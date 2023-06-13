@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PitchAnalyzer from "./temp_component/pitch";
 import PlaySongsSimultaneously from "./temp_component/PlaySongsSimultaneously";
-//testpage
+// testpage
 export default function TestPage() {
   const [isLoadComplete, setLoadComplete] = useState(false);
   const [isKeyUp, setKeyUp] = useState(false);
@@ -34,7 +34,9 @@ export default function TestPage() {
         console.log(err);
       }
     };
-    fetchFiles();
+    fetchFiles().catch((err) => {
+      console.log(err);
+    });
   }, []);
 
   return (
@@ -48,10 +50,10 @@ export default function TestPage() {
         originAnswer={ans1Array}
         keyUpAnswer={ans2Array}
         keyDownAnswer={ans3Array}
-        isKeyUp={false}
-        isKeyDown={false}
-        isFrozen={false}
-        isMute={false}
+        isKeyUp={isKeyUp}
+        isKeyDown={isKeyDown}
+        isFrozen={isFrozen}
+        isMute={isMute}
         setKeyUp={setKeyUp}
         setKeyDown={setKeyDown}
         setFrozen={setFrozen}

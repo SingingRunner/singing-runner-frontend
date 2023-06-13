@@ -52,8 +52,7 @@ export default function PlaySongsSimultaneously(
     if (typeof window === "undefined") return;
 
     // Create AudioContext
-    audioCtxRef.current = new (window.AudioContext ||
-      window.webkitAudioContext)();
+    audioCtxRef.current = new window.AudioContext();
 
     // Use the created AudioContext
     const audioCtx = audioCtxRef.current;
@@ -74,7 +73,7 @@ export default function PlaySongsSimultaneously(
       // If all songs are loaded, start playing them
       sources.current.forEach((source, i) => {
         source.start();
-        if (i == 0) {
+        if (i === 0) {
           gainNodes.current[i].gain.value = 1;
         }
       });
@@ -90,7 +89,12 @@ export default function PlaySongsSimultaneously(
   return (
     <div>
       {songFiles.map((_, index) => (
-        <button key={index} onClick={() => handleSolo(index)}>
+        <button
+          key={index}
+          onClick={() => {
+            handleSolo(index);
+          }}
+        >
           Solo {index + 1}
         </button>
       ))}
