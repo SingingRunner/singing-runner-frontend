@@ -192,6 +192,7 @@ export default function Graphic(props: IGrapicProps) {
   }, [...props.playersScore]);
 
   /** player의 위치를 1씩 이동하는 함수 */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const movePlayer = (index: number, direction: "forward" | "backward") => {
     if (!players[index]) return;
     if (!players[index].visible) return;
