@@ -1,5 +1,5 @@
 # Use the larger node image for building the project
-FROM node:16 as builder
+FROM node:17 as builder
 
 WORKDIR /my_frontend/
 COPY ./package.json /my_frontend/
@@ -10,7 +10,7 @@ COPY . .
 RUN yarn build
 
 # Use the smaller alpine-node image for deployment
-FROM node:16-alpine
+FROM node:17-alpine
 
 WORKDIR /my_frontend/
 COPY --from=builder /my_frontend/package.json .
