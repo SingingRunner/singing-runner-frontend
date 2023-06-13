@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface IGameUIProps {
   // switchPlayerToSnowman: (index: number) => void;
   // switchSnowmanToPlayer: (index: number) => void;
@@ -14,6 +16,16 @@ export interface IGameUIProps {
     keyUp: boolean;
     shield: boolean;
   };
+  setActiveItem: Dispatch<
+    SetStateAction<{
+      mute: boolean;
+      frozen: boolean;
+      cloud: boolean;
+      keyDown: boolean;
+      keyUp: boolean;
+      shield: boolean;
+    }>
+  >;
   playersActiveItem: string[];
   itemList: string[];
   useItem: (item: string) => void;

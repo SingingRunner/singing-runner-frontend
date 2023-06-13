@@ -20,6 +20,7 @@ export default function GameUI(props: IGameUIProps) {
         playersScore={props.playersScore}
         totalPlayers={props.totalPlayers}
         activeItem={props.activeItem}
+        setActiveItem={props.setActiveItem}
         playersActiveItem={props.playersActiveItem}
         offItem={props.offItem}
         decibel={props.decibel}

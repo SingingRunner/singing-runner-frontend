@@ -58,7 +58,9 @@ export default function Game() {
       ...INIT_ITEM_EFFECT, // 나머지 효과 모두 종료
       [item]: true,
     });
+
     changePlayersActiveItem(0, item); // 🚨 통신 되면 필요 없을 듯
+
     if (item === "keyUp") {
       setMrKey("keyUp");
     } else if (item === "keyDown") {
@@ -66,11 +68,19 @@ export default function Game() {
     } else if (item === "mute") {
       setIsMuteActive(true);
     }
+
+    // frozen 아이템은 유저가 직접 종료
+    if (item === "frozen") return;
+    console.log(item, "FROZEN 나오면 안됨");
+
+    // 나머지 아이템은 5초 뒤에 자동 종료
+    setTimeout(() => offItem(item), 4500);
   };
 
   const checkDecibel = () => {
     if (isMuteActive && decibel > -60) offItem("mute");
   };
+
   useEffect(() => {
     if (isMuteActive) checkDecibel();
   }, [isMuteActive, decibel]);
@@ -92,9 +102,9 @@ export default function Game() {
 
   // 테스트
   useEffect(() => {
-    onItem("keyUp");
-    // onItem("keyDown");
-    // onItem("mute");
+    // onItem("keyUp");
+    onItem("keyDown");
+    onItem("mute");
     // onItem("frozen");
     // getItem("mute");
     getItem("frozen");
@@ -128,12 +138,6 @@ export default function Game() {
     console.log(item, "사용했어요!");
   };
 
-  // 🚨 키 변경 테스트
-  useEffect(() => {
-    setMrKey("origin");
-    // setMrKey("keyUp");
-    // setMrKey("keyDown");
-  }, []);
   return (
     <>
       {playersScore[0]}
@@ -142,6 +146,7 @@ export default function Game() {
         playersScore={playersScore}
         totalPlayers={totalPlayers}
         activeItem={activeItem}
+        setActiveItem={setActiveItem}
         playersActiveItem={playersActiveItem}
         itemList={itemList}
         useItem={useItem}
@@ -156,6 +161,7 @@ export default function Game() {
         mrKey={mrKey}
         setDecibel={setDecibel}
         setPlayersScore={setPlayersScore}
+        activeItem={activeItem}
       />
     </>
   );
