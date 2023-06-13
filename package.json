@@ -16,11 +16,15 @@
     "next": "12.1.0",
     "pitchfinder": "^2.3.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "socket.io-client": "^4.6.2",
+    "recoil": "^0.7.7",
+    "three": "^0.153.0"
   },
   "devDependencies": {
     "@types/node": "17.0.2",
     "@types/react": "17.0.2",
+    "@types/three": "^0.152.1",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "eslint": "^8.42.0",
     "eslint-config-next": "^13.4.5",
