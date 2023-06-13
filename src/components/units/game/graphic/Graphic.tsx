@@ -2,12 +2,34 @@ import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { IGrapicProps } from "./Graphic.types";
+import { useRouter } from "next/router";
+import { Howl } from "howler";
 declare global {
   interface Window {
     scene: THREE.Scene;
   }
 }
 export default function Graphic(props: IGrapicProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const sound = new Howl({
+      src: ["/music/cutted_snowflower_origin_mr.wav"],
+      autoplay: true,
+      loop: true,
+      volume: 0.5,
+      onend: function () {
+        console.log("Finished!");
+      },
+    });
+
+    sound.play();
+
+    return () => {
+      sound.unload(); // cleanup
+    };
+  }, [router.asPath]);
+
   const [players, setPlayers] = useState<THREE.Object3D[]>([]);
   const [actions, setActions] = useState<THREE.AnimationAction[]>([]);
   const [isStop, setIsStop] = useState<boolean[]>([]);
@@ -170,7 +192,6 @@ export default function Graphic(props: IGrapicProps) {
   }, [...props.playersScore]);
 
   /** player의 위치를 1씩 이동하는 함수 */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const movePlayer = (index: number, direction: "forward" | "backward") => {
     if (!players[index]) return;
     if (!players[index].visible) return;
@@ -179,13 +200,21 @@ export default function Graphic(props: IGrapicProps) {
     players[index].position.z += moveAmount;
   };
 
-  /* 아이템 효과 */
+  /* 전체 유저 아이템 효과 */
   useEffect(() => {
+    console.log("여기?");
     props.playersActiveItem.forEach((item, index) => {
+      console.log(item, "아이템2");
       if (item === "mute") {
         stopPlayer(index);
       } else if (item === "frozen") {
         switchPlayerToSnowman(index);
+      } else if (item === "") {
+        startPlayer(index);
+        if (snowmans[index]) {
+          switchSnowmanToPlayer(index);
+          props.playersActiveItem[index] = "";
+        }
       }
     });
   }, [...props.playersActiveItem]);
@@ -233,6 +262,7 @@ export default function Graphic(props: IGrapicProps) {
 
     // load the snowman
     const gltfLoader = new GLTFLoader();
+    if (!players[index]) return;
     gltfLoader.load("/game/player/snowman.glb", (gltf) => {
       const snowman = gltf.scene.children[0];
       snowman.scale.set(0.02, 0.02, 0.02);
@@ -294,6 +324,7 @@ export default function Graphic(props: IGrapicProps) {
   const reduceSnowmanHealth = () => {
     if (snowmans[0]) playCrashSound();
     setSnowmanHealth((health) => {
+      console.log("눈사람 땔기ㅣ", health);
       if (health <= 10) {
         switchSnowmanToPlayer(0); // 눈사람 체력이 0이 되면 플레이어로 전환
       }
