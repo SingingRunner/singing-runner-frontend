@@ -1,12 +1,13 @@
 import { Global } from "@emotion/react";
 import { AppProps } from "next/app";
-import { globalStyles } from "../src/commons/styles/globalStyles";
+import { globalStyles } from "../styles/globalStyles";
+import { RecoilRoot } from "recoil";
 
-export default function App({ Component }: AppProps): JSX.Element {
+export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
-    <>
+    <RecoilRoot>
       <Global styles={globalStyles} />
-      <Component />
-    </>
+      <Component {...pageProps} />
+    </RecoilRoot>
   );
 }
