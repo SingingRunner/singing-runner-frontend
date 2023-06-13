@@ -16,6 +16,7 @@ WORKDIR /my_frontend/
 COPY --from=builder /my_frontend/package.json .
 COPY --from=builder /my_frontend/yarn.lock .
 COPY --from=builder /my_frontend/.next ./.next
+COPY --from=builder /my_frontend/public ./public
 RUN yarn install --production
 
 CMD ["yarn", "start"]
