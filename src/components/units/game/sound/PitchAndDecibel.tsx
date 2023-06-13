@@ -139,6 +139,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   const handleAudioStream = (stream: MediaStream) => {
+    setTimeout(() => {}, 1000);
+    const sources = props.sources;
+    sources.current.forEach((source, i) => {
+      source.start();
+    });
     audioContext = new window.AudioContext();
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
     analyzer = audioContext.createAnalyser();
