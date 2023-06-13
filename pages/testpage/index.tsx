@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
+const songFiles = [
+  '/music/snowflower_vocal_origin.wav',
+  '/music/snowflower_vocal_3keydown.wav',
+  '/music/snowflower_vocal_3keyup.wav',
+];
+
 const PlaySongsSimultaneously: React.FC = () => {
-  const songFiles = [
-    '/music/snowflower_vocal_origin.wav',
-    '/music/snowflower_vocal_3keydown.wav',
-    '/music/snowflower_vocal_3keyup.wav',
-  ];
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
