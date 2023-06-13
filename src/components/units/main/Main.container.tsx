@@ -159,9 +159,16 @@ const Main = () => {
           console.log("game_ready true sended to server");
         });
 
-        newSocket.on("game_ready", async (isGameStarted: boolean) => {
+        newSocket.on("game_ready", async (userData) => {
+          // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
+          // userData에는 socketId만 담겨서 올거임.
+          const { user1, user2, user3 } = userData;
+          const myId = newSocket.id;
+          const otherUsers = [user1, user2, user3].filter((user) => user.socketId !== myId);
+          console.log(otherUsers);
+
           console.log("game_ready true received");
-          if (isGameStarted) {
+          if (user1?.socketId && user2?.socketId && user3?.socketId) {
             setShowLoading(false);
             setLoading(false);
             try {
