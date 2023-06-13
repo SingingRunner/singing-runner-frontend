@@ -1,12 +1,70 @@
 import { useEffect, useState } from "react";
-import MainUI from "./Main.presenter";
+import { io, Socket } from "socket.io-client";
+import MainUI, { MainUIProps } from "./Main.presenter";
 
-export default function Main() {
+const Main = () => {
   // 컨테이너는 로직만 담당하고, UI는 다른 파일로 분리해서 작성한다.
   const [isClicked, setIsClicked] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  const handleBattleModeClick = () => {
+    if (socket === null) {
+      // 소켓 열고 소켓 통신 시작
+      const newSocket = io("https://injungle.shop");
+      setSocket(newSocket);
+
+      // Add event listeners or perform any necessary socket communication logic
+      newSocket.on(
+        "connect",
+        () => {
+          console.log("Socket connected");
+          newSocket.emit("match_making", "Hello, server!"); // 보낼 정보: UserMatchDTO = {userI, userMMR: number, nickName: string, userActive: userActiveStatus }
+        }
+        // You can send/receive messages, emit events, etc.
+      );
+      // Send a message to the server
+      newSocket.on("match_making", () => {
+        // song_title, singer => 수락 화면에 집어넣기
+        console.log("Disconnected from server");
+      });
+
+      // 수락 화면에서 버튼 누르는거에 따라 처리
+      newSocket.emit("accept", () => {
+        // true, false
+        console.log("Disconnected from server");
+      }); // 3명 다 수락되면 백에서 true 올거임. 거절한 유저는 소켓 끊는다. => 버튼 선택화면으로 보내기
+      // 수락했는데 남은 나머지는 false 받을거임. => 모달 꺼지고 대기화면 시간 이을 수 있으면 잇고 아니면 00:00으로 보내기
+
+      // on으로 true 받으면 로딩 메세지 던져줌.
+      newSocket.on("accept", () => {
+        // true 받음
+        console.log("Disconnected from server");
+      });
+
+      // 로딩화면 렌더링 => 소켓 로딩 메세지 emit으로 보낸다.
+      // newSocket.emit("loading", msg);
+
+      // 그러면 노래파일 올거임. 다 오면, 게임 스타트 => 게임 스타트 메세지 emit으로 보낸다. (true)
+
+      // 3명 다 true 보내고 나면, true 올거임. => 인게임 화면 렌더링
+
+      newSocket.on("disconnect", () => {
+        console.log("Disconnected from server");
+      });
+
+      // Server-side event listener for the 'chat message' event
+      newSocket.on("chat message", (msg) => {
+        console.log("Received message:", msg);
+        // Process the received message and emit to other clients
+        newSocket.emit("chat message", msg);
+      });
+
+      // You can also update any state or perform other actions related to the battle mode
+    }
+  };
 
   useEffect(() => {
     const simulateLoading = () => {
@@ -14,12 +72,6 @@ export default function Main() {
         setTimeout(() => {
           if (progress < 100) {
             setProgress(progress + 10); // Increase the progress by 10% every 1 second
-            // if (progress === 20 || progress === 40)  {
-            //   setProgress(progress + 20);
-            // }
-            // if (progress === 70) {
-            //   setProgress(progress + 30);
-            // }
           } else {
             setLoading(false);
           }
@@ -29,7 +81,11 @@ export default function Main() {
 
     simulateLoading();
 
-    return () => clearTimeout();
+    return () => {
+      if (timer) {
+        clearTimeout(timer); // 타이머 취소
+      }
+    };
   }, [showLoading, progress]);
 
   const handleClick = () => {
@@ -43,6 +99,9 @@ export default function Main() {
   const handleLoading = () => {
     // 로딩 모달 띄우기
     setShowModal(false);
+    if (!showModal) {
+      setShowModal(false);
+    }
     setShowLoading(true);
   };
 
@@ -91,22 +150,25 @@ export default function Main() {
     return `${minutes}:${seconds}`;
   };
 
-  return (
-    <MainUI
-      isClicked={isClicked}
-      handleClick={handleClick}
-      isBattleClicked={isBattleClicked}
-      handleBattleClick={handleBattleClick}
-      handleMatchCancel={handleMatchCancel}
-      timer={timer}
-      formatTime={formatTime}
-      showModal={showModal}
-      setShowModal={setShowModal}
-      showLoading={showLoading}
-      setShowLoading={setShowLoading}
-      handleLoading={handleLoading}
-      loading={loading}
-      progress={progress}
-    />
-  );
-}
+  const props: MainUIProps = {
+    isClicked,
+    handleClick,
+    isBattleClicked,
+    handleBattleClick,
+    handleMatchCancel,
+    timer,
+    formatTime,
+    showModal,
+    setShowModal,
+    showLoading,
+    setShowLoading,
+    handleLoading,
+    loading,
+    handleBattleModeClick,
+    progress,
+  };
+
+  return <MainUI {...props} />;
+};
+
+export default Main;

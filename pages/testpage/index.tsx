@@ -2,18 +2,9 @@ import React, { useEffect, useRef } from 'react';
 
 const PlaySongsSimultaneously: React.FC = () => {
   const songFiles = [
-    // '/music/snowflower_origin.wav',
-    // '/music/snowflower_3keydown.wav',
-    // '/music/snowflower_3keyup.wav',
-    // '/music/snowflower_5keyup.wav',
-    // '/music/snowflower_2keyup.wav',
-    // '/music/snowflower_8keyup.wav',
     '/music/snowflower_vocal_origin.wav',
     '/music/snowflower_vocal_3keydown.wav',
     '/music/snowflower_vocal_3keyup.wav',
-    // '/music/snowflower_origin.wav',
-    // '/music/snowflower_3keydown.wav',
-    // '/music/snowflower_3keyup.wav',
   ];
 
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -25,14 +16,22 @@ const PlaySongsSimultaneously: React.FC = () => {
     if (typeof window === 'undefined') return;
 
     // Create AudioContext
-    audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtxRef.current = new window.AudioContext ();
 
     // Use the created AudioContext
     const audioCtx = audioCtxRef.current;
 
-    Promise.all(songFiles.map((file) => fetch(file).then(res => res.arrayBuffer())))
-      .then(datas => Promise.all(datas.map(data => audioCtx.decodeAudioData(data))))
-      .then(buffers => {
+    const loadSongs = async () => {
+      try {
+        const dataPromises = songFiles.map(async (file) => {
+          const res = await fetch(file);
+          return await res.arrayBuffer();
+        });
+        const datas = await Promise.all(dataPromises);
+
+        const bufferPromises = datas.map(async (data) => await audioCtx.decodeAudioData(data));
+        const buffers = await Promise.all(bufferPromises);
+
         gainNodes.current = songFiles.map((_, i) => {
           const gainNode = audioCtx.createGain();
           gainNode.gain.value = 0; // Start all audios muted
@@ -44,7 +43,12 @@ const PlaySongsSimultaneously: React.FC = () => {
           sources.current[i] = source;
           return gainNode;
         });
-      });
+      } catch (error) {
+        console.error("Error loading songs: ", error);
+      }
+    };
+
+    void loadSongs();
 
     // Cleanup function to stop all songs
     return () => {
@@ -65,7 +69,7 @@ const PlaySongsSimultaneously: React.FC = () => {
   return (
     <div>
       {songFiles.map((_, index) => (
-        <button key={index} onClick={() => handleSolo(index)}>
+        <button key={index} onClick={() => { handleSolo(index); }}>
           Solo {index + 1}
         </button>
       ))}

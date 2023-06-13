@@ -39,7 +39,6 @@ export const LoadingBackground = styled.div`
   height: 100%;
   /* background: rgba(255, 255, 255, 1); */
   background: #1A1128;
-  z-index: 2;
 `;
 
 export const MatchAcceptButton = styled.button`
@@ -87,7 +86,7 @@ export const MarqueeContent = styled.div`
   display: flex;
   width: max-content;
   animation: ${marqueeAnimation} 10s linear infinite;
-  & > *:first-child {
+  & > *:first-of-type {
     padding-right: 10px; // 반복 사이 간격 조정
   }
 `;
@@ -132,7 +131,6 @@ export const ModalBackground = styled.div`
   width: 100vw;
   height: 100%;
   background: rgba(0, 0, 0, 1);
-  z-index: 2;
 `;
 
 export const ImageWrapper = styled.div`
@@ -144,27 +142,23 @@ export const ImageEllipse = styled.img`
   position: absolute;
   left: 45%;
   top: -60px;
-  z-index: 1;
 `;
 
 export const ImageVector = styled.img`
   position: absolute;
   left: 47.5%;
   top: -48px;
-  z-index: 1;
 `;
 
 export const ImageCat = styled.img`
   position: absolute;
   left: 32%;
-  z-index: 1;
 `;
 
 export const ImageMike = styled.img`
   position: absolute;
   top: 62px;
   left: 24%;
-  z-index: 2;
 `;
 
 export const Timer = styled.div`
@@ -178,7 +172,6 @@ export const StartButton = styled.button`
   width: 100%;
   justify-content: center;
   align-items: center;
-  z-index: 1;
   height: 40px;
   font-size: 16px;
   background: linear-gradient(to right, #8b50f2, #bd00fe);
@@ -198,7 +191,6 @@ export const MatchButton = styled.button`
   width: 100%;
   justify-content: center;
   align-items: center;
-  z-index: 1;
   height: 48px;
   font-size: 16px;
   background: #bd00fe;
@@ -213,7 +205,6 @@ export const MatchCancelButton = styled.button`
   width: 100%;
   justify-content: center;
   align-items: center;
-  z-index: 1;
   height: 40px;
   font-size: 16px;
   background: transparent;
@@ -228,7 +219,6 @@ export const BasicButton = styled.button`
   width: 100%;
   justify-content: center;
   align-items: center;
-  z-index: 1;
   height: 40px;
   font-size: 16px;
   background: transparent;

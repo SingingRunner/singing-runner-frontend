@@ -1,35 +1,7 @@
-import React, { useState } from "react";
-import io from "socket.io-client";
-import {
-  BasicButton,
-  ImageCat,
-  ImageMike,
-  ImageWrapper,
-  MatchButton,
-  MatchCancelButton,
-  ModalWrapper,
-  StartButton,
-  Timer,
-  ImageEllipse,
-  ImageVector,
-  ModalBackground,
-  ModalMatchComplete,
-  ModalMatchSongTitle,
-  ModalMatchSongArtist,
-  MarqueeContainer,
-  MarqueeContent,
-  MatchButtonWrapper,
-  MatchAcceptButton,
-  MatchDenyButton,
-  LoadingBar,
-  LoadingBackground,
-  LoadingBarWrapper,
-  LoadingGauge,
-  LoadingMessage,
-} from "../../../../styles/emotion";
+import * as S from "../../../../styles/emotion";
 import ButtonWrapper from "../../commons/buttons/wrapper";
 
-interface MainUIProps {
+export interface MainUIProps {
   isClicked: boolean;
   handleClick: () => void;
   isBattleClicked: boolean;
@@ -44,47 +16,14 @@ interface MainUIProps {
   handleLoading: () => void;
   loading: boolean;
   progress: number;
+  handleBattleModeClick: () => void;
 }
 
-const MainUI: React.FC<MainUIProps> = ({
-  handleClick,
-  isClicked,
-  isBattleClicked,
-  handleBattleClick,
-  handleMatchCancel,
-  timer,
-  formatTime,
-  showModal,
-  setShowModal,
-  showLoading,
-  setShowLoading,
-  handleLoading,
-  loading,
-  progress,
-}) => {
-  const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null);
-
-  const handleBattleModeClick = () => {
-    if (socket === null) {
-      // Open socket and start socket communication
-      const newSocket = io("https://injungle.shop");
-      setSocket(newSocket);
-
-      // Add event listeners or perform any necessary socket communication logic
-      newSocket.on("connect", () => {
-        console.log("Socket connected");
-        // You can send/receive messages, emit events, etc.
-      });
-
-      // Place your socket-related code here
-
-      // You can also update any state or perform other actions related to the battle mode
-    }
-  };
+const MainUI = (props: MainUIProps) => {
 
   return (
     <>
-      {!isBattleClicked && (
+      {!props.isBattleClicked && (
         <div
           style={{
             width: "100vw",
@@ -93,32 +32,32 @@ const MainUI: React.FC<MainUIProps> = ({
             position: "relative",
           }}
         >
-          <ImageWrapper>
-            <ImageCat src="../images/cat.png" alt="Image" />
-            <ImageMike src="../images/microphone.png" alt="Image" />
-          </ImageWrapper>
-          {isClicked && (
+          <S.ImageWrapper>
+            <S.ImageCat src="../images/cat.png" alt="Image" />
+            <S.ImageMike src="../images/microphone.png" alt="Image" />
+          </S.ImageWrapper>
+          {props.isClicked && (
             <>
               <ButtonWrapper>
-                <BasicButton
-                  onClick={handleBattleClick}
+                <S.BasicButton
+                  onClick={props.handleBattleClick}
                   style={{ marginBottom: "20px" }}
                 >
                   배틀 모드
-                </BasicButton>
-                <BasicButton onClick={handleClick}>커스텀 모드</BasicButton>
+                </S.BasicButton>
+                <S.BasicButton onClick={props.handleClick}>커스텀 모드</S.BasicButton>
               </ButtonWrapper>
             </>
           )}
 
-          {!isClicked && (
+          {!props.isClicked && (
             <ButtonWrapper>
-              <StartButton onClick={handleClick}>START</StartButton>
+              <S.StartButton onClick={props.handleClick}>START</S.StartButton>
             </ButtonWrapper>
           )}
         </div>
       )}
-      {isBattleClicked && (
+      {props.isBattleClicked && (
         <div
           style={{
             width: "100vw",
@@ -127,64 +66,64 @@ const MainUI: React.FC<MainUIProps> = ({
             position: "relative",
           }}
         >
-          <ImageWrapper>
-            <ImageCat src="../images/cat.png" alt="Image" />
-            <ImageMike src="../images/microphone.png" alt="Image" />
-          </ImageWrapper>
+          <S.ImageWrapper>
+            <S.ImageCat src="../images/cat.png" alt="Image" />
+            <S.ImageMike src="../images/microphone.png" alt="Image" />
+          </S.ImageWrapper>
           <ButtonWrapper>
-            <MatchButton
-              onClick={handleBattleModeClick}
+            <S.MatchButton
+              onClick={props.handleBattleModeClick}
               style={{ marginBottom: "20px" }}
             >
-              <Timer>{formatTime(timer)}</Timer>
+              <S.Timer>{props.formatTime(props.timer)}</S.Timer>
               게임 찾는 중...
-            </MatchButton>
-            <MatchCancelButton onClick={handleMatchCancel}>
+            </S.MatchButton>
+            <S.MatchCancelButton onClick={props.handleMatchCancel}>
               매칭 취소
-            </MatchCancelButton>
+            </S.MatchCancelButton>
           </ButtonWrapper>
         </div>
       )}
-      {showModal && (
+      {props.showModal && (
         <>
-          <ModalBackground>
-            <ModalWrapper>
-              <ImageWrapper>
-                <ImageEllipse src="../images/ellipse.png" />
-                <ImageVector src="../images/Vector.png" />
-              </ImageWrapper>
-              <ModalMatchComplete>매칭이 완료되었습니다.</ModalMatchComplete>
-              <ModalMatchSongArtist>YB</ModalMatchSongArtist>
-              <MarqueeContainer>
-                <MarqueeContent>
-                  <ModalMatchSongTitle>
+          <S.ModalBackground>
+            <S.ModalWrapper>
+              <S.ImageWrapper>
+                <S.ImageEllipse src="../images/ellipse.png" />
+                <S.ImageVector src="../images/Vector.png" />
+              </S.ImageWrapper>
+              <S.ModalMatchComplete>매칭이 완료되었습니다.</S.ModalMatchComplete>
+              <S.ModalMatchSongArtist>YB</S.ModalMatchSongArtist>
+              <S.MarqueeContainer>
+                <S.MarqueeContent>
+                  <S.ModalMatchSongTitle>
                     나는 나비 (A Flying Butterfly)
-                  </ModalMatchSongTitle>
-                  <ModalMatchSongTitle>
+                  </S.ModalMatchSongTitle>
+                  <S.ModalMatchSongTitle>
                     나는 나비 (A Flying Butterfly)
-                  </ModalMatchSongTitle>
-                </MarqueeContent>
-              </MarqueeContainer>
-              <MatchButtonWrapper>
-                <MatchDenyButton>거절하기</MatchDenyButton>
-                <MatchAcceptButton onClick={handleLoading}>
+                  </S.ModalMatchSongTitle>
+                </S.MarqueeContent>
+              </S.MarqueeContainer>
+              <S.MatchButtonWrapper>
+                <S.MatchDenyButton>거절하기</S.MatchDenyButton>
+                <S.MatchAcceptButton onClick={props.handleLoading}>
                   참여하기
-                </MatchAcceptButton>
-              </MatchButtonWrapper>
-            </ModalWrapper>
-          </ModalBackground>
+                </S.MatchAcceptButton>
+              </S.MatchButtonWrapper>
+            </S.ModalWrapper>
+          </S.ModalBackground>
         </>
       )}
-      {showLoading && (
+      {props.showLoading && (
         <>
-          <LoadingBackground>
-            {loading ? (
-              <LoadingMessage>잠시만 기다려주세요.</LoadingMessage>
+          <S.LoadingBackground>
+            {props.loading ? (
+              <S.LoadingMessage>잠시만 기다려주세요.</S.LoadingMessage>
             ) : (
               <></>
             )}
-            {loading ? (
-              <LoadingBarWrapper>
+            {props.loading ? (
+              <S.LoadingBarWrapper>
                 Loading...
                 <div
                   style={{
@@ -193,19 +132,19 @@ const MainUI: React.FC<MainUIProps> = ({
                     backgroundColor: "#1A1128",
                   }}
                 >
-                  <LoadingGauge
+                  <S.LoadingGauge
                     style={{
-                      width: `${progress}%`,
+                      width: `${props.progress}%`,
                       height: "100%",
                     }}
                   />
                 </div>
-              </LoadingBarWrapper>
+              </S.LoadingBarWrapper>
             ) : (
-              <LoadingMessage>게임이 시작됩니다!</LoadingMessage>
+              <S.LoadingMessage>게임이 시작됩니다!</S.LoadingMessage>
             )}
-            <MatchButtonWrapper></MatchButtonWrapper>
-          </LoadingBackground>
+            <S.MatchButtonWrapper></S.MatchButtonWrapper>
+          </S.LoadingBackground>
         </>
       )}
     </>
