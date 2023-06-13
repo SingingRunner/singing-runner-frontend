@@ -39,7 +39,7 @@ export default function ItemInfo(props: IItemInfoProps) {
         <ItemInfoWrapper>
           <Msg>소리를 질러서 탈출하세요!</Msg>
           <ItemInfoIcon src="/game/item/effect/mute.png" />
-          <DecibelBar decibel={props.decibel}>
+          <DecibelBar decibel={props.decibel + 120}>
             <div className="meter">
               <div className="bar" id="bar1"></div>
               <div className="bar" id="bar2"></div>
