@@ -2,34 +2,13 @@ import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { IGrapicProps } from "./Graphic.types";
-import { useRouter } from "next/router";
-import { Howl } from "howler";
+
 declare global {
   interface Window {
     scene: THREE.Scene;
   }
 }
 export default function Graphic(props: IGrapicProps) {
-  const router = useRouter();
-
-  useEffect(() => {
-    const sound = new Howl({
-      src: ["/music/cutted_snowflower_origin_mr.wav"],
-      autoplay: true,
-      loop: true,
-      volume: 0.5,
-      onend: function () {
-        console.log("Finished!");
-      },
-    });
-
-    sound.play();
-
-    return () => {
-      sound.unload(); // cleanup
-    };
-  }, [router.asPath]);
-
   const [players, setPlayers] = useState<THREE.Object3D[]>([]);
   const [actions, setActions] = useState<THREE.AnimationAction[]>([]);
   const [isStop, setIsStop] = useState<boolean[]>([]);
