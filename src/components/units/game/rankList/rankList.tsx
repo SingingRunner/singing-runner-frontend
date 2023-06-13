@@ -16,10 +16,10 @@ function RankList(props: IRankListProps) {
         score: props.playersScore[i],
         idx: i,
       }));
-      const temp = data?.sort((a, b) => b[0]?.score - a[0]?.score);
-      setSortedData(temp);
+      const temp = data?.sort((a, b) => b.score - a.score);
+      setSortedData([...temp]);
     }
-  }, [props.playersScore, props.playersActiveItem, props.playersScore]);
+  }, [...props.playersScore, props.playersActiveItem]);
 
   return (
     <RankWrapper>

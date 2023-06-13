@@ -90,26 +90,30 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     // 🚨 타 유저 점수 반영
     // 현재 유저는 calculateScore 함수에서 반영하고 있음
     // 오른쪽 유저면
-    props.setPlayersScore((prev) => {
-      const newScore = [...prev];
-      newScore[1] = currentScore;
-      return newScore;
-    });
+    // props.setPlayersScore((prev) => {
+    //   const newScore = [...prev];
+    //   newScore[1] = currentScore;
+    //   return newScore;
+    // });
     // 왼쪽 유저면
-    props.setPlayersScore((prev) => {
-      const newScore = [...prev];
-      newScore[2] = currentScore;
-      return newScore;
-    });
+    // props.setPlayersScore((prev) => {
+    //   const newScore = [...prev];
+    //   newScore[2] = currentScore;
+    //   return newScore;
+    // });
   }, []);
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     console.log(
       "채점에 반영되고 있는 현재 유저의 ITEM_STATUS",
+      "frozen: ",
       props.isFrozen,
+      "isKeyDown: ",
       props.isKeyDown,
+      "isKeyUp: ",
       props.isKeyUp,
+      "isMute: ",
       props.isMute
     );
     if (props.isFrozen) {
