@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  EC2_INSTANCE_USERNAME: ${{ secrets.EC2_INSTANCE_USERNAME }}
+  EC2_INSTANCE_IP: ${{ secrets.EC2_INSTANCE_IP }}
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Extract version from PR message
+        id: extract-version
+        run: |
+          version=$(echo "${{ github.event.pull_request.title }}" | grep -oP '(?<=\[Version: ).*?(?=\])') && echo "::set-output name=version::$version"
+
+      - name: Build Docker image
+        run: |
+          version=${{ steps.extract-version.outputs.version }}
+          docker build -t singing-runner-frontend:$version .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Push image to Docker Hub
+        run: |
+          version=${{ steps.extract-version.outputs.version }}
+          docker tag singing-runner-frontend:$version ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:$version
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:$version
+
+      - name: SSH into EC2 instance and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_INSTANCE_IP }}
+          username: ${{ secrets.EC2_INSTANCE_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            CONTAINER_IDS=$(docker ps -a --format "{{.ID}} {{.Image}}" | awk '/singing-runner-frontend/ {print $1}')
+            for CONTAINER_ID in $CONTAINER_IDS; do
+              docker stop "$CONTAINER_ID"
+              docker rm "$CONTAINER_ID"
+            done
+            IMAGE_IDS=$(docker images --format "{{.ID}} {{.Repository}}" | awk '$2 ~ /singing-runner-frontend/ {print $1}')
+
+            if [ -n "$IMAGE_IDS" ]; then
+              # Delete each image by ID
+              for IMAGE_ID in $IMAGE_IDS; do
+                docker rmi -f "$IMAGE_ID"
+              done
+            else
+              echo "No images found matching the pattern *singing-runner-frontend*"
+            fi
+            
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:${{ steps.extract-version.outputs.version }}
+            docker run -d -p 3000:3000 --name singing-runner-frontend ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:${{ steps.extract-version.outputs.version }}
