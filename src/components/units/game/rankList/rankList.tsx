@@ -1,44 +1,43 @@
-// 전체 플레이어의 랭킹 (🚨 가데이터)
 import styled from "@emotion/styled";
-import { memo } from "react";
-const RankList = (props: IRankListProps) => {
-  console.log("여기 왜 안 바뀌어", props.playersActiveItem);
+import { memo, useEffect, useState } from "react";
+
+function RankList(props: IRankListProps) {
+  const [sortedData, setSortedData] = useState<
+    Array<{
+      activeItem: string;
+      score: number;
+      idx: number;
+    }>
+  >();
+  useEffect(() => {
+    if (props.playersScore) {
+      const data = ["", "", ""].map((_, i) => ({
+        activeItem: props.playersActiveItem[i],
+        score: props.playersScore[i],
+        idx: i,
+      }));
+      const temp = data?.sort((a, b) => b[0]?.score - a[0]?.score);
+      setSortedData(temp);
+    }
+  }, [props.playersScore, props.playersActiveItem, props.playersScore]);
+
   return (
     <RankWrapper>
-      <Rank>
-        <span>1</span>
-        <Profile src="/game/player/profile/cat.png" />
-        {props.playersActiveItem[0] && (
-          <ItemEffect
-            src={`/game/item/effect/${props.playersActiveItem[0]}.png`}
-          />
-        )}
-        <span>99</span>
-      </Rank>
-      <Rank>
-        <span>2</span>
-        <Profile src="/game/player/profile/cat.png" />
-        {props.playersActiveItem[1] && (
-          <ItemEffect
-            src={`/game/item/effect/${props.playersActiveItem[0]}.png`}
-          />
-        )}
-
-        <span>95</span>
-      </Rank>
-      <Rank>
-        <span>3</span>
-        <Profile src="/game/player/profile/cat.png" />
-        {props.playersActiveItem[2] && (
-          <ItemEffect
-            src={`/game/item/effect/${props.playersActiveItem[0]}.png`}
-          />
-        )}
-        <span>88</span>
-      </Rank>
+      {sortedData?.map((el, i) => {
+        return (
+          <Rank key={i}>
+            <span>{i + 1}</span>
+            <Profile src={`/game/player/profile/cat${el.idx}.png`} />
+            {el.activeItem && (
+              <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
+            )}
+            <span>{el.score}</span>
+          </Rank>
+        );
+      })}
     </RankWrapper>
   );
-};
+}
 export default memo(RankList);
 
 const RankWrapper = styled.div`
@@ -92,4 +91,5 @@ const ItemEffect = styled.img`
 
 interface IRankListProps {
   playersActiveItem: string[];
+  playersScore: number[];
 }

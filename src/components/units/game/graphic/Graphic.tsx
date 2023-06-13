@@ -8,6 +8,11 @@ declare global {
     scene: THREE.Scene;
   }
 }
+
+const MAX_POSITION = 10;
+const MIN_POSITION = -3;
+const SNOWMAN_DAMAGE_INTERVAL = 3.5;
+
 export default function Graphic(props: IGrapicProps) {
   const [players, setPlayers] = useState<THREE.Object3D[]>([]);
   const [actions, setActions] = useState<THREE.AnimationAction[]>([]);
@@ -166,12 +171,33 @@ export default function Graphic(props: IGrapicProps) {
   }, [players, isStop]);
 
   /* 실시간 채점 */
+  const [playersMovedPosition, setPlayersMovedPosition] = useState([0, 0, 0]);
+
   useEffect(() => {
-    // 🚨 채점 로직에 따라서 movePlayer, stopPlayer 함수 호출
-  }, [...props.playersScore]);
+    if (players) {
+      const mid = props.playersScore[0];
+      const right = props.playersScore[1];
+      const left = props.playersScore[2];
+
+      if (right > mid && playersMovedPosition[1] < MAX_POSITION) {
+        movePlayer(1, "forward");
+        setPlayersMovedPosition((prev) => [prev[0], prev[1]++, prev[2]]);
+      } else if (right < mid && playersMovedPosition[1] > MIN_POSITION) {
+        movePlayer(1, "backward");
+        setPlayersMovedPosition((prev) => [prev[0], prev[1]--, prev[2]]);
+      }
+
+      if (left > mid && playersMovedPosition[2] < MAX_POSITION) {
+        movePlayer(2, "forward");
+        setPlayersMovedPosition((prev) => [prev[0], prev[1], prev[2]++]);
+      } else if (left < mid && playersMovedPosition[2] > MIN_POSITION) {
+        movePlayer(2, "backward");
+        setPlayersMovedPosition((prev) => [prev[0], prev[1], prev[2]--]);
+      }
+    }
+  }, [props.playersScore]);
 
   /** player의 위치를 1씩 이동하는 함수 */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const movePlayer = (index: number, direction: "forward" | "backward") => {
     if (!players[index]) return;
     if (!players[index].visible) return;
@@ -182,16 +208,16 @@ export default function Graphic(props: IGrapicProps) {
 
   /* 전체 유저 아이템 효과 */
   useEffect(() => {
-    console.log("여기?");
     props.playersActiveItem.forEach((item, index) => {
-      console.log(item, "아이템2");
-      if (item === "mute") {
-        stopPlayer(index);
-      } else if (item === "frozen") {
-        switchPlayerToSnowman(index);
-      } else if (item === "") {
+      // 음소거 아이템 공격 -> 멈춤
+      if (item === "mute") stopPlayer(index);
+      // 눈사람 아이템 공격 -> 눈사람으로 변신
+      else if (item === "frozen") switchPlayerToSnowman(index);
+      // 아이템 해제 -> 재생, 눈사람 해제
+      else if (item === "") {
         startPlayer(index);
-        if (snowmans[index]) {
+        if (snowmans[index] && index !== 0) {
+          // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리
           switchSnowmanToPlayer(index);
           props.playersActiveItem[index] = "";
         }
@@ -216,7 +242,6 @@ export default function Graphic(props: IGrapicProps) {
   };
 
   /** player의 애니메이션을 다시 재생하는 함수 */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const startPlayer = (index: number) => {
     if (!players[index]) return;
     if (!players[index].visible) return;
@@ -302,36 +327,38 @@ export default function Graphic(props: IGrapicProps) {
 
   /** 눈사람의 체력을 10씩 감소하는 함수 */
   const reduceSnowmanHealth = () => {
+    if (!snowmans[0]) return;
     if (snowmans[0]) playCrashSound();
     setSnowmanHealth((health) => {
-      console.log("눈사람 땔기ㅣ", health);
-      if (health <= 10) {
+      if (health <= 5) {
         switchSnowmanToPlayer(0); // 눈사람 체력이 0이 되면 플레이어로 전환
       }
-      const newHealth = Math.max(health - 3.5, 0);
+      const newHealth = Math.max(health - SNOWMAN_DAMAGE_INTERVAL, 0);
       if (snowmanHealthBarRef.current)
         snowmanHealthBarRef.current.scale.x = newHealth / 100;
       return newHealth;
     });
   };
 
-  const isSoundPlayingRef = useRef(false);
-  const touchCounterRef = useRef(0);
+  /* 눈사람 뿌시는 소리 */
+  const soundRef = useRef(false);
+  const soundCounterRef = useRef(0);
   let audio: HTMLAudioElement;
   useEffect(() => {
     audio = new Audio("/game/item/effect/small_crash.mp3");
     audio.onended = () => {
-      // 오디오가 끝나면 플래그를 다시 false로 설정하고, 카운터를 초기화합니다.
-      isSoundPlayingRef.current = false;
-      touchCounterRef.current = 0;
+      // 오디오가 끝나면 플래그를 다시 false로 설정하고, 카운터 초기화
+      // (세번 클릭까지는 오디오를 다시 재생하지 않음)
+      soundRef.current = false;
+      soundCounterRef.current = 0;
     };
   }, []);
 
   /** 눈사람 뿌시는 소리를 재생하는 함수 */
   const playCrashSound = () => {
-    // 오디오가 이미 재생 중이고 카운터가 3보다 작다면 카운터를 증가시키고 아무 것도 하지 않습니다.
-    if (isSoundPlayingRef.current && touchCounterRef.current < 3) {
-      touchCounterRef.current++;
+    // 오디오가 이미 재생 중이고 카운터가 3보다 작다면 카운터를 증가시키고 아무 것도 하지 않음
+    if (soundRef.current && soundCounterRef.current < 3) {
+      soundCounterRef.current++;
       return;
     }
 
@@ -339,8 +366,8 @@ export default function Graphic(props: IGrapicProps) {
     audio
       .play()
       .catch((error) => console.error("Audio playback failed due to:", error));
-    isSoundPlayingRef.current = true;
-    touchCounterRef.current = 0;
+    soundRef.current = true;
+    soundCounterRef.current = 0;
   };
 
   return <div ref={canvasRef} />;

@@ -30,7 +30,6 @@ export default function Sound(props: ISoundProps) {
     // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
     for (const key in props.activeItem) {
       if (Object.prototype.hasOwnProperty.call(props.activeItem, key)) {
-        console.log(props.activeItem[key], key, "아이템");
         switch (key) {
           case "keyUp":
             if (props.activeItem[key]) setKeyUp(true);
@@ -73,9 +72,6 @@ export default function Sound(props: ISoundProps) {
           return Number(value);
         });
         setAns3Array(ans3ArrayTmp);
-        console.log("111", ans1Array);
-        console.log("222", ans2Array);
-        console.log("333", ans3Array);
       } catch (err) {
         console.log(err);
       }

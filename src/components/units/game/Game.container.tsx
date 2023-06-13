@@ -12,23 +12,30 @@ const INIT_ITEM_EFFECT = {
 };
 
 export default function Game() {
-  // 🚨 총 플레이어 수
+  // 테스트
+  useEffect(() => {
+    onItem("keyUp");
+    // onItem("keyDown");
+    // onItem("mute");
+    // onItem("frozen");
+    getItem("mute");
+    getItem("frozen");
+    getItem("keyUp");
+    // getItem("keyDown");
+  }, []);
+
+  // ⭐️ 총 플레이어 수
   const totalPlayers = 3;
   // 🚨 모든 유저의 점수를 관리하는 상태
-  const [playersScore, setPlayersScore] = useState([0, 0, 0]);
-  // 현재의 mrKey를 저장하는 상태
+  const [playersScore, setPlayersScore] = useState([0, 100, 0]);
+  // ⭐️ 현재의 mrKey를 저장하는 상태
   const [mrKey, setMrKey] = useState("origin");
   // mute 아이템 발동 시 측정한 데시벨의 상태
   const [decibel, setDecibel] = useState(0);
   // mute 공격을 당한 경우, 데시벨 측정 시작을 위한 상태
   const [isMuteActive, setIsMuteActive] = useState(false);
 
-  useEffect(() => {
-    console.log(playersScore);
-  }, [playersScore]);
-
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
-  // 아이템 중복 허용 로직에 사용
   const [activeItem, setActiveItem] = useState({
     mute: false,
     frozen: false,
@@ -43,6 +50,7 @@ export default function Game() {
   const [playersActiveItem, setPlayersActiveItem] = useState(["", "", ""]);
 
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
+  // 🚨 다른 유저들에게 공격이 들어오면 호출
   const changePlayersActiveItem = (playerIndex: number, item: string) => {
     setPlayersActiveItem((prev) => {
       const temp = [...prev];
@@ -59,7 +67,8 @@ export default function Game() {
       [item]: true,
     });
 
-    changePlayersActiveItem(0, item); // 🚨 통신 되면 필요 없을 듯
+    // ⭐️ 통신 되면 필요 없을 듯
+    changePlayersActiveItem(0, item);
 
     if (item === "keyUp") {
       setMrKey("keyUp");
@@ -71,46 +80,35 @@ export default function Game() {
 
     // frozen 아이템은 유저가 직접 종료
     if (item === "frozen") return;
-    console.log(item, "FROZEN 나오면 안됨");
 
     // 나머지 아이템은 5초 뒤에 자동 종료
     setTimeout(() => offItem(item), 4500);
   };
 
+  /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
+    console.log("decibel", decibel);
     if (isMuteActive && decibel > -60) offItem("mute");
   };
 
   useEffect(() => {
-    if (isMuteActive) checkDecibel();
+    if (isMuteActive) {
+      checkDecibel();
+    }
   }, [isMuteActive, decibel]);
 
   /** 아이템 효과를 종료하는 함수 */
-  // 🚨현재 유저에게 적용된 아이템 공격이 종료되면 호출
   const offItem = (item: string) => {
     setActiveItem({
       ...activeItem,
       [item]: false,
     });
     changePlayersActiveItem(0, "");
-    if (item === "keyUp" || item === "keyDown") {
-      setMrKey("origin");
-    } else if (item === "mute") {
-      setIsMuteActive(false);
-    }
-  };
+    if (item === "keyUp" || item === "keyDown") setMrKey("origin");
+    else if (item === "mute") setIsMuteActive(false);
 
-  // 테스트
-  useEffect(() => {
-    // onItem("keyUp");
-    onItem("keyDown");
-    onItem("mute");
-    // onItem("frozen");
-    // getItem("mute");
-    getItem("frozen");
-    getItem("keyUp");
-    // getItem("keyDown");
-  }, []);
+    // 🚨 아이템 공격이 종료됐다고 서버에 알리기
+  };
 
   // 가지고 있는 아이템 목록
   const [itemList, setItemList] = useState([""]);
@@ -135,12 +133,15 @@ export default function Game() {
     setItemList((prev) => {
       return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
     });
-    console.log(item, "사용했어요!");
   };
 
   return (
     <>
-      {playersScore[0]}
+      <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
+        {`${playersScore[0]}, `}
+        {`${playersScore[1]}, `}
+        {playersScore[2]}
+      </div>
       <GameUI
         decibel={decibel}
         playersScore={playersScore}
@@ -151,11 +152,6 @@ export default function Game() {
         itemList={itemList}
         useItem={useItem}
         offItem={offItem}
-        // switchPlayerToSnowman={switchPlayerToSnowman}
-        // switchSnowmanToPlayer={switchSnowmanToPlayer}
-        // stopPlayer={stopPlayer}
-        // startPlayer={startPlayer}
-        // movePlayer={movePlayer}
       />
       <Sound
         mrKey={mrKey}
