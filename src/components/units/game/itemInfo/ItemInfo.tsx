@@ -1,6 +1,7 @@
 // 현재 유저에게 적용된 아이템의 효과를 보여주는 컴포넌트
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
+import { memo } from "react";
 
 interface IItemInfoProps {
   decibel: number;
@@ -14,7 +15,7 @@ interface IItemInfoProps {
   };
 }
 
-export default function ItemInfo(props: IItemInfoProps) {
+function ItemInfo(props: IItemInfoProps) {
   return (
     <>
       {props.activeItem.frozen && (
@@ -53,6 +54,7 @@ export default function ItemInfo(props: IItemInfoProps) {
     </>
   );
 }
+export default memo(ItemInfo);
 
 // 아이템 효과를 서서히 나타나게 하기 위한 애니메이션
 const fadeIn = keyframes`

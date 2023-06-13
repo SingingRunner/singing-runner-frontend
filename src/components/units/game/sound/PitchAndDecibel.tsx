@@ -84,12 +84,28 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   let audioContext: AudioContext | null = null;
   let mediaStreamSource: MediaStreamAudioSourceNode | null = null;
   let analyzer: AnalyserNode | null = null;
-  // console.log(props.originAnswer, "originAnswer");
+
+  useEffect(() => {
+    // 🚨 타 유저 점수 반영
+    // 현재 유저는 calculateScore 함수에서 반영하고 있음
+    // 오른쪽 유저면
+    props.setPlayersScore((prev) => {
+      const newScore = [...prev];
+      newScore[1] = currentScore;
+      return newScore;
+    });
+    // 왼쪽 유저면
+    props.setPlayersScore((prev) => {
+      const newScore = [...prev];
+      newScore[2] = currentScore;
+      return newScore;
+    });
+  }, []);
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     console.log(
-      "ITEM_STATUS",
+      "채점에 반영되고 있는 현재 유저의 ITEM_STATUS",
       props.isFrozen,
       props.isKeyDown,
       props.isKeyUp,
@@ -108,13 +124,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         currentScore
       );
     } else if (props.originAnswer != null) {
-      console.log(
-        props.originAnswer[idx],
-        noteValue,
-        currentScore,
-        props.originAnswer,
-        idx
-      );
       score = getScoreFromDiff(
         props.originAnswer[idx],
         noteValue,
@@ -133,6 +142,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       newScore[0] = currentScore;
       return newScore;
     });
+
+    // 🚨 이 점수 서버에 보내기
 
     return currentScore;
   };
@@ -157,7 +168,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       }
       const avg = sum / frequencyArray.length;
       const decibel = calculateDecibel(avg);
-      // console.log("decibel1: ", decibel);
       props.setDecibel(decibel);
       const pitch = calculatePitch(dataArray);
       if (pitch != null && pitch > 0) {

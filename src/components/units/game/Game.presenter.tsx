@@ -27,11 +27,14 @@ export default function GameUI(props: IGameUIProps) {
       />
       <S.Wrapper>
         {isItemActivated && <S.ItemEffectWrapper />}
-        {/* 🚨 제목 - 가수 */}
+        {/* ⭐️ 제목 - 가수 */}
         <S.Title>나는 나비 - 윤도현 밴드</S.Title>
         <Lyric />
         <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
-        <RankList playersActiveItem={props.playersActiveItem} />
+        <RankList
+          playersActiveItem={props.playersActiveItem}
+          playersScore={props.playersScore}
+        />
         <ItemList itemList={props.itemList} useItem={props.useItem} />
       </S.Wrapper>
     </>
