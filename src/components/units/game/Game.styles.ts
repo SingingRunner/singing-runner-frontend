@@ -23,7 +23,7 @@ export const ItemEffectWrapper = styled.div`
   height: 100vh;
   border: 10px solid transparent;
   /* box-shadow: 0 0 10px 10px transparent inset; */
-  animation: ${fullScreenFlash} 1s ease-in-out 3;
+  animation: ${fullScreenFlash} 1s ease-in-out 4;
 `;
 export const Title = styled.div`
   display: flex;
@@ -31,8 +31,8 @@ export const Title = styled.div`
   justify-content: center;
   height: 50px;
   width: 100%;
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 900;
+  font-size: 14px;
   color: #fe259b;
 `;
 export const TestButtonWrapper = styled.div`

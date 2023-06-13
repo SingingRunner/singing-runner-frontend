@@ -189,16 +189,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   useEffect(() => {
-    const navigator: any = window.navigator;
-    navigator.getUserMedia =
-      navigator.mediaDevices.getUserMedia ||
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia;
-
     if (props.isLoadComplete) {
-      navigator
+      navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(handleAudioStream)
         .catch((error) => {
