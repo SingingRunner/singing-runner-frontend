@@ -29,8 +29,8 @@ const ItemWrapper = styled.div`
   top: 50%;
   right: 0;
   img {
-    width: 76px;
-    height: 76px;
+    width: 84px;
+    height: 84px;
     margin-bottom: -8px;
   }
 `;

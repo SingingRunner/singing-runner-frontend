@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { memo } from "react";
 
 const data = [
   { timeStamp: 0, lyrics: "내 모습이 보이지 않아 앞길도 보이지 않아" },
@@ -21,10 +22,10 @@ const data = [
   { timeStamp: 17, lyrics: "날개를 활짝 펴고 세상을 자유롭게 날거야" },
 ];
 
-export default function Lyric() {
+function Lyric() {
   return (
     <LyricWrapper>
-      {/* 🚨 탈주 메시지 */}
+      {/* ⭐️ 탈주 메시지 */}
       {/* <DisconnectMsg>겁쟁이 “머기조”님이 탈주했습니다!</DisconnectMsg> */}
       <TextWrapper>
         {data.map((item, i) => (
@@ -34,6 +35,7 @@ export default function Lyric() {
     </LyricWrapper>
   );
 }
+export default memo(Lyric);
 
 const LyricWrapper = styled.div`
   display: flex;
@@ -51,7 +53,7 @@ const LyricWrapper = styled.div`
   border-radius: 7px;
 `;
 
-// 🚨 탈주 메시지
+// ⭐️ 탈주 메시지
 // const DisconnectMsg = styled.p`
 //   position: absolute;
 //   top: 12px;
