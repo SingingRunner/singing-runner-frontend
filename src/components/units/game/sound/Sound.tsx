@@ -6,6 +6,14 @@ interface ISoundProps {
   mrKey: string;
   setDecibel: Dispatch<SetStateAction<number>>;
   setPlayersScore: Dispatch<SetStateAction<number[]>>;
+  activeItem: {
+    mute: boolean;
+    frozen: boolean;
+    cloud: boolean;
+    keyDown: boolean;
+    keyUp: boolean;
+    shield: boolean;
+  };
 }
 export default function Sound(props: ISoundProps) {
   const [isLoadComplete, setLoadComplete] = useState(false);
@@ -16,6 +24,32 @@ export default function Sound(props: ISoundProps) {
   const [ans1Array, setAns1Array] = useState<number[]>([]);
   const [ans2Array, setAns2Array] = useState<number[]>([]);
   const [ans3Array, setAns3Array] = useState<number[]>([]);
+
+  useEffect(() => {
+    // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
+    for (const key in props.activeItem) {
+      if (Object.prototype.hasOwnProperty.call(props.activeItem, key)) {
+        console.log(props.activeItem[key], key, "아이템");
+        switch (key) {
+          case "keyUp":
+            if (props.activeItem[key]) setKeyUp(true);
+            else setKeyUp(false);
+            break;
+          case "keyDown":
+            if (props.activeItem[key]) setKeyDown(true);
+            else setKeyDown(false);
+            break;
+          case "frozen":
+            if (props.activeItem[key]) setFrozen(true);
+            else setFrozen(false);
+            break;
+          case "mute":
+            if (props.activeItem[key]) setMute(true);
+            else setMute(false);
+        }
+      }
+    }
+  }, [props.activeItem]);
 
   useEffect(() => {
     const fetchFiles = async () => {

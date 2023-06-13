@@ -88,6 +88,13 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
+    console.log(
+      "ITEM_STATUS",
+      props.isFrozen,
+      props.isKeyDown,
+      props.isKeyUp,
+      props.isMute
+    );
     if (props.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (props.isMute) {

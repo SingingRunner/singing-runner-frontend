@@ -1,6 +1,8 @@
 // 전체 플레이어의 랭킹 (🚨 가데이터)
 import styled from "@emotion/styled";
-export default function RankList(props: IRankListProps) {
+import { memo } from "react";
+const RankList = (props: IRankListProps) => {
+  console.log("여기 왜 안 바뀌어", props.playersActiveItem);
   return (
     <RankWrapper>
       <Rank>
@@ -36,7 +38,8 @@ export default function RankList(props: IRankListProps) {
       </Rank>
     </RankWrapper>
   );
-}
+};
+export default memo(RankList);
 
 const RankWrapper = styled.div`
   display: flex;
