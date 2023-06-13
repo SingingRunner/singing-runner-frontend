@@ -11,12 +11,13 @@ interface IMRProps {
   mrKey: string;
   isLoadComplete: boolean;
   setLoadComplete: Dispatch<SetStateAction<boolean>>;
+  sources: React.MutableRefObject<AudioBufferSourceNode[]>;
 }
 
 export default function MR(props: IMRProps) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
-  const sources = useRef<AudioBufferSourceNode[]>([]);
+  const sources = props.sources;
 
   const loadSong = (audioCtx: AudioContext) => {
     Promise.all(

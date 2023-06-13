@@ -69,6 +69,7 @@ interface IPitchAndDecibelProps {
   setMute: Dispatch<SetStateAction<boolean>>;
   setDecibel: Dispatch<SetStateAction<number>>;
   setPlayersScore: Dispatch<SetStateAction<number[]>>;
+  sources: React.MutableRefObject<AudioBufferSourceNode[]>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
