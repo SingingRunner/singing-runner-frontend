@@ -71,7 +71,7 @@ const ItemInfoWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: ${fadeIn} 0.5s forwards, ${fadeOut} 0.5s 3s forwards;
+  animation: ${fadeIn} 0.5s forwards, ${fadeOut} 0.5s 4s forwards;
 `;
 
 const Msg = styled.div`
