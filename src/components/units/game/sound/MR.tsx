@@ -65,7 +65,6 @@ export default function MR(props: IMRProps) {
     if (props.isLoadComplete) {
       // If all songs are loaded, start playing them
       sources.current.forEach((source, i) => {
-        source.start();
         if (i === 0) {
           gainNodes.current[i].gain.value = 1;
         }
