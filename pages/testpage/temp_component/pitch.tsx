@@ -3,9 +3,9 @@ import * as PitchFinder from "pitchfinder";
 
 interface IPitchAnalyzerProps {
   isLoadComplete: boolean;
-  originAnswer: number[];
-  keyUpAnswer: number[];
-  keyDownAnswer: number[];
+  originAnswer: number[] | null;
+  keyUpAnswer: number[] | null;
+  keyDownAnswer: number[] | null;
   isKeyUp: boolean;
   setKeyUp: Dispatch<SetStateAction<boolean>>;
   isKeyDown: boolean;
@@ -88,15 +88,15 @@ export default function PitchAnalyzer(props: IPitchAnalyzerProps) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (props.isMute) {
       score = Math.floor((currentScore * 2) / 3);
-    } else if (props.isKeyUp) {
+    } else if (props.isKeyUp && props.keyUpAnswer != null) {
       score = getScoreFromDiff(props.keyUpAnswer[idx], noteValue, currentScore);
-    } else if (props.isKeyDown) {
+    } else if (props.isKeyDown && props.keyDownAnswer != null) {
       score = getScoreFromDiff(
         props.keyDownAnswer[idx],
         noteValue,
         currentScore
       );
-    } else {
+    } else if (props.originAnswer != null) {
       score = getScoreFromDiff(
         props.originAnswer[idx],
         noteValue,
