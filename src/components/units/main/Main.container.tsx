@@ -3,6 +3,8 @@ import { io, Socket } from "socket.io-client";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { socketState, usersIdInfoState } from "../../../commons/store";
 
 const Main = () => {
   // 컨테이너는 로직만 담당하고, UI는 다른 파일로 분리해서 작성한다.
@@ -11,11 +13,13 @@ const Main = () => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [, setSocketState] = useRecoilState(socketState);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
   const [isAccepted, setIsAccepted] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
   const router = useRouter();
+  const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
 
   const handleChangeAddress = async () => {
     // 인게임 화면으로 전환
@@ -39,6 +43,7 @@ const Main = () => {
       // path: "/api/socket.io",
       // });
       setSocket(newSocket);
+      setSocketState(newSocket);
 
       // 소켓 연결 => 유저 정보 보내기
       newSocket.on(
@@ -164,8 +169,10 @@ const Main = () => {
           // userData에는 socketId만 담겨서 올거임.
           const { user1, user2, user3 } = userData;
           const myId = newSocket.id;
-          const otherUsers = [user1, user2, user3].filter((user) => user.socketId !== myId);
-          console.log(otherUsers);
+          const otherUsers = [user1, user2, user3].filter(
+            (user) => user.socketId !== myId
+          );
+          setUsersIdInfoState([myId, ...otherUsers]);
 
           console.log("game_ready true received");
           if (user1?.socketId && user2?.socketId && user3?.socketId) {

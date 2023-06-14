@@ -217,9 +217,8 @@ export default function Graphic(props: IGrapicProps) {
       else if (item === "") {
         startPlayer(index);
         if (snowmans[index] && index !== 0) {
-          // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리
+          // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
           switchSnowmanToPlayer(index);
-          props.playersActiveItem[index] = "";
         }
       }
     });
@@ -264,7 +263,6 @@ export default function Graphic(props: IGrapicProps) {
   /** 플레이어를 눈사람으로 바꾸는 함수 */
   const switchPlayerToSnowman = (index: number) => {
     if (snowmans[index]) return; // If the snowman is already loaded, do not load again
-
     // load the snowman
     const gltfLoader = new GLTFLoader();
     if (!players[index]) return;
