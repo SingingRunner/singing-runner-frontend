@@ -16,27 +16,58 @@ export default function GameUI(props: IGameUIProps) {
 
   return (
     <>
-      <Graphic
-        playersScore={props.playersScore}
-        totalPlayers={props.totalPlayers}
-        activeItem={props.activeItem}
-        setActiveItem={props.setActiveItem}
-        playersActiveItem={props.playersActiveItem}
-        offItem={props.offItem}
-        decibel={props.decibel}
-      />
-      <S.Wrapper>
-        {isItemActivated && <S.ItemEffectWrapper />}
-        {/* ⭐️ 제목 - 가수 */}
-        <S.Title>나는 나비 - 윤도현 밴드</S.Title>
-        <Lyric />
-        <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
-        <RankList
-          playersActiveItem={props.playersActiveItem}
-          playersScore={props.playersScore}
-        />
-        <ItemList itemList={props.itemList} useItem={props.useItem} />
-      </S.Wrapper>
+      {!props.hideLoading && ( // 로딩 화면
+        <>
+          <S.LoadingBackground>
+            {props.loading ? (
+              <S.LoadingMessage>잠시만 기다려주세요.</S.LoadingMessage>
+            ) : (
+              <></>
+            )}
+            {props.loading ? (
+              <S.LoadingBarWrapper>
+                Loading...
+                <S.LoadingBar>
+                  <S.LoadingGauge
+                    style={{
+                      width: `${props.progress}%`,
+                    }}
+                  />
+                </S.LoadingBar>
+              </S.LoadingBarWrapper>
+            ) : (
+              <S.LoadingMessage>게임이 시작됩니다!</S.LoadingMessage>
+            )}
+            <S.MatchButtonWrapper></S.MatchButtonWrapper>
+          </S.LoadingBackground>
+        </>
+      )}
+      {props.hideLoading && (
+        // 로딩화면 끝, 게임 시작
+        <>
+          <Graphic
+            playersScore={props.playersScore}
+            totalPlayers={props.totalPlayers}
+            activeItem={props.activeItem}
+            setActiveItem={props.setActiveItem}
+            playersActiveItem={props.playersActiveItem}
+            offItem={props.offItem}
+            decibel={props.decibel}
+          />
+          <S.Wrapper>
+            {isItemActivated && <S.ItemEffectWrapper />}
+            {/* ⭐️ 제목 - 가수 */}
+            <S.Title>나는 나비 - 윤도현 밴드</S.Title>
+            <Lyric />
+            <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
+            <RankList
+              playersActiveItem={props.playersActiveItem}
+              playersScore={props.playersScore}
+            />
+            <ItemList itemList={props.itemList} useItem={props.useItem} />
+          </S.Wrapper>
+        </>
+      )}
     </>
   );
 }
