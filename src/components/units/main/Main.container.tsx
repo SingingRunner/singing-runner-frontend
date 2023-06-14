@@ -42,9 +42,9 @@ const Main = () => {
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
           console.log("accept true received");
-          socket.emit("loading", () => {
-            // "loading" emit 하고 나서 인게임 화면으로 렌더링
-            handleChangeAddress();
+          socket.emit("loading");
+          // "loading" emit 하고 나서 인게임 화면으로 렌더링
+          handleChangeAddress();
           });
           // 인게임 렌더링 => 로딩화면 game.container로 옮김.
         } else {
