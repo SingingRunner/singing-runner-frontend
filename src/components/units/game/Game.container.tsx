@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { useRecoilValue } from "recoil";
-import { socketState, usersIdInfoState } from "../../../commons/store";
+import { usersIdInfoState } from "../../../commons/store";
+import { SocketContext } from "../../../commons/contexts/SocketContext";
 
 const INIT_ITEM_EFFECT = {
   mute: false,
@@ -16,7 +17,8 @@ const ITEM_DURATION = 5000; // 아이템 지속 시간
 const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
 
 export default function Game() {
-  const socket = useRecoilValue(socketState);
+  const socket = useContext(SocketContext);
+
   const usersIdInfo = useRecoilValue(usersIdInfoState);
 
   // 테스트

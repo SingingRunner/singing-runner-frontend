@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState, useContext } from "react";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
-import { socketState, usersIdInfoState } from "../../../commons/store";
+import { usersIdInfoState } from "../../../commons/store";
+import { SocketContext } from "../../../commons/contexts/SocketContext";
 
 const Main = () => {
+  const socket = useContext(SocketContext);
+
   // 컨테이너는 로직만 담당하고, UI는 다른 파일로 분리해서 작성한다.
   const [isClicked, setIsClicked] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [, setSocketState] = useRecoilState(socketState);
+  // const [socket, setSocket] = useState<Socket | null>(null);
+  // const [socket, setSocketState] = useRecoilState(socketState);
+  // const setSocketState = useSetRecoilState(socketState);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
   const [isAccepted, setIsAccepted] = useState(false);
@@ -96,38 +99,33 @@ const Main = () => {
   const handleBattleModeClick = () => {
     setIsBattleClicked(true); // 배틀 모드 버튼 누른 상태로 변경
     console.log("1", socket);
-    if (socket === null) {
-      console.log(socket);
+    if (socket) {
       // 💻 소켓 열고 소켓 통신 시작
-      const newSocket = io("http://localhost:3000");
-      // {
-      // const newSocket = io("https://injungle.shop", {
-      // path: "/api/socket.io",
-      // });
-      setSocket(newSocket);
-      setSocketState(newSocket);
+      // const socket = io("http://localhost:3000");
 
+      // const socket = io("https://injungle.shop", {
+      //   path: "/api/socket.io",
+      // });
+      // setSocket(socket);
+      // console.log(socket);
+      // setSocketState(socket);
+
+      console.log(socket);
+      const UserMatchDTO = {
+        userId: "1",
+        userMMR: 1000,
+        nickName: "Tom",
+        userActive: "connect",
+        uerKeynote: "maleKey",
+      };
       // 소켓 연결 => 유저 정보 보내기
-      newSocket.on(
-        "connect",
-        () => {
-          console.log("Socket connected");
-          const UserMatchDTO = {
-            userId: "1",
-            userMMR: 1000,
-            nickName: "Tom",
-            userActive: "connect",
-            uerKeynote: "maleKey",
-          };
-          newSocket.emit("match_making", UserMatchDTO, () => {
-            console.log("match_making sended to server");
-          }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
-        }
-        // You can send/receive messages, emit events, etc.
-      );
+
+      socket.emit("match_making", UserMatchDTO, () => {
+        console.log("match_making sended to server");
+      }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
 
       // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
-      newSocket.on("match_making", (data) => {
+      socket.on("match_making", (data) => {
         // song_title, singer => 수락 화면에 집어넣기
         const { songTitle, singer } = data;
 
@@ -141,7 +139,7 @@ const Main = () => {
       });
 
       // 로딩 화면에서 소켓 통신으로 노래 data 받음
-      newSocket.on("loading", async (data) => {
+      socket.on("loading", async (data) => {
         const {
           songTitle,
           singer,
@@ -189,12 +187,12 @@ const Main = () => {
         console.log("true received");
 
         // 다운이 다 되면 아래를 보냄
-        newSocket.emit("game_ready", true, () => {
+        socket.emit("game_ready", true, () => {
           console.log("game_ready true sended to server");
         });
       });
 
-      newSocket.on("disconnect", () => {
+      socket.on("disconnect", () => {
         console.log("Disconnected from server");
       });
     }
