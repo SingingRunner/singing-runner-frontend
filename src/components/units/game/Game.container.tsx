@@ -14,24 +14,11 @@ const INIT_ITEM_EFFECT = {
   shield: false,
 };
 const ITEM_DURATION = 5000; // 아이템 지속 시간
-const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
+const ITEM_GET_INTERVAL = 1000; // 아이템 발생 텀
 
 export default function Game() {
   const socket = useContext(SocketContext);
-
   const usersIdInfo = useRecoilValue(usersIdInfoState);
-
-  // 테스트
-  // useEffect(() => {
-  // onItem("keyUp");
-  // onItem("keyDown");
-  // onItem("mute");
-  // onItem("frozen");
-  // getItem("mute");
-  // getItem("frozen");
-  // getItem("keyUp");
-  // getItem("keyDown");
-  // }, []);
 
   // ⭐️ 총 플레이어 수
   const totalPlayers = 3;
@@ -76,8 +63,26 @@ export default function Game() {
     if (socket) {
       // 다른 유저로부터 공격이 들어옴
       socket.on("use_item", (data) => {
-        onItem(data);
+        onItem(data.item);
+
+        // 아이템이 눈사람 | 음소거 -> 현재 플레이어와 공격자가 아닌 플레이어 적용
+        if (data instanceof Object) {
+          for (let i = 1; i < 3; i++) {
+            if (data.user === usersIdInfo[i]) continue; // 공격자 제외
+            // if (!(data.item === "frozen" && data.user === usersIdInfo[0]))
+            // if(data.user === usersIdInfo[0])
+            // changePlayersActiveItem(i, data.item);
+          }
+        }
+
+        // 아이템이 키업 | 키다운 -> 모두에게 적용
+        else if (!(data instanceof Object)) {
+          for (let i = 0; i < 3; i++) {
+            changePlayersActiveItem(i, data);
+          }
+        }
       });
+
       // 다른 유저가 아이템에서 탈출
       socket.on("escape_item", (data) => {
         usersIdInfo.forEach((user, i) => {
@@ -138,7 +143,9 @@ export default function Game() {
     if (item === "keyUp" || item === "keyDown") setMrKey("origin");
     else if (item === "mute") setIsMuteActive(false);
     // 🚨 음소거와 눈사람 아이템 공격이 종료됐다고 서버에 알리기
-    if (item === "mute" || item === "frozen") socket?.emit("escape_item");
+    if (item === "mute" || item === "frozen") {
+      socket?.emit("escape_item");
+    }
   };
 
   // 가지고 있는 아이템 목록
@@ -179,6 +186,8 @@ export default function Game() {
     /* 🚨 아이템 사용 */
     socket?.emit("use_item", item);
     setItemList((prev) => {
+      // 같은 아이템이 두 개 있으면 하나만 제거
+      if (prev[0] === prev[1]) return prev.slice(1);
       return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
     });
     // keyUp과 keyDown은 현재 유저에게도 공격이 들어감

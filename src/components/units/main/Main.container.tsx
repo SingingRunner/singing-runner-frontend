@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState, useContext } from "react";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
@@ -30,7 +31,7 @@ const Main = () => {
     if (socket && isAccepted) {
       // 수락 화면에서 버튼 누르는거에 따라 처리
       socket.emit("accept", true, () => {
-        console.log("accept true sended to server");
+        // console.log("accept true sended to server");
       });
       // => 대기 화면
     }
@@ -40,20 +41,20 @@ const Main = () => {
         // emit 보낸 이후에 소켓 끊을 수 있게 처리
         socket.off("match_making");
       });
-      console.log("accept false sended to server");
+      // console.log("accept false sended to server");
       // => 모드 선택 화면
     }
-    if (socket && showWaiting) {
+    if (socket && showWaiting && !showLoading) {
       // 3명 다 수락되면 백에서 true 올거임
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
-          console.log("accept true received");
+          // console.log("accept true received");
           // Send to loading screen
           setShowLoading(true);
           socket.emit("loading");
         } else {
           // 3명 중에 거절하는 사람 생겨서(false 받음) 다시 버튼 선택(매칭 찾는 중)화면으로 보내기
-          console.log("accept false received");
+          // console.log("accept false received");
           setShowWaiting(false);
           setShowModal(false);
         }
@@ -64,31 +65,28 @@ const Main = () => {
       socket.on("game_ready", async (userData) => {
         // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
         // userData에는 socketId만 담겨서 올거임.
-        const { user1, user2, user3 } = userData;
+        // const { user1, user2, user3 } = userData;
         const myId = socket.id;
-        const otherUsers = [user1, user2, user3].filter(
-          (user) => user !== myId
-        );
-        console.log(otherUsers);
+        const otherUsers = userData.filter((user: any) => user !== myId);
         setUsersIdInfoState([myId, ...otherUsers]);
 
-        console.log("game_ready true received");
-        if (user1 && user2 && user3) {
-          setShowLoading(false);
-          setLoading(false);
-          try {
-            await handleChangeAddress(); // 로딩 화면에서 인게임으로 화면 렌더링
-          } catch (error) {
-            console.error("Error occurred while navigating to '/game':", error);
-          }
+        // // console.log("game_ready true received");
+        // if (user1 && user2 && user3) {
+        setShowLoading(false);
+        setLoading(false);
+        try {
+          handleChangeAddress(); // 로딩 화면에서 인게임으로 화면 렌더링
+        } catch (error) {
+          console.error("Error occurred while navigating to '/game':", error);
         }
+        // }
       });
     }
   }, [isAccepted, isRejected, showWaiting, socket, showLoading]);
 
-  const handleChangeAddress = async () => {
+  const handleChangeAddress = () => {
     // 인게임 화면으로 전환
-    await router.push("/game");
+    void router.push("/game");
   };
 
   const handleLoadingClick = () => {
@@ -98,7 +96,6 @@ const Main = () => {
 
   const handleBattleModeClick = () => {
     setIsBattleClicked(true); // 배틀 모드 버튼 누른 상태로 변경
-    console.log("1", socket);
     if (socket) {
       // 💻 소켓 열고 소켓 통신 시작
       // const socket = io("http://localhost:3000");
@@ -107,10 +104,9 @@ const Main = () => {
       //   path: "/api/socket.io",
       // });
       // setSocket(socket);
-      // console.log(socket);
+      // // console.log(socket);
       // setSocketState(socket);
 
-      console.log(socket);
       const UserMatchDTO = {
         userId: "1",
         userMMR: 1000,
@@ -121,7 +117,7 @@ const Main = () => {
       // 소켓 연결 => 유저 정보 보내기
 
       socket.emit("match_making", UserMatchDTO, () => {
-        console.log("match_making sended to server");
+        // console.log("match_making sended to server");
       }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
 
       // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
@@ -135,65 +131,44 @@ const Main = () => {
         if (songTitle && singer) {
           setShowModal(true);
         }
-        console.log("match_making data received from server");
+        // console.log("match_making data received from server");
       });
 
       // 로딩 화면에서 소켓 통신으로 노래 data 받음
       socket.on("loading", async (data) => {
-        const {
-          songTitle,
-          singer,
-          songLyrics,
-          songFile,
-          songGender,
-          songMale,
-          songMaleUp,
-          songMaleDown,
-          songFemale,
-          songFemaleUp,
-          songFemaleDown,
-          vocalMale,
-          vocalMaleUp,
-          vocalMaleDown,
-          vocalFemale,
-          vocalFemaleUp,
-          vocalFemaleDown,
-        } = data;
-        console.log("1111111111");
+        // const {
+        //   songTitle,
+        //   singer,
+        //   songLyrics,
+        //   songFile,
+        //   songGender,
+        //   songMale,
+        //   songMaleUp,
+        //   songMaleDown,
+        //   songFemale,
+        //   songFemaleUp,
+        //   songFemaleDown,
+        //   vocalMale,
+        //   vocalMaleUp,
+        //   vocalMaleDown,
+        //   vocalFemale,
+        //   vocalFemaleUp,
+        //   vocalFemaleDown,
+        // } = data;
         await fetch("/music/snowflower_origin.wav");
-        console.log("2222222222");
         await fetch("/music/snowflower_3keyup.wav");
-        console.log("3333333333");
         await fetch("/music/snowflower_3keydown.wav");
 
-        console.log(songTitle);
-        console.log(singer);
-        console.log(songLyrics);
-        console.log(songFile);
-        console.log(songGender);
-        console.log(songMale);
-        console.log(songMaleUp);
-        console.log(songMaleDown);
-        console.log(songFemale);
-        console.log(songFemaleUp);
-        console.log(songFemaleDown);
-        console.log(vocalMale);
-        console.log(vocalMaleUp);
-        console.log(vocalMaleDown);
-        console.log(vocalFemale);
-        console.log(vocalFemaleUp);
-        console.log(vocalFemaleDown);
-
-        console.log("true received");
+        // console.log("true received");
 
         // 다운이 다 되면 아래를 보냄
         socket.emit("game_ready", true, () => {
-          console.log("game_ready true sended to server");
+          // console.log("game_ready true sended to server");
         });
       });
 
       socket.on("disconnect", () => {
-        console.log("Disconnected from server");
+        // console.log("Disconnected from server");
       });
     }
   };

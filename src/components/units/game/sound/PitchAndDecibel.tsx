@@ -110,17 +110,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
-    console.log(
-      "채점에 반영되고 있는 현재 유저의 ITEM_STATUS",
-      "frozen: ",
-      props.isFrozen,
-      "isKeyDown: ",
-      props.isKeyDown,
-      "isKeyUp: ",
-      props.isKeyUp,
-      "isMute: ",
-      props.isMute
-    );
     if (props.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (props.isMute) {
