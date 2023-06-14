@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import MR from "./MR";
 import PitchAndDecibel from "./PitchAndDecibel";
 
@@ -24,12 +24,12 @@ export default function Sound(props: ISoundProps) {
   const [ans1Array, setAns1Array] = useState<number[]>([]);
   const [ans2Array, setAns2Array] = useState<number[]>([]);
   const [ans3Array, setAns3Array] = useState<number[]>([]);
+  const sources = useRef<AudioBufferSourceNode[]>([]);
 
   useEffect(() => {
     // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
     for (const key in props.activeItem) {
       if (Object.prototype.hasOwnProperty.call(props.activeItem, key)) {
-        console.log(props.activeItem[key], key, "아이템");
         switch (key) {
           case "keyUp":
             if (props.activeItem[key]) setKeyUp(true);
@@ -72,9 +72,6 @@ export default function Sound(props: ISoundProps) {
           return Number(value);
         });
         setAns3Array(ans3ArrayTmp);
-        console.log("111", ans1Array);
-        console.log("222", ans2Array);
-        console.log("333", ans3Array);
       } catch (err) {
         console.log(err);
       }
@@ -90,6 +87,7 @@ export default function Sound(props: ISoundProps) {
         mrKey={props.mrKey}
         isLoadComplete={isLoadComplete}
         setLoadComplete={setLoadComplete}
+        sources={sources}
       />
 
       <PitchAndDecibel
@@ -107,6 +105,7 @@ export default function Sound(props: ISoundProps) {
         setMute={setMute}
         setDecibel={props.setDecibel}
         setPlayersScore={props.setPlayersScore}
+        sources={sources}
       />
     </>
   );

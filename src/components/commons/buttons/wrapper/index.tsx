@@ -1,12 +1,8 @@
-import PropTypes from 'prop-types';
-import { Wrapper } from '../../../../../styles/emotion';
+import PropTypes from "prop-types";
+import { Wrapper } from "../../../../../src/components/units/main/Main.styles";
 
 const ButtonWrapper = ({ children }) => {
-  return (
-    <Wrapper>
-      {children}
-    </Wrapper>
-  );
+  return <Wrapper>{children}</Wrapper>;
 };
 
 ButtonWrapper.propTypes = {

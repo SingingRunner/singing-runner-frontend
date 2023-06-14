@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import * as PitchFinder from "pitchfinder";
+import { useRecoilValue } from "recoil";
+import { socketState, usersIdInfoState } from "../../../../commons/store";
 
 const pitchDetector = PitchFinder.AMDF({
   sampleRate: 44100,
@@ -69,9 +71,13 @@ interface IPitchAndDecibelProps {
   setMute: Dispatch<SetStateAction<boolean>>;
   setDecibel: Dispatch<SetStateAction<number>>;
   setPlayersScore: Dispatch<SetStateAction<number[]>>;
+  sources: React.MutableRefObject<AudioBufferSourceNode[]>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
+  const socket = useRecoilValue(socketState);
+  const usersIdInfo = useRecoilValue(usersIdInfoState);
+
   const pitchAveragesRef = useRef<number[]>([]);
   const avgPitchWindowSize = 3;
   let avgPitch: number = 0;
@@ -84,15 +90,34 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   let audioContext: AudioContext | null = null;
   let mediaStreamSource: MediaStreamAudioSourceNode | null = null;
   let analyzer: AnalyserNode | null = null;
-  // console.log(props.originAnswer, "originAnswer");
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("score", (data) => {
+        usersIdInfo.forEach((userId, i) => {
+          if (userId === data.user) {
+            props.setPlayersScore((prev) => {
+              const newScore = [...prev];
+              newScore[i] = data.score;
+              return newScore;
+            });
+          }
+        });
+      });
+    }
+  }, [socket]);
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     console.log(
-      "ITEM_STATUS",
+      "채점에 반영되고 있는 현재 유저의 ITEM_STATUS",
+      "frozen: ",
       props.isFrozen,
+      "isKeyDown: ",
       props.isKeyDown,
+      "isKeyUp: ",
       props.isKeyUp,
+      "isMute: ",
       props.isMute
     );
     if (props.isFrozen) {
@@ -108,13 +133,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         currentScore
       );
     } else if (props.originAnswer != null) {
-      console.log(
-        props.originAnswer[idx],
-        noteValue,
-        currentScore,
-        props.originAnswer,
-        idx
-      );
       score = getScoreFromDiff(
         props.originAnswer[idx],
         noteValue,
@@ -134,10 +152,18 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       return newScore;
     });
 
+    // 서버에 현재 유저의 점수 전송
+    socket?.emit("score", currentScore);
+
     return currentScore;
   };
 
   const handleAudioStream = (stream: MediaStream) => {
+    setTimeout(() => {}, 1000);
+    const sources = props.sources;
+    sources.current.forEach((source, i) => {
+      source.start();
+    });
     audioContext = new window.AudioContext();
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
     analyzer = audioContext.createAnalyser();
@@ -157,7 +183,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       }
       const avg = sum / frequencyArray.length;
       const decibel = calculateDecibel(avg);
-      // console.log("decibel1: ", decibel);
       props.setDecibel(decibel);
       const pitch = calculatePitch(dataArray);
       if (pitch != null && pitch > 0) {

@@ -69,4 +69,5 @@ jobs:
             fi
             
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:${{ steps.extract-version.outputs.version }}
+
             docker run -d -p 4000:3000 --name singing-runner-frontend ${{ secrets.DOCKERHUB_USERNAME }}/singing-runner-frontend:${{ steps.extract-version.outputs.version }}

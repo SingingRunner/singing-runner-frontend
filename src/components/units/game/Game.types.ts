@@ -1,11 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface IGameUIProps {
-  // switchPlayerToSnowman: (index: number) => void;
-  // switchSnowmanToPlayer: (index: number) => void;
-  // stopPlayer: (index: number) => void;
-  // startPlayer: (index: number) => void;
-  // movePlayer: (index: number, direction: "forward" | "backward") => void;
   playersScore: number[];
   totalPlayers: number;
   activeItem: {
