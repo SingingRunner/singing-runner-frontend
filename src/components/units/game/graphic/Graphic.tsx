@@ -1,3 +1,4 @@
+// Graphic.tsx
 import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -238,14 +239,16 @@ export default function Graphic(props: IGrapicProps) {
       // 음소거 아이템 공격 -> 멈춤
       if (item === "mute") stopPlayer(index);
       // 눈사람 아이템 공격 -> 눈사람으로 변신
+      // else if (item === "frozen") switchPlayerToSnowman(index);
       else if (item === "frozen") switchPlayerToSnowman(index);
       // 아이템 해제 -> 재생, 눈사람 해제
       else if (item === "") {
         startPlayer(index);
-        if (snowmans[index] && index !== 0) {
-          // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
-          switchSnowmanToPlayer(index);
-        }
+        // if (snowmans[index] && index !== 0) {
+        // if (index !== 0) {
+        // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
+        switchSnowmanToPlayer(index);
+        // }
       }
     });
   }, [...props.playersActiveItem]);
@@ -344,7 +347,7 @@ export default function Graphic(props: IGrapicProps) {
     else if (currentPlayerRef.current) currentPlayerRef.current.visible = true;
 
     // 눈사람 제거
-    window.scene.remove(snowmans[index]);
+    if (snowmans[index]) window.scene.remove(snowmans[index]);
     snowmans[index] = null;
     snowmanHealthBarRef.current = null;
   };
@@ -356,6 +359,7 @@ export default function Graphic(props: IGrapicProps) {
     setSnowmanHealth((health) => {
       if (health <= 5) {
         switchSnowmanToPlayer(0); // 눈사람 체력이 0이 되면 플레이어로 전환
+        props.offItem("frozen");
       }
       const newHealth = Math.max(health - SNOWMAN_DAMAGE_INTERVAL, 0);
       if (snowmanHealthBarRef.current)

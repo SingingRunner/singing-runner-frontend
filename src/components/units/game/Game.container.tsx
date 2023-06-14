@@ -1,3 +1,4 @@
+// Game.container.tsx
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
@@ -63,20 +64,19 @@ export default function Game() {
     if (socket) {
       // 다른 유저로부터 공격이 들어옴
       socket.on("use_item", (data) => {
-        onItem(data.item);
-
         // 아이템이 눈사람 | 음소거 -> 현재 플레이어와 공격자가 아닌 플레이어 적용
         if (data instanceof Object) {
+          onItem(data.item);
           for (let i = 1; i < 3; i++) {
             if (data.user === usersIdInfo[i]) continue; // 공격자 제외
-            // if (!(data.item === "frozen" && data.user === usersIdInfo[0]))
-            // if(data.user === usersIdInfo[0])
+            // if (data.user === usersIdInfo[0]) continue; // 현재 플레이어는 위에서 onItem으로 바로 적용되므로 제외
             // changePlayersActiveItem(i, data.item);
           }
         }
 
         // 아이템이 키업 | 키다운 -> 모두에게 적용
         else if (!(data instanceof Object)) {
+          onItem(data);
           for (let i = 0; i < 3; i++) {
             changePlayersActiveItem(i, data);
           }
@@ -193,8 +193,10 @@ export default function Game() {
     // keyUp과 keyDown은 현재 유저에게도 공격이 들어감
     if (item === "keyUp" || item === "keyDown") onItem(item);
     // ⭐️ 나머지 아이템들은 현재 유저를 제외한 나머지 플레이어들에게 아이템 공격 표시
-    changePlayersActiveItem(1, item);
-    changePlayersActiveItem(2, item);
+    if (item === "mute") {
+      changePlayersActiveItem(1, item);
+      changePlayersActiveItem(2, item);
+    }
   };
 
   const [hideLoading, setHideLoading] = useState(false);
@@ -209,7 +211,6 @@ export default function Game() {
         setTimeout(() => {
           if (progress < 100) {
             setProgress(progress + 10); // Increase the progress by 10% every 1 second
-            console.log("progress", progress, " 123");
           } else {
             setHideLoading(true);
             setLoading(false);
@@ -225,50 +226,47 @@ export default function Game() {
 
   if (socket) {
     // 로딩 화면에서 소켓 통신으로 노래 data 받음
-    socket.on("loading", async (data) => {
-      const {
-        songTitle,
-        singer,
-        songLyrics,
-        songFile,
-        songGender,
-        songMale,
-        songMaleUp,
-        songMaleDown,
-        songFemale,
-        songFemaleUp,
-        songFemaleDown,
-        vocalMale,
-        vocalMaleUp,
-        vocalMaleDown,
-        vocalFemale,
-        vocalFemaleUp,
-        vocalFemaleDown,
-      } = data;
-      console.log("1111111111");
+    socket.on("loading", async () => {
+      // const {
+      //   songTitle,
+      //   singer,
+      //   songLyrics,
+      //   songFile,
+      //   songGender,
+      //   songMale,
+      //   songMaleUp,
+      //   songMaleDown,
+      //   songFemale,
+      //   songFemaleUp,
+      //   songFemaleDown,
+      //   vocalMale,
+      //   vocalMaleUp,
+      //   vocalMaleDown,
+      //   vocalFemale,
+      //   vocalFemaleUp,
+      //   vocalFemaleDown,
+      // } = data;
       await fetch("/music/snowflower_origin.wav");
-      console.log("2222222222");
       await fetch("/music/snowflower_3keyup.wav");
-      console.log("3333333333");
       await fetch("/music/snowflower_3keydown.wav");
 
-      console.log(songTitle);
-      console.log(singer);
-      console.log(songLyrics);
-      console.log(songFile);
-      console.log(songGender);
-      console.log(songMale);
-      console.log(songMaleUp);
-      console.log(songMaleDown);
-      console.log(songFemale);
-      console.log(songFemaleUp);
-      console.log(songFemaleDown);
-      console.log(vocalMale);
-      console.log(vocalMaleUp);
-      console.log(vocalMaleDown);
-      console.log(vocalFemale);
-      console.log(vocalFemaleUp);
-      console.log(vocalFemaleDown);
+      // console.log(songTitle);
+      // console.log(singer);
+      // console.log(songLyrics);
+      // console.log(songFile);
+      // console.log(songGender);
+      // console.log(songMale);
+      // console.log(songMaleUp);
+      // console.log(songMaleDown);
+      // console.log(songFemale);
+      // console.log(songFemaleUp);
+      // console.log(songFemaleDown);
+      // console.log(vocalMale);
+      // console.log(vocalMaleUp);
+      // console.log(vocalMaleDown);
+      // console.log(vocalFemale);
+      // console.log(vocalFemaleUp);
+      // console.log(vocalFemaleDown);
 
       console.log("true received");
 
