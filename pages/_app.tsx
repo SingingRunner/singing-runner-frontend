@@ -6,9 +6,9 @@ import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Head from "next/head";
 
 const songFiles = [
-  "/music/jjanggu_mr_5keydown.wav",
-  "/music/jjanggu_mr_2keydown.wav",
-  "/music/jjanggu_mr_8keydown.wav",
+  "/music/jjanggu_mr.wav",
+  "/music/jjanggu_mr_3keyup.wav",
+  "/music/jjanggu_mr_3keydown.wav",
 ];
 
 const assetFiles = [
