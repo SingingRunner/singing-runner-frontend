@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
@@ -14,7 +14,7 @@ const INIT_ITEM_EFFECT = {
   shield: false,
 };
 const ITEM_DURATION = 5000; // 아이템 지속 시간
-const ITEM_GET_INTERVAL = 1000; // 아이템 발생 텀
+const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
 
 export default function Game() {
   const socket = useContext(SocketContext);
@@ -200,7 +200,6 @@ export default function Game() {
   const [hideLoading, setHideLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
 
   useEffect(() => {
     // 로딩 화면 보여주기
@@ -223,24 +222,6 @@ export default function Game() {
     };
     simulateLoading();
   }, [hideLoading, progress]);
-
-  useEffect(() => {
-    if (socket && !hideLoading) {
-      // 인게임 화면에서 로딩화면 풀렸을 때,
-
-      socket.on("game_ready", async (userData) => {
-        // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
-        // userData에는 socketId만 담겨서 올거임.
-        console.log("game_ready true received"); // 로딩화면 풀림, 게임 시작
-
-        // const { user1, user2, user3 } = userData;
-        const myId = socket.id;
-        const otherUsers = userData.filter((user: any) => user !== myId);
-        console.log(otherUsers);
-        setUsersIdInfoState([myId, ...otherUsers]);
-      });
-    }
-  });
 
   if (socket) {
     // 로딩 화면에서 소켓 통신으로 노래 data 받음

@@ -6,10 +6,9 @@ import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Head from "next/head";
 
 const songFiles = [
-  "/music/snowflower_origin.wav",
-  "/music/snowflower_3keydown.wav",
-  "/music/snowflower_3keyup.wav",
-  "/music/cutted_snowflower_origin_mr.wav",
+  "/music/jjanggu_mr.wav",
+  "/music/jjanggu_mr_3keyup.wav",
+  "/music/jjanggu_mr_3keydown.wav",
 ];
 
 const assetFiles = [
@@ -30,7 +29,6 @@ const assetFiles = [
   "/game/player/profile/cat1.png",
   "/game/player/profile/cat2.png",
   "/game/player/cat.glb",
-  "/game/player/dog.glb",
   "/game/player/snowman.glb",
   // Add more asset file paths as needed
 ];
