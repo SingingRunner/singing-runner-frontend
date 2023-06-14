@@ -30,7 +30,7 @@ export default function GameUI(props: IGameUIProps) {
                 <S.LoadingBar>
                   <S.LoadingGauge
                     style={{
-                      width: `${props.progress}%`,
+                      width: `${Number(props.progress)}%`,
                     }}
                   />
                 </S.LoadingBar>
