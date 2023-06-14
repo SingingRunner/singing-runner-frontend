@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
 import * as PitchFinder from "pitchfinder";
 import { useRecoilValue } from "recoil";
-import { socketState, usersIdInfoState } from "../../../../commons/store";
+import { usersIdInfoState } from "../../../../commons/store";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 const pitchDetector = PitchFinder.AMDF({
   sampleRate: 44100,
@@ -75,7 +76,7 @@ interface IPitchAndDecibelProps {
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
-  const socket = useRecoilValue(socketState);
+  const socket = useContext(SocketContext);
   const usersIdInfo = useRecoilValue(usersIdInfoState);
 
   const pitchAveragesRef = useRef<number[]>([]);
