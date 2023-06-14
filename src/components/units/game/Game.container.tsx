@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
@@ -14,24 +14,11 @@ const INIT_ITEM_EFFECT = {
   shield: false,
 };
 const ITEM_DURATION = 5000; // 아이템 지속 시간
-const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
+const ITEM_GET_INTERVAL = 1000; // 아이템 발생 텀
 
 export default function Game() {
   const socket = useContext(SocketContext);
-
   const usersIdInfo = useRecoilValue(usersIdInfoState);
-
-  // 테스트
-  // useEffect(() => {
-  // onItem("keyUp");
-  // onItem("keyDown");
-  // onItem("mute");
-  // onItem("frozen");
-  // getItem("mute");
-  // getItem("frozen");
-  // getItem("keyUp");
-  // getItem("keyDown");
-  // }, []);
 
   // ⭐️ 총 플레이어 수
   const totalPlayers = 3;
@@ -76,8 +63,26 @@ export default function Game() {
     if (socket) {
       // 다른 유저로부터 공격이 들어옴
       socket.on("use_item", (data) => {
-        onItem(data);
+        onItem(data.item);
+
+        // 아이템이 눈사람 | 음소거 -> 현재 플레이어와 공격자가 아닌 플레이어 적용
+        if (data instanceof Object) {
+          for (let i = 1; i < 3; i++) {
+            if (data.user === usersIdInfo[i]) continue; // 공격자 제외
+            // if (!(data.item === "frozen" && data.user === usersIdInfo[0]))
+            // if(data.user === usersIdInfo[0])
+            // changePlayersActiveItem(i, data.item);
+          }
+        }
+
+        // 아이템이 키업 | 키다운 -> 모두에게 적용
+        else if (!(data instanceof Object)) {
+          for (let i = 0; i < 3; i++) {
+            changePlayersActiveItem(i, data);
+          }
+        }
       });
+
       // 다른 유저가 아이템에서 탈출
       socket.on("escape_item", (data) => {
         usersIdInfo.forEach((user, i) => {
@@ -138,7 +143,9 @@ export default function Game() {
     if (item === "keyUp" || item === "keyDown") setMrKey("origin");
     else if (item === "mute") setIsMuteActive(false);
     // 🚨 음소거와 눈사람 아이템 공격이 종료됐다고 서버에 알리기
-    if (item === "mute" || item === "frozen") socket?.emit("escape_item");
+    if (item === "mute" || item === "frozen") {
+      socket?.emit("escape_item");
+    }
   };
 
   // 가지고 있는 아이템 목록
@@ -179,6 +186,8 @@ export default function Game() {
     /* 🚨 아이템 사용 */
     socket?.emit("use_item", item);
     setItemList((prev) => {
+      // 같은 아이템이 두 개 있으면 하나만 제거
+      if (prev[0] === prev[1]) return prev.slice(1);
       return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
     });
     // keyUp과 keyDown은 현재 유저에게도 공격이 들어감
@@ -188,13 +197,114 @@ export default function Game() {
     changePlayersActiveItem(2, item);
   };
 
+  const [hideLoading, setHideLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
+
+  useEffect(() => {
+    // 로딩 화면 보여주기
+    const simulateLoading = () => {
+      if (socket && !hideLoading) {
+        // 로딩화면 보여지는 상황 (처음 상황)
+        setTimeout(() => {
+          if (progress < 100) {
+            setProgress(progress + 10); // Increase the progress by 10% every 1 second
+            console.log("progress", progress, " 123");
+          } else {
+            setHideLoading(true);
+            setLoading(false);
+            socket.emit("game_ready", true, () => {
+              console.log("game_ready true sended to server");
+            });
+          }
+        }, 1000);
+      }
+    };
+    simulateLoading();
+  }, [hideLoading, progress]);
+
+  useEffect(() => {
+    if (socket && !hideLoading) {
+      // 인게임 화면에서 로딩화면 풀렸을 때,
+
+      socket.on("game_ready", async (userData) => {
+        // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
+        // userData에는 socketId만 담겨서 올거임.
+        console.log("game_ready true received"); // 로딩화면 풀림, 게임 시작
+
+        // const { user1, user2, user3 } = userData;
+        const myId = socket.id;
+        const otherUsers = userData.filter((user: any) => user !== myId);
+        console.log(otherUsers);
+        setUsersIdInfoState([myId, ...otherUsers]);
+      });
+    }
+  });
+
+  if (socket) {
+    // 로딩 화면에서 소켓 통신으로 노래 data 받음
+    socket.on("loading", async (data) => {
+      const {
+        songTitle,
+        singer,
+        songLyrics,
+        songFile,
+        songGender,
+        songMale,
+        songMaleUp,
+        songMaleDown,
+        songFemale,
+        songFemaleUp,
+        songFemaleDown,
+        vocalMale,
+        vocalMaleUp,
+        vocalMaleDown,
+        vocalFemale,
+        vocalFemaleUp,
+        vocalFemaleDown,
+      } = data;
+      console.log("1111111111");
+      await fetch("/music/snowflower_origin.wav");
+      console.log("2222222222");
+      await fetch("/music/snowflower_3keyup.wav");
+      console.log("3333333333");
+      await fetch("/music/snowflower_3keydown.wav");
+
+      console.log(songTitle);
+      console.log(singer);
+      console.log(songLyrics);
+      console.log(songFile);
+      console.log(songGender);
+      console.log(songMale);
+      console.log(songMaleUp);
+      console.log(songMaleDown);
+      console.log(songFemale);
+      console.log(songFemaleUp);
+      console.log(songFemaleDown);
+      console.log(vocalMale);
+      console.log(vocalMaleUp);
+      console.log(vocalMaleDown);
+      console.log(vocalFemale);
+      console.log(vocalFemaleUp);
+      console.log(vocalFemaleDown);
+
+      console.log("true received");
+
+      // 다운이 다 되면 아래를 보냄
+      // socket.emit("game_ready", true, () => {
+      //   console.log("game_ready true sended to server");
+      // });
+    });
+  }
+
   return (
     <>
-      <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
+      {/* <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
         {`${playersScore[0]}, `}
         {`${playersScore[1]}, `}
         {playersScore[2]}
-      </div>
+      </div> */}
       <GameUI
         decibel={decibel}
         playersScore={playersScore}
@@ -205,6 +315,9 @@ export default function Game() {
         itemList={itemList}
         useItem={useItem}
         offItem={offItem}
+        hideLoading={hideLoading}
+        loading={loading}
+        progress={progress}
       />
       <Sound
         mrKey={mrKey}

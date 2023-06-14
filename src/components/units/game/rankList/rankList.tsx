@@ -25,9 +25,12 @@ function RankList(props: IRankListProps) {
     <RankWrapper>
       {sortedData?.map((el, i) => {
         return (
-          <Rank key={i}>
+          <Rank key={i} isCurrentUser={el.idx === 0}>
             <span>{i + 1}</span>
-            <Profile src={`/game/player/profile/cat${el.idx}.png`} />
+            <Profile
+              isCurrentUser={el.idx === 0}
+              src={`/game/player/profile/cat2.png`}
+            />
             {el.activeItem && (
               <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
             )}
@@ -56,7 +59,8 @@ const Rank = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1a1128;
+    background-color: ${(props: { isCurrentUser: boolean }) =>
+      props.isCurrentUser ? `#6400ff` : ` #1a1128`};
     width: 22px;
     height: 22px;
     border-radius: 100%;
@@ -79,6 +83,8 @@ const Profile = styled.img`
   height: 68px;
   border: 6px solid #1a1128;
   border-radius: 100%;
+  border: ${(props: { isCurrentUser: boolean }) =>
+    props.isCurrentUser ? `6px solid #6400ff` : `6px solid #1a1128`};
 `;
 
 const ItemEffect = styled.img`

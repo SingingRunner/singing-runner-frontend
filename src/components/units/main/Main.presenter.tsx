@@ -41,7 +41,7 @@ const MainUI = (props: IMainUIProps) => {
           )}
         </div>
       )}
-      {props.isBattleClicked && ( // 2. 배틀 모드 버튼 클릭 후
+      {props.isBattleClicked && (  // 2. 배틀 모드 버튼 클릭 후
         <div
           style={{
             width: "100vw",
@@ -68,7 +68,7 @@ const MainUI = (props: IMainUIProps) => {
           </ButtonWrapper>
         </div>
       )}
-      {props.showModal && ( // 매칭 잡혔을 때 모달
+      {props.showModal && (        // 3. 매칭 잡혔을 때 모달
         <>
           <S.ModalBackground>
             <S.ModalWrapper>
@@ -108,7 +108,7 @@ const MainUI = (props: IMainUIProps) => {
           </S.ModalBackground>
         </>
       )}
-      {props.showWaiting && ( // 대기 화면
+      {props.showWaiting && (      // 4. 다른 유저 대기 모달
         <>
           <S.ModalBackground>
             <S.ModalWrapper>
@@ -132,35 +132,9 @@ const MainUI = (props: IMainUIProps) => {
                   </S.ModalMatchSongTitle>
                 </S.MarqueeContent>
               </S.MarqueeContainer>
-              <button onClick={props.handleLoadingClick}>test</button>
+              {/* <button onClick={props.handleLoadingClick}>test</button> */}
             </S.ModalWrapper>
           </S.ModalBackground>
-        </>
-      )}
-      {props.showLoading && ( // 로딩 화면
-        <>
-          <S.LoadingBackground>
-            {props.loading ? (
-              <S.LoadingMessage>잠시만 기다려주세요.</S.LoadingMessage>
-            ) : (
-              <></>
-            )}
-            {props.loading ? (
-              <S.LoadingBarWrapper>
-                Loading...
-                <S.LoadingBar>
-                  <S.LoadingGauge
-                    style={{
-                      width: `${props.progress}%`,
-                    }}
-                  />
-                </S.LoadingBar>
-              </S.LoadingBarWrapper>
-            ) : (
-              <S.LoadingMessage>게임이 시작됩니다!</S.LoadingMessage>
-            )}
-            <S.MatchButtonWrapper></S.MatchButtonWrapper>
-          </S.LoadingBackground>
         </>
       )}
     </>

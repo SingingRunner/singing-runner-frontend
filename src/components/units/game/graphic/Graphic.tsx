@@ -179,20 +179,37 @@ export default function Graphic(props: IGrapicProps) {
       const right = props.playersScore[1];
       const left = props.playersScore[2];
 
+      if (mid > right && playersMovedPosition[0] <= playersMovedPosition[1]) {
+        movePlayer(0, "forward");
+        movePlayer(1, "backward");
+      } else if (
+        mid < right &&
+        playersMovedPosition[0] >= playersMovedPosition[1]
+      ) {
+        movePlayer(0, "backward");
+        movePlayer(1, "forward");
+      }
+      if (mid > left && playersMovedPosition[0] <= playersMovedPosition[2]) {
+        movePlayer(0, "forward");
+        movePlayer(2, "backward");
+      } else if (
+        mid < left &&
+        playersMovedPosition[0] >= playersMovedPosition[2]
+      ) {
+        movePlayer(0, "backward");
+        movePlayer(2, "forward");
+      }
+
       if (right > mid && playersMovedPosition[1] < MAX_POSITION) {
         movePlayer(1, "forward");
-        setPlayersMovedPosition((prev) => [prev[0], prev[1]++, prev[2]]);
       } else if (right < mid && playersMovedPosition[1] > MIN_POSITION) {
         movePlayer(1, "backward");
-        setPlayersMovedPosition((prev) => [prev[0], prev[1]--, prev[2]]);
       }
 
       if (left > mid && playersMovedPosition[2] < MAX_POSITION) {
         movePlayer(2, "forward");
-        setPlayersMovedPosition((prev) => [prev[0], prev[1], prev[2]++]);
       } else if (left < mid && playersMovedPosition[2] > MIN_POSITION) {
         movePlayer(2, "backward");
-        setPlayersMovedPosition((prev) => [prev[0], prev[1], prev[2]--]);
       }
     }
   }, [props.playersScore]);
@@ -201,9 +218,18 @@ export default function Graphic(props: IGrapicProps) {
   const movePlayer = (index: number, direction: "forward" | "backward") => {
     if (!players[index]) return;
     if (!players[index].visible) return;
-
+    if (
+      playersMovedPosition[index] > MAX_POSITION ||
+      playersMovedPosition[index] < MIN_POSITION
+    )
+      return;
     const moveAmount = direction === "forward" ? 1 : -1;
     players[index].position.z += moveAmount;
+    setPlayersMovedPosition((prev) => {
+      const newPlayersMovedPosition = [...prev];
+      newPlayersMovedPosition[index] += moveAmount;
+      return newPlayersMovedPosition;
+    });
   };
 
   /* 전체 유저 아이템 효과 */
