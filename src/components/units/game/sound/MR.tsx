@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 
 const songFiles = [
-  "/music/cutted_snowflower_origin_mr.wav",
-  // "/music/snowflower_origin.wav",
-  "/music/snowflower_3keyup.wav",
-  "/music/snowflower_3keydown.wav",
+  "/music/jjanggu_mr_5keydown.wav",
+  "/music/jjanggu_mr_2keydown.wav",
+  "/music/jjanggu_mr_8keydown.wav",
 ];
 
 interface IMRProps {
