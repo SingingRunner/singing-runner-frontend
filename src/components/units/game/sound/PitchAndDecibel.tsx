@@ -102,26 +102,39 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   let analyzer: AnalyserNode | null = null;
 
   useEffect(() => {
-    if (socket) {
-      socket.on("score", (data) => {
-        usersIdInfo.forEach((userId, i) => {
-          if (userId === data.user) {
-            props.setPlayersScore((prev) => {
-              const newScore = [...prev];
-              newScore[i] = data.score;
-              return newScore;
-            });
-          }
-        });
-      });
-      socket.on("game_ready", async (userData) => {
-        const myId = socket.id;
-        const otherUsers = userData.fileter((user: any) => user !== myId);
-        setUserIdInfoState([myId, ...otherUsers]);
-        setIsLoadCompleteAll(true);
-      });
-    }
+    console.log("usersidinfo: ", usersIdInfo);
+  }, [usersIdInfo]);
+
+  useEffect(() => {
+    const tmp = (userData) => {
+      console.log("game_ready");
+      const myId = socket?.id;
+      console.log(userData);
+      const otherUsers = userData.filter((user: any) => user !== myId);
+      setUserIdInfoState([myId, ...otherUsers]);
+      setIsLoadCompleteAll(true);
+    };
+    socket?.on("game_ready", tmp);
   }, [socket]);
+
+  useEffect(() => {
+    console.log("registering score listener");
+    console.log("useridinfo", usersIdInfo);
+    const scoreListener = (data) => {
+      console.log("received score event", data);
+      usersIdInfo.forEach((userId, i) => {
+        if (userId === data.user) {
+          console.log("found matching user for score event", userId);
+          props.setPlayersScore((prev) => {
+            const newScore = [...prev];
+            newScore[i] = data.score;
+            return newScore;
+          });
+        }
+      });
+    };
+    socket?.on("score", scoreListener);
+  }, [socket, usersIdInfo]);
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
@@ -158,6 +171,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     });
 
     // 서버에 현재 유저의 점수 전송
+    console.log(currentScore);
     socket?.emit("score", currentScore);
 
     return currentScore;
