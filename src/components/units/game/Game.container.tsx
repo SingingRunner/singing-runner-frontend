@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
