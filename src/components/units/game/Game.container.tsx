@@ -300,11 +300,11 @@ export default function Game() {
 
   return (
     <>
-      <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
+      {/* <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
         {`${playersScore[0]}, `}
         {`${playersScore[1]}, `}
         {playersScore[2]}
-      </div>
+      </div> */}
       <GameUI
         decibel={decibel}
         playersScore={playersScore}

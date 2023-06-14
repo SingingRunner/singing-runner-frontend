@@ -37,7 +37,7 @@ const Main = () => {
       // console.log("accept false sended to server");
       // => 모드 선택 화면
     }
-    if (socket && showWaiting && !showLoading) {
+    if (socket && showWaiting) {
       // 3명 다 수락되면 백에서 true 올거임
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
@@ -58,8 +58,8 @@ const Main = () => {
     // 원래 있던 코드 game.container로 옮김.
   }, [isAccepted, isRejected, showWaiting, socket]);
 
-
-  const handleChangeAddress = () => { // 인게임 화면으로 전환
+  const handleChangeAddress = () => {
+    // 인게임 화면으로 전환
     router.push("/game");
   };
 
@@ -67,7 +67,7 @@ const Main = () => {
     setIsBattleClicked(true); // 배틀 모드 버튼 누른 상태로 변경
     if (socket) {
       // 소켓 열고 소켓 통신 시작 => 소켓 전역 변수로 대체
-      
+
       const UserMatchDTO = {
         userId: "1",
         userMmr: 1000,
@@ -81,18 +81,18 @@ const Main = () => {
         // console.log("match_making sended to server");
       }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
 
-      socket.on("match_making", (data) => {     // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
-        const { songTitle, singer } = data;     // song_title, singer => 수락 화면에 집어넣기   
+      socket.on("match_making", (data) => {
+        // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
+        const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
 
         setSongTitle(songTitle);
         setSinger(singer);
 
         if (songTitle && singer) {
-          setShowModal(true);                  // 수락 화면 띄우기
+          setShowModal(true); // 수락 화면 띄우기
         }
         // console.log("match_making data received from server");
       });
-
 
       // on("loading") => 노래 받는 원래 코드 game.container로 옮김.
 
@@ -113,22 +113,25 @@ const Main = () => {
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
-  const handleMatchCancel = () => {   // 매칭 취소 버튼 눌렀을 때 작동
-    setIsBattleClicked(false);        // 배틀 모드 버튼 누르지 않은 상태로 변경
-    setTimer(0);                      // 타이머 0으로 초기화
+  const handleMatchCancel = () => {
+    // 매칭 취소 버튼 눌렀을 때 작동
+    setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
+    setTimer(0); // 타이머 0으로 초기화
   };
 
-  const handleMatchAccept = () => {   // 매칭 수락 버튼 눌렀을 때 작동
-    setShowModal(false);              // 모달 끄기
-    setShowWaiting(true);             // 대기화면 띄우기
+  const handleMatchAccept = () => {
+    // 매칭 수락 버튼 눌렀을 때 작동
+    setShowModal(false); // 모달 끄기
+    setShowWaiting(true); // 대기화면 띄우기
     setIsAccepted(true);
     setIsRejected(false);
   };
 
-  const handleMatchDecline = () => {   // 매칭 거절 버튼 눌렀을 때 작동
-    setShowModal(false);               // 모달 끄기
-    setIsBattleClicked(false);         // 배틀 모드 버튼 누르지 않은 상태로 변경
-    setTimer(0);                       // 타이머 0으로 초기화
+  const handleMatchDecline = () => {
+    // 매칭 거절 버튼 눌렀을 때 작동
+    setShowModal(false); // 모달 끄기
+    setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
+    setTimer(0); // 타이머 0으로 초기화
     setIsAccepted(false);
     setIsRejected(true);
   };
@@ -148,7 +151,8 @@ const Main = () => {
     };
   }, [isBattleClicked, timer]);
 
-  const formatTime = (time: number): string => {  // 타이머 시간 포맷
+  const formatTime = (time: number): string => {
+    // 타이머 시간 포맷
     const minutes = Math.floor(time / 60)
       .toString()
       .padStart(2, "0");

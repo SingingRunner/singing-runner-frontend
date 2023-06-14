@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import * as PitchFinder from "pitchfinder";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
@@ -87,6 +87,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
   const [isLoadCompleteAll, setIsLoadCompleteAll] = useState<boolean>(false);
+  const [, setUserIdInfoState] = useRecoilState(usersIdInfoState);
 
   const avgPitchWindowSize = 3;
   let avgPitch: number = 0;
@@ -113,7 +114,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
           }
         });
       });
-      socket.on("game_ready", () => {
+      socket.on("game_ready", async (userData) => {
+        const myId = socket.id;
+        const otherUsers = userData.fileter((user: any) => user !== myId);
+        setUserIdInfoState([myId, ...otherUsers]);
         setIsLoadCompleteAll(true);
       });
     }
