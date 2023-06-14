@@ -202,10 +202,11 @@ export default function Game() {
   const [progress, setProgress] = useState(0);
   const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
 
-
-  useEffect(() => {  // 로딩 화면 보여주기
+  useEffect(() => {
+    // 로딩 화면 보여주기
     const simulateLoading = () => {
-      if (socket && !hideLoading) {     // 로딩화면 보여지는 상황 (처음 상황)
+      if (socket && !hideLoading) {
+        // 로딩화면 보여지는 상황 (처음 상황)
         setTimeout(() => {
           if (progress < 100) {
             setProgress(progress + 10); // Increase the progress by 10% every 1 second
@@ -223,9 +224,7 @@ export default function Game() {
     simulateLoading();
   }, [hideLoading, progress]);
 
-
   useEffect(() => {
-
     if (socket && !hideLoading) {
       // 인게임 화면에서 로딩화면 풀렸을 때,
 
@@ -233,15 +232,12 @@ export default function Game() {
         // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
         // userData에는 socketId만 담겨서 올거임.
         console.log("game_ready true received"); // 로딩화면 풀림, 게임 시작
-        
-        const { user1, user2, user3 } = userData;
+
+        // const { user1, user2, user3 } = userData;
         const myId = socket.id;
-        const otherUsers = [user1, user2, user3].filter(
-          (user) => user !== myId
-        );
+        const otherUsers = userData.filter((user: any) => user !== myId);
         console.log(otherUsers);
         setUsersIdInfoState([myId, ...otherUsers]);
-
       });
     }
   });
