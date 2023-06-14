@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import * as PitchFinder from "pitchfinder";
+import { useRecoilValue } from "recoil";
+import { socketState, usersIdInfoState } from "../../../../commons/store";
 
 const pitchDetector = PitchFinder.AMDF({
   sampleRate: 44100,
@@ -73,6 +75,9 @@ interface IPitchAndDecibelProps {
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
+  const socket = useRecoilValue(socketState);
+  const usersIdInfo = useRecoilValue(usersIdInfoState);
+
   const pitchAveragesRef = useRef<number[]>([]);
   const avgPitchWindowSize = 3;
   let avgPitch: number = 0;
@@ -87,21 +92,20 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   let analyzer: AnalyserNode | null = null;
 
   useEffect(() => {
-    // 🚨 타 유저 점수 반영
-    // 현재 유저는 calculateScore 함수에서 반영하고 있음
-    // 오른쪽 유저면
-    // props.setPlayersScore((prev) => {
-    //   const newScore = [...prev];
-    //   newScore[1] = currentScore;
-    //   return newScore;
-    // });
-    // 왼쪽 유저면
-    // props.setPlayersScore((prev) => {
-    //   const newScore = [...prev];
-    //   newScore[2] = currentScore;
-    //   return newScore;
-    // });
-  }, []);
+    if (socket) {
+      socket.on("score", (data) => {
+        usersIdInfo.forEach((userId, i) => {
+          if (userId === data.user) {
+            props.setPlayersScore((prev) => {
+              const newScore = [...prev];
+              newScore[i] = data.score;
+              return newScore;
+            });
+          }
+        });
+      });
+    }
+  }, [socket]);
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
@@ -148,7 +152,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       return newScore;
     });
 
-    // 🚨 이 점수 서버에 보내기
+    // 서버에 현재 유저의 점수 전송
+    socket?.emit("score", currentScore);
 
     return currentScore;
   };

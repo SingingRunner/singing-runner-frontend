@@ -3,6 +3,8 @@ import { io, Socket } from "socket.io-client";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
+import { useRecoilState } from "recoil";
+import { socketState, usersIdInfoState } from "../../../commons/store";
 
 const Main = () => {
   // 컨테이너는 로직만 담당하고, UI는 다른 파일로 분리해서 작성한다.
@@ -11,6 +13,7 @@ const Main = () => {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [, setSocketState] = useRecoilState(socketState);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
   const [isAccepted, setIsAccepted] = useState(false);
@@ -18,6 +21,7 @@ const Main = () => {
   const [showWaiting, setShowWaiting] = useState(false);
 
   const router = useRouter();
+  const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
 
   useEffect(() => {
     if (socket && isAccepted) {
@@ -63,6 +67,7 @@ const Main = () => {
           (user) => user !== myId
         );
         console.log(otherUsers);
+        setUsersIdInfoState([myId, ...otherUsers]);
 
         console.log("game_ready true received");
         if (user1 && user2 && user3) {
@@ -100,6 +105,7 @@ const Main = () => {
       // path: "/api/socket.io",
       // });
       setSocket(newSocket);
+      setSocketState(newSocket);
 
       // 소켓 연결 => 유저 정보 보내기
       newSocket.on(

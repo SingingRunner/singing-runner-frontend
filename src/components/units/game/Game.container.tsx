@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
+import { useRecoilValue } from "recoil";
+import { socketState, usersIdInfoState } from "../../../commons/store";
 
 const INIT_ITEM_EFFECT = {
   mute: false,
@@ -10,66 +12,93 @@ const INIT_ITEM_EFFECT = {
   keyUp: false,
   shield: false,
 };
+const ITEM_DURATION = 5000; // 아이템 지속 시간
+const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
 
 export default function Game() {
+  const socket = useRecoilValue(socketState);
+  const usersIdInfo = useRecoilValue(usersIdInfoState);
+
   // 테스트
-  useEffect(() => {
-    onItem("keyUp");
-    // onItem("keyDown");
-    // onItem("mute");
-    // onItem("frozen");
-    getItem("mute");
-    getItem("frozen");
-    getItem("keyUp");
-    // getItem("keyDown");
-  }, []);
+  // useEffect(() => {
+  // onItem("keyUp");
+  // onItem("keyDown");
+  // onItem("mute");
+  // onItem("frozen");
+  // getItem("mute");
+  // getItem("frozen");
+  // getItem("keyUp");
+  // getItem("keyDown");
+  // }, []);
 
   // ⭐️ 총 플레이어 수
   const totalPlayers = 3;
-  // 🚨 모든 유저의 점수를 관리하는 상태
-  const [playersScore, setPlayersScore] = useState([0, 100, 0]);
   // ⭐️ 현재의 mrKey를 저장하는 상태
   const [mrKey, setMrKey] = useState("origin");
   // mute 아이템 발동 시 측정한 데시벨의 상태
   const [decibel, setDecibel] = useState(0);
   // mute 공격을 당한 경우, 데시벨 측정 시작을 위한 상태
   const [isMuteActive, setIsMuteActive] = useState(false);
+  // 모든 유저의 점수를 관리하는 상태
+  const [playersScore, setPlayersScore] = useState([0, 0, 0]);
 
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
-  const [activeItem, setActiveItem] = useState({
-    mute: false,
-    frozen: false,
-    cloud: false,
-    keyDown: false,
-    keyUp: false,
-    shield: false,
-  });
+  const [activeItem, setActiveItem] = useState({ ...INIT_ITEM_EFFECT });
 
   // 모든 유저들의 활성화된 아이템을 프로필 옆에 나타내기 위해 저장하는 상태 (["나", "오른쪽", "왼쪽"])
   // 마지막에 활성화된 아이템 하나만 저장
   const [playersActiveItem, setPlayersActiveItem] = useState(["", "", ""]);
 
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
-  // 🚨 다른 유저들에게 공격이 들어오면 호출
+  // 🚨 1 - 다른 유저들에게 공격이 들어가면 호출
   const changePlayersActiveItem = (playerIndex: number, item: string) => {
     setPlayersActiveItem((prev) => {
       const temp = [...prev];
       temp[playerIndex] = item;
       return temp;
     });
+
+    // 5초 뒤에 자동으로 종료
+    if (item === "keyUp" || item === "keyDown" || item === "mute") {
+      setTimeout(() => {
+        setPlayersActiveItem((prev) => {
+          const temp = [...prev];
+          temp[playerIndex] = "";
+          return temp;
+        });
+      }, ITEM_DURATION);
+    }
   };
 
-  /** 아이템 효과를 시작하는 함수 */
-  // 🚨현재 유저에게 아이템 공격이 들어오면 호출
+  useEffect(() => {
+    if (socket) {
+      // 다른 유저로부터 공격이 들어옴
+      socket.on("use_item", (data) => {
+        onItem(data);
+      });
+      // 다른 유저가 아이템에서 탈출
+      socket.on("escape_item", (data) => {
+        usersIdInfo.forEach((user, i) => {
+          if (user === data) {
+            changePlayersActiveItem(i, "");
+          }
+        });
+      });
+    }
+  }, [socket]);
+
+  /** 현재 유저에게 아이템 효과를 시작하는 함수 */
   const onItem = (item: string) => {
     setActiveItem({
       ...INIT_ITEM_EFFECT, // 나머지 효과 모두 종료
       [item]: true,
     });
 
-    // ⭐️ 통신 되면 필요 없을 듯
+    // 모든 유저의 아이템 효과를 저장하는 상태에 반영
     changePlayersActiveItem(0, item);
 
+    // 키 변경 | 음소거
+    // frozen은 별도 함수에서 적용
     if (item === "keyUp") {
       setMrKey("keyUp");
     } else if (item === "keyDown") {
@@ -78,11 +107,11 @@ export default function Game() {
       setIsMuteActive(true);
     }
 
+    // 아이템 효과 종료 처리
     // frozen 아이템은 유저가 직접 종료
     if (item === "frozen") return;
-
     // 나머지 아이템은 5초 뒤에 자동 종료
-    setTimeout(() => offItem(item), 4500);
+    setTimeout(() => offItem(item), ITEM_DURATION);
   };
 
   /** 데시벨을 측정하는 함수 */
@@ -106,12 +135,29 @@ export default function Game() {
     changePlayersActiveItem(0, "");
     if (item === "keyUp" || item === "keyDown") setMrKey("origin");
     else if (item === "mute") setIsMuteActive(false);
-
-    // 🚨 아이템 공격이 종료됐다고 서버에 알리기
+    // 🚨 음소거와 눈사람 아이템 공격이 종료됐다고 서버에 알리기
+    if (item === "mute" || item === "frozen") socket?.emit("escape_item");
   };
 
   // 가지고 있는 아이템 목록
   const [itemList, setItemList] = useState([""]);
+  useEffect(() => {
+    // 10초 간격으로 아이템 획득 요청
+    const interval = setInterval(() => {
+      socket?.emit("get_item");
+    }, ITEM_GET_INTERVAL);
+
+    // 🚨 아이템 받기
+    if (socket) {
+      socket.on("get_item", (item: string) => {
+        getItem(item);
+      });
+    }
+
+    return () => {
+      clearInterval(interval); // 컴포넌트가 언마운트될 때 interval을 정리합니다.
+    };
+  }, [socket]);
 
   /** 아이템 획득 함수 */
   const getItem = (item: string) => {
@@ -128,11 +174,16 @@ export default function Game() {
 
   /** 아이템 사용 함수 */
   const useItem = (item: string) => {
-    /* 🚨 아이템 사용 API 요청하기 */
-
+    /* 🚨 아이템 사용 */
+    socket?.emit("use_item", item);
     setItemList((prev) => {
       return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
     });
+    // keyUp과 keyDown은 현재 유저에게도 공격이 들어감
+    if (item === "keyUp" || item === "keyDown") onItem(item);
+    // ⭐️ 나머지 아이템들은 현재 유저를 제외한 나머지 플레이어들에게 아이템 공격 표시
+    changePlayersActiveItem(1, item);
+    changePlayersActiveItem(2, item);
   };
 
   return (
