@@ -24,7 +24,7 @@ const Main = () => {
     if (socket && isAccepted) {
       // 수락 화면에서 버튼 누르는거에 따라 처리
       socket.emit("accept", true, () => {
-        console.log("accept true sended to server");
+        // console.log("accept true sended to server");
       });
       // => 대기 화면
     }
@@ -34,10 +34,10 @@ const Main = () => {
         // emit 보낸 이후에 소켓 끊을 수 있게 처리
         socket.off("match_making");
       });
-      console.log("accept false sended to server");
+      // console.log("accept false sended to server");
       // => 모드 선택 화면
     }
-    if (socket && showWaiting) {
+    if (socket && showWaiting && !showLoading) {
       // 3명 다 수락되면 백에서 true 올거임
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
@@ -49,7 +49,7 @@ const Main = () => {
           // 인게임 렌더링 => 로딩화면 game.container로 옮김.
         } else {
           // 3명 중에 거절하는 사람 생겨서(false 받음) 다시 버튼 선택(매칭 찾는 중)화면으로 보내기
-          console.log("accept false received");
+          // console.log("accept false received");
           setShowWaiting(false);
           setShowModal(false);
         }
@@ -58,17 +58,16 @@ const Main = () => {
     // 원래 있던 코드 game.container로 옮김.
   }, [isAccepted, isRejected, showWaiting, socket]);
 
+
   const handleChangeAddress = () => { // 인게임 화면으로 전환
     router.push("/game");
   };
 
   const handleBattleModeClick = () => {
     setIsBattleClicked(true); // 배틀 모드 버튼 누른 상태로 변경
-    console.log("1", socket);
     if (socket) {
       // 소켓 열고 소켓 통신 시작 => 소켓 전역 변수로 대체
-
-      console.log(socket);
+      
       const UserMatchDTO = {
         userId: "1",
         userMmr: 1000,
@@ -79,7 +78,7 @@ const Main = () => {
       // 소켓 연결 => 유저 정보 보내기
 
       socket.emit("match_making", UserMatchDTO, () => {
-        console.log("match_making sended to server");
+        // console.log("match_making sended to server");
       }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
 
       socket.on("match_making", (data) => {     // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
@@ -91,13 +90,14 @@ const Main = () => {
         if (songTitle && singer) {
           setShowModal(true);                  // 수락 화면 띄우기
         }
-        console.log("match_making data received from server");
+        // console.log("match_making data received from server");
       });
+
 
       // on("loading") => 노래 받는 원래 코드 game.container로 옮김.
 
       socket.on("disconnect", () => {
-        console.log("Disconnected from server");
+        // console.log("Disconnected from server");
       });
     }
   };
