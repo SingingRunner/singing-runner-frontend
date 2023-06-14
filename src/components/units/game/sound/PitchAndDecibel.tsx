@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import * as PitchFinder from "pitchfinder";
 import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
@@ -78,8 +85,9 @@ interface IPitchAndDecibelProps {
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const socket = useContext(SocketContext);
   const usersIdInfo = useRecoilValue(usersIdInfoState);
-
   const pitchAveragesRef = useRef<number[]>([]);
+  const [isLoadCompleteAll, setIsLoadCompleteAll] = useState<boolean>(false);
+
   const avgPitchWindowSize = 3;
   let avgPitch: number = 0;
   let pitchSamples: number = 0;
@@ -104,6 +112,9 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
             });
           }
         });
+      });
+      socket.on("game_ready", () => {
+        setIsLoadCompleteAll(true);
       });
     }
   }, [socket]);
@@ -160,7 +171,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   const handleAudioStream = (stream: MediaStream) => {
-    setTimeout(() => {}, 1000);
     const sources = props.sources;
     sources.current.forEach((source, i) => {
       source.start();
@@ -222,7 +232,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   useEffect(() => {
-    if (props.isLoadComplete) {
+    if (props.isLoadComplete && isLoadCompleteAll) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(handleAudioStream)
@@ -230,7 +240,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
           console.error("Error accessing microphone:", error);
         });
     }
-  }, [props.isLoadComplete]);
+  }, [props.isLoadComplete, isLoadCompleteAll]);
 
   return null;
 }
