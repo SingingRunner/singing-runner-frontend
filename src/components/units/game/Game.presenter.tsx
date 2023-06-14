@@ -57,7 +57,7 @@ export default function GameUI(props: IGameUIProps) {
           <S.Wrapper>
             {isItemActivated && <S.ItemEffectWrapper />}
             {/* ⭐️ 제목 - 가수 */}
-            <S.Title>나는 나비 - 윤도현 밴드</S.Title>
+            <S.Title>짱구는 못말려 - Various Artists</S.Title>
             <Lyric />
             <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
             <RankList
