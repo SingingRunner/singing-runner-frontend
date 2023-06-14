@@ -56,7 +56,7 @@ const MainUI = (props: IMainUIProps) => {
           </S.ImageWrapper>
           <ButtonWrapper>
             <S.MatchButton
-              onClick={props.handleBattleModeClick}
+              // onClick={props.handleBattleModeClick}
               style={{ marginBottom: "20px" }}
             >
               <S.Timer>{props.formatTime(props.timer)}</S.Timer>

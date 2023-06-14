@@ -18,8 +18,70 @@ const Main = () => {
   const [singer, setSinger] = useState("");
   const [isAccepted, setIsAccepted] = useState(false);
   const [isRejected, setIsRejected] = useState(false);
+  const [showWaiting, setShowWaiting] = useState(false);
+
   const router = useRouter();
   const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
+
+  useEffect(() => {
+    if (socket && isAccepted) {
+      // 수락 화면에서 버튼 누르는거에 따라 처리
+      socket.emit("accept", true, () => {
+        console.log("accept true sended to server");
+      });
+      // => 대기 화면
+    }
+    if (socket && isRejected) {
+      // 거절 유저는 소켓 끊음.
+      socket.emit("accept", false, () => {
+        // emit 보낸 이후에 소켓 끊을 수 있게 처리
+        socket.off("match_making");
+      });
+      console.log("accept false sended to server");
+      // => 모드 선택 화면
+    }
+    if (socket && showWaiting) {
+      // 3명 다 수락되면 백에서 true 올거임
+      socket.on("accept", (isMatched: boolean) => {
+        if (isMatched) {
+          console.log("accept true received");
+          // Send to loading screen
+          setShowLoading(true);
+          socket.emit("loading");
+        } else {
+          // 3명 중에 거절하는 사람 생겨서(false 받음) 다시 버튼 선택(매칭 찾는 중)화면으로 보내기
+          console.log("accept false received");
+          setShowWaiting(false);
+          setShowModal(false);
+        }
+      });
+    }
+
+    if (socket && showLoading) {
+      socket.on("game_ready", async (userData) => {
+        // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
+        // userData에는 socketId만 담겨서 올거임.
+        const { user1, user2, user3 } = userData;
+        const myId = socket.id;
+        const otherUsers = [user1, user2, user3].filter(
+          (user) => user !== myId
+        );
+        console.log(otherUsers);
+        setUsersIdInfoState([myId, ...otherUsers]);
+
+        console.log("game_ready true received");
+        if (user1 && user2 && user3) {
+          setShowLoading(false);
+          setLoading(false);
+          try {
+            await handleChangeAddress(); // 로딩 화면에서 인게임으로 화면 렌더링
+          } catch (error) {
+            console.error("Error occurred while navigating to '/game':", error);
+          }
+        }
+      });
+    }
+  }, [isAccepted, isRejected, showWaiting, socket, showLoading]);
 
   const handleChangeAddress = async () => {
     // 인게임 화면으로 전환
@@ -78,39 +140,6 @@ const Main = () => {
         console.log("match_making data received from server");
       });
 
-      if (isAccepted) {
-        // 수락 화면에서 버튼 누르는거에 따라 처리
-        newSocket.emit("accept", true, () => {
-          console.log("accept true sended to server");
-        });
-        // => 대기 화면
-      }
-
-      if (isRejected) {
-        // 거절 유저는 소켓 끊음.
-        newSocket.emit("accept", false, () => {
-          // emit 보낸 이후에 소켓 끊을 수 있게 처리
-          newSocket.off("match_making");
-        });
-        console.log("accept false sended to server");
-        // => 모드 선택 화면
-      }
-
-      // 3명 다 수락되면 백에서 true 올거임
-      newSocket.on("accept", (isMatched: boolean) => {
-        if (isMatched) {
-          console.log("accept true received");
-          // Send to loading screen
-          setShowLoading(true);
-          newSocket.emit("loading");
-        } else {
-          // 3명 중에 거절하는 사람 생겨서(false 받음) 다시 버튼 선택(매칭 찾는 중)화면으로 보내기
-          console.log("accept false received");
-          setShowWaiting(false);
-          setShowModal(false);
-        }
-      });
-
       // 로딩 화면에서 소켓 통신으로 노래 data 받음
       newSocket.on("loading", async (data) => {
         const {
@@ -163,31 +192,6 @@ const Main = () => {
         newSocket.emit("game_ready", true, () => {
           console.log("game_ready true sended to server");
         });
-
-        newSocket.on("game_ready", async (userData) => {
-          // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
-          // userData에는 socketId만 담겨서 올거임.
-          const { user1, user2, user3 } = userData;
-          const myId = newSocket.id;
-          const otherUsers = [user1, user2, user3].filter(
-            (user) => user.socketId !== myId
-          );
-          setUsersIdInfoState([myId, ...otherUsers]);
-
-          console.log("game_ready true received");
-          if (user1?.socketId && user2?.socketId && user3?.socketId) {
-            setShowLoading(false);
-            setLoading(false);
-            try {
-              await handleChangeAddress(); // 로딩 화면에서 인게임으로 화면 렌더링
-            } catch (error) {
-              console.error(
-                "Error occurred while navigating to '/game':",
-                error
-              );
-            }
-          }
-        });
       });
 
       newSocket.on("disconnect", () => {
@@ -225,7 +229,6 @@ const Main = () => {
   const [isBattleClicked, setIsBattleClicked] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false); // 모달 상태
-  const [showWaiting, setShowWaiting] = useState(false);
 
   const handleMatchCancel = () => {
     // 매칭 취소 버튼 눌렀을 때 작동
@@ -262,14 +265,14 @@ const Main = () => {
     }
 
     // 타이머 5초 되면 => 소켓 신호 오는 걸로 변경할 예정
-    if (timer === 1000) {
-      setShowModal(true);
-      // 매칭 취소 or 거절하기 or 대기화면 or 타이머 600초 되면 타이머 종료
-      setTimer(0); // 타이머 0으로 초기화
-      return () => {
-        clearInterval(interval);
-      };
-    }
+    // if (timer === 1000) {
+    // setShowModal(true);
+    // 매칭 취소 or 거절하기 or 대기화면 or 타이머 600초 되면 타이머 종료
+    // setTimer(0); // 타이머 0으로 초기화
+    // return () => {
+    // clearInterval(interval);
+    // };
+    // }
 
     return () => {
       clearInterval(interval); // 타이머 종료
