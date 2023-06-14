@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
@@ -188,6 +188,111 @@ export default function Game() {
     changePlayersActiveItem(2, item);
   };
 
+  const [hideLoading, setHideLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [, setUsersIdInfoState] = useRecoilState(usersIdInfoState);
+
+
+  useEffect(() => {  // 로딩 화면 보여주기
+    const simulateLoading = () => {
+      if (socket && !hideLoading) {     // 로딩화면 보여지는 상황 (처음 상황)
+        setTimeout(() => {
+          if (progress < 100) {
+            setProgress(progress + 10); // Increase the progress by 10% every 1 second
+            console.log("progress", progress, " 123");
+          } else {
+            setHideLoading(true);
+            setLoading(false);
+            socket.emit("game_ready", true, () => {
+              console.log("game_ready true sended to server");
+            });
+          }
+        }, 1000);
+      }
+    };
+    simulateLoading();
+  }, [hideLoading, progress]);
+
+
+  useEffect(() => {
+
+    if (socket && !hideLoading) {
+      // 인게임 화면에서 로딩화면 풀렸을 때,
+
+      socket.on("game_ready", async (userData) => {
+        // userId, 게임 참가한 유저의 소켓 id, 자기를 제외한 두명의 정보 저장해야됨.
+        // userData에는 socketId만 담겨서 올거임.
+        console.log("game_ready true received"); // 로딩화면 풀림, 게임 시작
+        
+        const { user1, user2, user3 } = userData;
+        const myId = socket.id;
+        const otherUsers = [user1, user2, user3].filter(
+          (user) => user !== myId
+        );
+        console.log(otherUsers);
+        setUsersIdInfoState([myId, ...otherUsers]);
+
+      });
+    }
+  });
+
+  if (socket) {
+    // 로딩 화면에서 소켓 통신으로 노래 data 받음
+    socket.on("loading", async (data) => {
+      const {
+        songTitle,
+        singer,
+        songLyrics,
+        songFile,
+        songGender,
+        songMale,
+        songMaleUp,
+        songMaleDown,
+        songFemale,
+        songFemaleUp,
+        songFemaleDown,
+        vocalMale,
+        vocalMaleUp,
+        vocalMaleDown,
+        vocalFemale,
+        vocalFemaleUp,
+        vocalFemaleDown,
+      } = data;
+      console.log("1111111111");
+      await fetch("/music/snowflower_origin.wav");
+      console.log("2222222222");
+      await fetch("/music/snowflower_3keyup.wav");
+      console.log("3333333333");
+      await fetch("/music/snowflower_3keydown.wav");
+
+      console.log(songTitle);
+      console.log(singer);
+      console.log(songLyrics);
+      console.log(songFile);
+      console.log(songGender);
+      console.log(songMale);
+      console.log(songMaleUp);
+      console.log(songMaleDown);
+      console.log(songFemale);
+      console.log(songFemaleUp);
+      console.log(songFemaleDown);
+      console.log(vocalMale);
+      console.log(vocalMaleUp);
+      console.log(vocalMaleDown);
+      console.log(vocalFemale);
+      console.log(vocalFemaleUp);
+      console.log(vocalFemaleDown);
+
+      console.log("true received");
+
+      // 다운이 다 되면 아래를 보냄
+      // socket.emit("game_ready", true, () => {
+      //   console.log("game_ready true sended to server");
+      // });
+    });
+  }
+
   return (
     <>
       <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
@@ -205,6 +310,9 @@ export default function Game() {
         itemList={itemList}
         useItem={useItem}
         offItem={offItem}
+        hideLoading={hideLoading}
+        loading={loading}
+        progress={progress}
       />
       <Sound
         mrKey={mrKey}

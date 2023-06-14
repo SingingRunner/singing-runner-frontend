@@ -40,3 +40,44 @@ export const TestButtonWrapper = styled.div`
   top: 0;
   left: 0;
 `;
+export const LoadingBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  /* background: rgba(255, 255, 255, 1); */
+  background: #1a1128;
+`;
+export const LoadingMessage = styled.div`
+  font-size: 20px;
+  text-align: center;
+  margin-top: 95px;
+  background: #1a1128;
+  color: #bd00fe;
+`;
+export const LoadingBarWrapper = styled.div`
+  position: relative;
+  top: 70%;
+  width: 90%;
+  margin: 0 16px;
+  color: #ffffff;
+`;
+export const LoadingBar = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 30px;
+  backgroundColor: #ffffff,
+`;
+export const LoadingGauge = styled.div`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to right, #8b50f2, #bd00fe);
+`;
+export const MatchButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
