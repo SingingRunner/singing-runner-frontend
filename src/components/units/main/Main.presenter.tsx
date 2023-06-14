@@ -41,7 +41,7 @@ const MainUI = (props: IMainUIProps) => {
           )}
         </div>
       )}
-      {props.isBattleClicked && (  // 2. 배틀 모드 버튼 클릭 후
+      {props.isBattleClicked && ( // 2. 배틀 모드 버튼 클릭 후
         <div
           style={{
             width: "100vw",
@@ -68,7 +68,7 @@ const MainUI = (props: IMainUIProps) => {
           </ButtonWrapper>
         </div>
       )}
-      {props.showModal && (        // 3. 매칭 잡혔을 때 모달
+      {props.showModal && ( // 3. 매칭 잡혔을 때 모달
         <>
           <S.ModalBackground>
             <S.ModalWrapper>
@@ -80,19 +80,22 @@ const MainUI = (props: IMainUIProps) => {
                 매칭이 완료되었습니다.
               </S.ModalMatchComplete>
               <S.ModalMatchSongArtist>
-                {props.singer ? props.singer : "강산에"}
+                {/* {props.singer ? props.singer : "강산에"} */}
+                Various Artists
               </S.ModalMatchSongArtist>
               <S.MarqueeContainer>
                 <S.MarqueeContent>
                   <S.ModalMatchSongTitle>
-                    {props.songTitle
+                    {/* {props.songTitle
                       ? props.songTitle
-                      : "거꾸로 강을 거슬러 오르는 저 힘찬 연어들처럼"}
+                      : "거꾸로 강을 거슬러 오르는 저 힘찬 연어들처럼"} */}
+                    {"짱구는 못말려 오프닝(99년도 비디오판)"}
                   </S.ModalMatchSongTitle>
                   <S.ModalMatchSongTitle>
-                    {props.songTitle
+                    {/* {props.songTitle
                       ? props.songTitle
-                      : "거꾸로 강을 거슬러 오르는 저 힘찬 연어들처럼"}
+                      : "거꾸로 강을 거슬러 오르는 저 힘찬 연어들처럼"} */}
+                    {"짱구는 못말려 오프닝(99년도 비디오판)"}
                   </S.ModalMatchSongTitle>
                 </S.MarqueeContent>
               </S.MarqueeContainer>
@@ -108,7 +111,7 @@ const MainUI = (props: IMainUIProps) => {
           </S.ModalBackground>
         </>
       )}
-      {props.showWaiting && (      // 4. 다른 유저 대기 모달
+      {props.showWaiting && ( // 4. 다른 유저 대기 모달
         <>
           <S.ModalBackground>
             <S.ModalWrapper>
