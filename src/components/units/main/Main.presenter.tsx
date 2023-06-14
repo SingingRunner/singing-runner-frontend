@@ -123,15 +123,18 @@ const MainUI = (props: IMainUIProps) => {
                 다른 유저를 기다리는 중입니다.
               </S.ModalMatchComplete>
               <S.ModalMatchSongArtist>
-                {props.singer ? props.singer : "TEST"}
+                {/* {props.singer ? props.singer : "TEST"} */}
+                Various Artists
               </S.ModalMatchSongArtist>
               <S.MarqueeContainer>
                 <S.MarqueeContent>
                   <S.ModalMatchSongTitle>
-                    {props.songTitle ? props.songTitle : "TEST"}
+                    {/* {props.songTitle ? props.songTitle : "TEST"} */}
+                    {"짱구는 못말려 오프닝(99년도 비디오판)"}
                   </S.ModalMatchSongTitle>
                   <S.ModalMatchSongTitle>
-                    {props.songTitle ? props.songTitle : "TEST"}
+                    {/* {props.songTitle ? props.songTitle : "TEST"} */}
+                    {"짱구는 못말려 오프닝(99년도 비디오판)"}
                   </S.ModalMatchSongTitle>
                 </S.MarqueeContent>
               </S.MarqueeContainer>
