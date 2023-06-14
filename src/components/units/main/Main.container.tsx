@@ -99,11 +99,11 @@ const Main = () => {
     if (socket === null) {
       console.log(socket);
       // 💻 소켓 열고 소켓 통신 시작
-      const newSocket = io("http://localhost:3000");
+      // const newSocket = io("http://localhost:3000");
       // {
-      // const newSocket = io("https://injungle.shop", {
-      // path: "/api/socket.io",
-      // });
+      const newSocket = io("https://injungle.shop", {
+        path: "/api/socket.io",
+      });
       setSocket(newSocket);
       setSocketState(newSocket);
 
