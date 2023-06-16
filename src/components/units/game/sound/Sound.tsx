@@ -1,7 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
-import MR from "./MR";
 import PitchAndDecibel from "./PitchAndDecibel";
 
+const songFiles = [
+  "/music/jjanggu_mr.wav",
+  "/music/jjanggu_mr_3keyup.wav",
+  "/music/jjanggu_mr_3keydown.wav",
+];
 interface ISoundProps {
   mrKey: string;
   setDecibel: Dispatch<SetStateAction<number>>;
@@ -14,6 +18,12 @@ interface ISoundProps {
     keyUp: boolean;
     shield: boolean;
   };
+  hideLoading: boolean;
+  setHideLoading: Dispatch<SetStateAction<boolean>>;
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  progress: number;
+  setProgress: Dispatch<SetStateAction<number>>;
 }
 export default function Sound(props: ISoundProps) {
   const [isLoadComplete, setLoadComplete] = useState(false);
@@ -24,6 +34,8 @@ export default function Sound(props: ISoundProps) {
   const [ans1Array, setAns1Array] = useState<number[]>([]);
   const [ans2Array, setAns2Array] = useState<number[]>([]);
   const [ans3Array, setAns3Array] = useState<number[]>([]);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainNodes = useRef<GainNode[]>([]);
   const sources = useRef<AudioBufferSourceNode[]>([]);
 
   useEffect(() => {
@@ -52,6 +64,8 @@ export default function Sound(props: ISoundProps) {
   }, [props.activeItem]);
 
   useEffect(() => {
+    audioCtxRef.current = new window.AudioContext();
+    const audioCtx = audioCtxRef.current;
     const fetchFiles = async () => {
       try {
         const ans1 = await fetch("/origin.txt");
@@ -72,6 +86,35 @@ export default function Sound(props: ISoundProps) {
           return Number(value);
         });
         setAns3Array(ans3ArrayTmp);
+        const response = await Promise.all(
+          songFiles.map((file) => fetch(file))
+        );
+        const arrayBuffers = await Promise.all(
+          response.map((res) => res.arrayBuffer())
+        );
+        const audioBuffers = await Promise.all(
+          arrayBuffers.map((data) => {
+            props.setProgress(props.progress + 30);
+            return audioCtx.decodeAudioData(data);
+          })
+        );
+
+        gainNodes.current = audioBuffers.map((buffer, i) => {
+          const gainNode = audioCtx.createGain();
+          gainNode.gain.value = 0; // Start all audios muted
+          const source = audioCtx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(gainNode).connect(audioCtx.destination);
+          sources.current[i] = source;
+          if (i === 0) {
+            gainNode.gain.value = 1;
+          }
+          return gainNode;
+        });
+
+        props.setHideLoading(true);
+        props.setLoading(false);
+        setLoadComplete(true);
       } catch (err) {
         console.log(err);
       }
@@ -81,14 +124,26 @@ export default function Sound(props: ISoundProps) {
     });
   }, []);
 
+  const changeMRKey = (index: number) => {
+    gainNodes.current.forEach((gainNode, i) => {
+      gainNode.gain.value = i === index ? 1 : 0;
+    });
+  };
+
+  useEffect(() => {
+    if (props.mrKey === "origin") changeMRKey(0);
+    else if (props.mrKey === "keyUp") changeMRKey(1);
+    else if (props.mrKey === "keyDown") changeMRKey(2);
+  }, [props.mrKey]);
+
   return (
     <>
-      <MR
+      {/* <MR
         mrKey={props.mrKey}
         isLoadComplete={isLoadComplete}
         setLoadComplete={setLoadComplete}
         sources={sources}
-      />
+      /> */}
 
       <PitchAndDecibel
         isLoadComplete={isLoadComplete}

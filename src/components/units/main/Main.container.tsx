@@ -2,14 +2,9 @@ import { useEffect, useState, useContext } from "react";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
-// game.container로 옮김.
-// import { useRecoilState } from "recoil";
-// import { usersIdInfoState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
 const Main = () => {
-  // loading에 필요한 useState, userIDInfoState game.container로 옮김.
-
   const socket = useContext(SocketContext);
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
@@ -33,20 +28,16 @@ const Main = () => {
         if (isMatched) {
           console.log("accept true received");
           socket.emit("loading");
-          handleChangeAddress();
-
-          // "loading" emit 하고 나서 인게임 화면으로 렌더링
-          // 인게임 렌더링 => 로딩화면 game.container로 옮김.
+          handleChangeAddress(); // 인게임 화면으로 전환
         } else {
-          // 3명 중에 거절하는 사람 생겨서(false 받음) 다시 버튼 선택(매칭 찾는 중)화면으로 보내기
-          // console.log("accept false received");
+          // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
+          console.log("accept false received");
           setShowWaiting(false);
           setShowModal(false);
         }
       });
       socket.on("match_making", (data) => {
-        // 백에서 매칭 완료되면, 매칭된 유저 정보 받아오기
-        console.log("a");
+        // 매칭 완료되면, 매칭된 유저 정보 받아오기
         const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
         console.log(data);
         setSongTitle(songTitle);
@@ -55,64 +46,51 @@ const Main = () => {
         if (songTitle && singer) {
           setShowModal(true); // 수락 화면 띄우기
         }
-        // console.log("match_making data received from server");
       });
     }
   }, [socket]);
+
   useEffect(() => {
     if (socket && isAccepted) {
-      // 수락 화면에서 버튼 누르는거에 따라 처리
-      socket.emit("accept", true, () => {
-        // console.log("accept true sended to server");
-      });
-      // => 대기 화면
+      // 수락 누른 경우
+      console.log("accept true sended to server");
+      socket.emit("accept", true);
+      setIsAccepted(false);
+      // => 대기 화면으로 이동
     }
     if (socket && isRejected) {
-      // 거절 유저는 소켓 끊음.
-      socket.emit("accept", false, () => {
-        // emit 보낸 이후에 소켓 끊을 수 있게 처리
-        socket.off("match_making");
-      });
-      // console.log("accept false sended to server");
-      // => 모드 선택 화면
+      // 거절 누른 경우
+      console.log("accept false sended to server");
+      socket.emit("accept", false);
+      setIsRejected(false);
+      // => 모드 선택 화면으로 이동
     }
   }, [isAccepted, isRejected, showWaiting, socket]);
-
-  const handleBattleModeClick = () => {
-    setIsBattleClicked(true); // 배틀 모드 버튼 누른 상태로 변경
-    if (socket) {
-      // 소켓 열고 소켓 통신 시작 => 소켓 전역 변수로 대체
-
-      const UserMatchDTO = {
-        userId: "1",
-        userMmr: 1000,
-        nickName: "Tom",
-        userActive: "connect",
-        uerKeynote: "maleKey",
-      };
-      // 소켓 연결 => 유저 정보 보내기
-
-      socket.emit("match_making", UserMatchDTO, () => {
-        // console.log("match_making sended to server");
-      }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
-
-      // on("loading") => 노래 받는 원래 코드 game.container로 옮김.
-
-      socket.on("disconnect", () => {
-        // console.log("Disconnected from server");
-      });
-    }
-  };
-
-  // 로딩 화면 보여주기 game.container로 옮김.
 
   const handleClick = () => {
     setIsClicked(true);
     // handleChangeAddress(); 테스트용
   };
 
+  const UserMatchDTO = {
+    userId: "1",
+    userMmr: 1000,
+    nickName: "Tom",
+    userActive: "connect",
+    uerKeynote: "maleKey",
+  };
+
+  const handleBattleModeClick = () => {
+    setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
+    if (socket) {
+      // 소켓 연결 => 유저 정보 보내기
+      socket.emit("match_making", { UserMatchDTO, accept: true }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
+      socket.on("disconnect", () => {});
+    }
+  };
+
   const handleMatchCancel = () => {
-    // 매칭 취소 버튼 눌렀을 때 작동
+    socket?.emit("match_making", { UserMatchDTO, accept: false }); // 매칭 취소 백엔드에 알림.
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
   };
@@ -121,8 +99,8 @@ const Main = () => {
     // 매칭 수락 버튼 눌렀을 때 작동
     setShowModal(false); // 모달 끄기
     setShowWaiting(true); // 대기화면 띄우기
-    setIsAccepted(true);
     setIsRejected(false);
+    setIsAccepted(true);
   };
 
   const handleMatchDecline = () => {
@@ -150,7 +128,7 @@ const Main = () => {
   }, [isBattleClicked, timer]);
 
   const formatTime = (time: number): string => {
-    // 타이머 시간 포맷
+    // 타이머 시간 형식 "00:00"
     const minutes = Math.floor(time / 60)
       .toString()
       .padStart(2, "0");
@@ -158,6 +136,15 @@ const Main = () => {
 
     return `${minutes}:${seconds}`;
   };
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const props: IMainUIProps = {
     isClicked,
