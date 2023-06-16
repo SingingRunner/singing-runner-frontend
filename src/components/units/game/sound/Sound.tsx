@@ -18,22 +18,22 @@ interface ISoundProps {
     keyUp: boolean;
     shield: boolean;
   };
-  hideLoading: boolean;
-  setHideLoading: Dispatch<SetStateAction<boolean>>;
-  loading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
+  isLoadComplete: boolean;
+  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
 }
+
+export interface Answer {
+  values: number[];
+}
+
 export default function Sound(props: ISoundProps) {
-  const [isLoadComplete, setLoadComplete] = useState(false);
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
   const [isFrozen, setFrozen] = useState(false);
   const [isMute, setMute] = useState(false);
-  const [ans1Array, setAns1Array] = useState<number[]>([]);
-  const [ans2Array, setAns2Array] = useState<number[]>([]);
-  const [ans3Array, setAns3Array] = useState<number[]>([]);
+  const [answers, setAnswers] = useState<Answer[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
   const sources = useRef<AudioBufferSourceNode[]>([]);
@@ -74,18 +74,22 @@ export default function Sound(props: ISoundProps) {
         const ans1Text = await ans1.text();
         const ans2Text = await ans2.text();
         const ans3Text = await ans3.text();
-        const ans1ArrayTmp = ans1Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns1Array(ans1ArrayTmp);
-        const ans2ArrayTmp = ans2Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns2Array(ans2ArrayTmp);
-        const ans3ArrayTmp = ans3Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns3Array(ans3ArrayTmp);
+        const ans1ArrayTmp = {
+          values: ans1Text.split(",").map((value) => {
+            return Number(value);
+          }),
+        };
+        const ans2ArrayTmp = {
+          values: ans2Text.split(",").map((value) => {
+            return Number(value);
+          }),
+        };
+        const ans3ArrayTmp = {
+          values: ans3Text.split(",").map((value) => {
+            return Number(value);
+          }),
+        };
+        setAnswers([ans1ArrayTmp, ans2ArrayTmp, ans3ArrayTmp]);
         const response = await Promise.all(
           songFiles.map((file) => fetch(file))
         );
@@ -112,9 +116,7 @@ export default function Sound(props: ISoundProps) {
           return gainNode;
         });
 
-        props.setHideLoading(true);
-        props.setLoading(false);
-        setLoadComplete(true);
+        props.setIsLoadComplete(true);
       } catch (err) {
         console.log(err);
       }
@@ -123,6 +125,10 @@ export default function Sound(props: ISoundProps) {
       console.log(err);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(answers);
+  }, [answers]);
 
   const changeMRKey = (index: number) => {
     gainNodes.current.forEach((gainNode, i) => {
@@ -138,18 +144,9 @@ export default function Sound(props: ISoundProps) {
 
   return (
     <>
-      {/* <MR
-        mrKey={props.mrKey}
-        isLoadComplete={isLoadComplete}
-        setLoadComplete={setLoadComplete}
-        sources={sources}
-      /> */}
-
       <PitchAndDecibel
-        isLoadComplete={isLoadComplete}
-        originAnswer={ans1Array}
-        keyUpAnswer={ans2Array}
-        keyDownAnswer={ans3Array}
+        isLoadComplete={props.isLoadComplete}
+        answers={answers}
         isKeyUp={isKeyUp}
         isKeyDown={isKeyDown}
         isFrozen={isFrozen}
