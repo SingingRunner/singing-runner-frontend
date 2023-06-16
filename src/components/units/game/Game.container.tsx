@@ -39,6 +39,11 @@ export default function Game() {
   // 마지막에 활성화된 아이템 하나만 저장
   const [playersActiveItem, setPlayersActiveItem] = useState(["", "", ""]);
 
+  // 로딩 화면을 관리하는 상태
+  const [hideLoading, setHideLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
   // 🚨 1 - 다른 유저들에게 공격이 들어가면 호출
   const changePlayersActiveItem = (playerIndex: number, item: string) => {
@@ -199,31 +204,6 @@ export default function Game() {
     }
   };
 
-  const [hideLoading, setHideLoading] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    // 로딩 화면 보여주기
-    const simulateLoading = () => {
-      if (socket && !hideLoading) {
-        // 로딩화면 보여지는 상황 (처음 상황)
-        setTimeout(() => {
-          if (progress < 100) {
-            setProgress(progress + 10); // Increase the progress by 10% every 1 second
-          } else {
-            setHideLoading(true);
-            setLoading(false);
-            socket.emit("game_ready", true, () => {
-              console.log("game_ready true sended to server");
-            });
-          }
-        }, 1000);
-      }
-    };
-    simulateLoading();
-  }, [hideLoading, progress]);
-
   if (socket) {
     // 로딩 화면에서 소켓 통신으로 노래 data 받음
     socket.on("loading", async () => {
@@ -303,6 +283,12 @@ export default function Game() {
         setDecibel={setDecibel}
         setPlayersScore={setPlayersScore}
         activeItem={activeItem}
+        hideLoading={hideLoading}
+        setHideLoading={setHideLoading}
+        loading={loading}
+        setLoading={setLoading}
+        progress={progress}
+        setProgress={setProgress}
       />
     </>
   );
