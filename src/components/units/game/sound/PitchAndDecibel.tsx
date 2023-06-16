@@ -4,7 +4,7 @@ import {
   useContext,
   useEffect,
   useRef,
-  useState,
+  // useState,
 } from "react";
 import * as PitchFinder from "pitchfinder";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -86,7 +86,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const socket = useContext(SocketContext);
   const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
-  const [isLoadCompleteAll, setIsLoadCompleteAll] = useState<boolean>(false);
+  // const [isLoadCompleteAll, setIsLoadCompleteAll] = useState<boolean>(false);
   const [, setUserIdInfoState] = useRecoilState(usersIdInfoState);
 
   const avgPitchWindowSize = 3;
@@ -108,11 +108,18 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   useEffect(() => {
     const tmp = (userData) => {
       console.log("game_ready");
+      console.log("arrive time: ", new Date().getTime());
       const myId = socket?.id;
       console.log(userData);
       const otherUsers = userData.filter((user: any) => user !== myId);
       setUserIdInfoState([myId, ...otherUsers]);
-      setIsLoadCompleteAll(true);
+      // setIsLoadCompleteAll(true);
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleAudioStream)
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
     };
     socket?.on("game_ready", tmp);
   }, [socket]);
@@ -138,26 +145,25 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
+    let answer: number[] = [];
+
+    if (props.isKeyUp && props.keyUpAnswer != null) {
+      answer = props.keyUpAnswer;
+    } else if (props.isKeyDown && props.keyDownAnswer != null) {
+      answer = props.keyDownAnswer;
+    } else if (props.originAnswer != null) {
+      answer = props.originAnswer;
+    }
+
     if (props.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (props.isMute) {
       score = Math.floor((currentScore * 2) / 3);
-    } else if (props.isKeyUp && props.keyUpAnswer != null) {
-      score = getScoreFromDiff(props.keyUpAnswer[idx], noteValue, currentScore);
-    } else if (props.isKeyDown && props.keyDownAnswer != null) {
-      score = getScoreFromDiff(
-        props.keyDownAnswer[idx],
-        noteValue,
-        currentScore
-      );
-    } else if (props.originAnswer != null) {
-      score = getScoreFromDiff(
-        props.originAnswer[idx],
-        noteValue,
-        currentScore
-      );
+    } else {
+      score = getScoreFromDiff(answer[idx], noteValue, currentScore);
     }
-    if (score === 0) {
+
+    if (score === 0 && answer[idx] === 0) {
       ignoreCount++;
     }
     totalScore += score;
@@ -239,15 +245,15 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   useEffect(() => {
-    if (props.isLoadComplete && isLoadCompleteAll) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(handleAudioStream)
-        .catch((error) => {
-          console.error("Error accessing microphone:", error);
-        });
+    if (props.isLoadComplete) {
+      socket?.emit("game_ready");
     }
-  }, [props.isLoadComplete, isLoadCompleteAll]);
+  }, [props.isLoadComplete]);
+
+  // useEffect(() => {
+  // if (isLoadCompleteAll) {
+  // }
+  // }, [isLoadCompleteAll]);
 
   return null;
 }
