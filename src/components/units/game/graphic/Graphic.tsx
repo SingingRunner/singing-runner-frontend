@@ -78,7 +78,7 @@ export default function Graphic(props: IGrapicProps) {
     /* floor */
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const textureLoader = new THREE.TextureLoader();
-    const floorTexture = textureLoader.load("/game/floor/neon.jpg");
+    const floorTexture = textureLoader.load("/game/floor/neon.png");
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(10, 10); // Repeat the texture 10 times in both directions
