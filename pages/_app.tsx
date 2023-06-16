@@ -12,7 +12,7 @@ const songFiles = [
 ];
 
 const assetFiles = [
-  "/game/brick/neon_floor.jpg",
+  "/game/floor/neon.png",
   "/game/item/effect/frozen.png",
   "/game/item/effect/keyDown.png",
   "/game/item/effect/keyUp.png",
