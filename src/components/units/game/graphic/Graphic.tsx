@@ -78,17 +78,14 @@ export default function Graphic(props: IGrapicProps) {
     /* floor */
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const textureLoader = new THREE.TextureLoader();
-    const floorTexture = textureLoader.load("/game/brick/basecolor.jpg");
-    const normalTex = textureLoader.load("/game/brick/normal.jpg");
+    const floorTexture = textureLoader.load("/game/floor/neon.png");
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(10, 10); // Repeat the texture 10 times in both directions
     const floorMaterial = new THREE.MeshStandardMaterial({
       map: floorTexture,
       side: THREE.DoubleSide,
-      roughness: 0.1,
-      normalMap: normalTex,
-      color: "#6a594b",
+      color: "#d0d0d0",
     });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = Math.PI / 2;
