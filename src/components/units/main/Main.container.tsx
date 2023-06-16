@@ -137,6 +137,15 @@ const Main = () => {
     return `${minutes}:${seconds}`;
   };
 
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const props: IMainUIProps = {
     isClicked,
     handleClick,
