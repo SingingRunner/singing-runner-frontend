@@ -3,7 +3,6 @@ import * as PitchFinder from "pitchfinder";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import type { Answer } from "./Sound";
 
 const pitchDetector = PitchFinder.AMDF({
   sampleRate: 44100,
@@ -56,7 +55,9 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
 
 interface IPitchAndDecibelProps {
   isLoadComplete: boolean;
-  answers: Answer[];
+  originAnswer: number[];
+  keyUpAnswer: number[];
+  keyDownAnswer: number[];
   isKeyUp: boolean;
   setKeyUp: Dispatch<SetStateAction<boolean>>;
   isKeyDown: boolean;
@@ -87,30 +88,31 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   let audioContext: AudioContext | null = null;
   let mediaStreamSource: MediaStreamAudioSourceNode | null = null;
   let analyzer: AnalyserNode | null = null;
+  const propsRef = useRef(props);
 
   useEffect(() => {
-    console.log(props.answers);
-  }, [props.answers]);
+    propsRef.current = props;
+  }, [props]);
 
-  useEffect(() => {
-    const gameReady = (userData) => {
-      console.log("arrive time: ", new Date().getTime());
-      const sources = props.sources;
-      sources.current.forEach((source, i) => {
-        source.start();
+  const gameReady = (userData) => {
+    console.log("arrive time: ", new Date().getTime());
+    const sources = propsRef.current.sources;
+    sources.current.forEach((source, i) => {
+      source.start();
+    });
+    const myId = socket?.id;
+    const otherUsers = userData.filter((user: any) => user !== myId);
+    setUserIdInfoState([myId, ...otherUsers]);
+    // setIsLoadCompleteAll(true);
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(handleAudioStream)
+      .catch((error) => {
+        console.error("Error accessing microphone:", error);
       });
-      const myId = socket?.id;
-      console.log(userData);
-      const otherUsers = userData.filter((user: any) => user !== myId);
-      setUserIdInfoState([myId, ...otherUsers]);
-      // setIsLoadCompleteAll(true);
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(handleAudioStream)
-        .catch((error) => {
-          console.error("Error accessing microphone:", error);
-        });
-    };
+  };
+
+  useEffect(() => {
     socket?.on("game_ready", gameReady);
   }, [socket]);
 
@@ -132,23 +134,21 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     let answer: number[] = [];
-    console.log(props);
-    if (props.answers.length === 0) return 0;
-    const originAnswer = props.answers[0].values;
-    const keyUpAnswer = props.answers[1].values;
-    const keyDownAnswer = props.answers[2].values;
+    const originAnswer = propsRef.current.originAnswer;
+    const keyUpAnswer = propsRef.current.keyUpAnswer;
+    const keyDownAnswer = propsRef.current.keyDownAnswer;
 
-    if (props.isKeyUp && keyUpAnswer != null) {
+    if (propsRef.current.isKeyUp && keyUpAnswer != null) {
       answer = keyUpAnswer;
-    } else if (props.isKeyDown && keyDownAnswer != null) {
+    } else if (propsRef.current.isKeyDown && keyDownAnswer != null) {
       answer = keyDownAnswer;
     } else if (originAnswer != null) {
       answer = originAnswer;
     }
 
-    if (props.isFrozen) {
+    if (propsRef.current.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
-    } else if (props.isMute) {
+    } else if (propsRef.current.isMute) {
       score = Math.floor((currentScore * 2) / 3);
     } else {
       score = getScoreFromDiff(answer[idx], noteValue);
@@ -161,7 +161,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     if (++currentIdx !== ignoreCount) {
       currentScore = Math.round(totalScore / (currentIdx - ignoreCount));
     }
-    props.setPlayersScore((prev) => {
+    propsRef.current.setPlayersScore((prev) => {
       const newScore = [...prev];
       newScore[0] = currentScore;
       return newScore;
@@ -194,7 +194,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       }
       const avg = sum / frequencyArray.length;
       const decibel = calculateDecibel(avg);
-      props.setDecibel(decibel);
+      propsRef.current.setDecibel(decibel);
       const pitch = calculatePitch(dataArray);
       if (pitch != null && pitch > 0) {
         avgPitch += pitchToMIDINoteValue(pitch);
@@ -209,7 +209,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       if (currentTime != null) {
         const elapsedTime = currentTime - startTime;
         if (elapsedTime >= avgPitchWindowSize) {
-          if (pitchSamples === 0) {
+          if (pitchSamples < 0) {
             pitchAveragesRef.current.push(0);
             currentIdx++;
             ignoreCount++;
@@ -217,7 +217,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
             const averagePitch = avgPitch / pitchSamples;
             const avgMIDINoteValue = Math.round(averagePitch);
             pitchAveragesRef.current.push(avgMIDINoteValue);
-            console.log(avgMIDINoteValue);
             calculateScore(avgMIDINoteValue, currentIdx);
           }
           avgPitch = 0;
@@ -233,10 +232,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   };
 
   useEffect(() => {
-    if (props.isLoadComplete) {
+    if (propsRef.current.isLoadComplete) {
       socket?.emit("game_ready");
     }
-  }, [props.isLoadComplete]);
+  }, [propsRef.current.isLoadComplete]);
 
   return null;
 }
