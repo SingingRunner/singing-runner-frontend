@@ -24,19 +24,17 @@ interface ISoundProps {
   setProgress: Dispatch<SetStateAction<number>>;
 }
 
-export interface Answer {
-  values: number[];
-}
-
 export default function Sound(props: ISoundProps) {
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
   const [isFrozen, setFrozen] = useState(false);
   const [isMute, setMute] = useState(false);
-  const [answers, setAnswers] = useState<Answer[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
   const sources = useRef<AudioBufferSourceNode[]>([]);
+  const [originAnswer, setOriginAnswer] = useState<number[]>([]);
+  const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
+  const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
 
   useEffect(() => {
     // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
@@ -74,22 +72,12 @@ export default function Sound(props: ISoundProps) {
         const ans1Text = await ans1.text();
         const ans2Text = await ans2.text();
         const ans3Text = await ans3.text();
-        const ans1ArrayTmp = {
-          values: ans1Text.split(",").map((value) => {
-            return Number(value);
-          }),
-        };
-        const ans2ArrayTmp = {
-          values: ans2Text.split(",").map((value) => {
-            return Number(value);
-          }),
-        };
-        const ans3ArrayTmp = {
-          values: ans3Text.split(",").map((value) => {
-            return Number(value);
-          }),
-        };
-        setAnswers([ans1ArrayTmp, ans2ArrayTmp, ans3ArrayTmp]);
+        const ans1Array = ans1Text.split(",").map((value) => Number(value));
+        setOriginAnswer(ans1Array);
+        const ans2Array = ans2Text.split(",").map((value) => Number(value));
+        setKeyUpAnswer(ans2Array);
+        const ans3Array = ans3Text.split(",").map((value) => Number(value));
+        setKeyDownAnswer(ans3Array);
         const response = await Promise.all(
           songFiles.map((file) => fetch(file))
         );
@@ -126,10 +114,6 @@ export default function Sound(props: ISoundProps) {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(answers);
-  }, [answers]);
-
   const changeMRKey = (index: number) => {
     gainNodes.current.forEach((gainNode, i) => {
       gainNode.gain.value = i === index ? 1 : 0;
@@ -146,7 +130,9 @@ export default function Sound(props: ISoundProps) {
     <>
       <PitchAndDecibel
         isLoadComplete={props.isLoadComplete}
-        answers={answers}
+        originAnswer={originAnswer}
+        keyUpAnswer={keyUpAnswer}
+        keyDownAnswer={keyDownAnswer}
         isKeyUp={isKeyUp}
         isKeyDown={isKeyDown}
         isFrozen={isFrozen}
