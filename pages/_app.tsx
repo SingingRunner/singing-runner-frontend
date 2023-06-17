@@ -3,6 +3,7 @@ import { AppProps } from "next/app";
 import { globalStyles } from "../styles/globalStyles";
 import { RecoilRoot } from "recoil";
 import { SocketProvider } from "../src/commons/contexts/SocketContext";
+import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 
 const songFiles = [
@@ -69,7 +70,9 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
             />
           ))}
         </Head>
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SocketProvider>
     </RecoilRoot>
   );
