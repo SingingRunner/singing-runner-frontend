@@ -5,7 +5,7 @@ interface IButtonProps {
   onClick?: () => void;
 }
 export enum buttonType {
-  "GRADATAION",
+  "GRADAION",
   "EMPTY",
   "DISABLED",
   "ONECOLOR",
