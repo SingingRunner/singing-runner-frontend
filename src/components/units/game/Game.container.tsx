@@ -31,18 +31,15 @@ export default function Game() {
   const [isMuteActive, setIsMuteActive] = useState(false);
   // 모든 유저의 점수를 관리하는 상태
   const [playersScore, setPlayersScore] = useState([0, 0, 0]);
-
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [activeItem, setActiveItem] = useState({ ...INIT_ITEM_EFFECT });
-
   // 모든 유저들의 활성화된 아이템을 프로필 옆에 나타내기 위해 저장하는 상태 (["나", "오른쪽", "왼쪽"])
   // 마지막에 활성화된 아이템 하나만 저장
   const [playersActiveItem, setPlayersActiveItem] = useState(["", "", ""]);
-
   // 로딩 화면을 관리하는 상태
-  const [hideLoading, setHideLoading] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoadComplete, setIsLoadComplete] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [itemList, setItemList] = useState([""]);
 
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
   // 🚨 1 - 다른 유저들에게 공격이 들어가면 호출
@@ -154,7 +151,6 @@ export default function Game() {
   };
 
   // 가지고 있는 아이템 목록
-  const [itemList, setItemList] = useState([""]);
   useEffect(() => {
     // 10초 간격으로 아이템 획득 요청
     const interval = setInterval(() => {
@@ -207,63 +203,16 @@ export default function Game() {
   if (socket) {
     // 로딩 화면에서 소켓 통신으로 노래 data 받음
     socket.on("loading", async () => {
-      // const {
-      //   songTitle,
-      //   singer,
-      //   songLyrics,
-      //   songFile,
-      //   songGender,
-      //   songMale,
-      //   songMaleUp,
-      //   songMaleDown,
-      //   songFemale,
-      //   songFemaleUp,
-      //   songFemaleDown,
-      //   vocalMale,
-      //   vocalMaleUp,
-      //   vocalMaleDown,
-      //   vocalFemale,
-      //   vocalFemaleUp,
-      //   vocalFemaleDown,
-      // } = data;
       await fetch("/music/snowflower_origin.wav");
       await fetch("/music/snowflower_3keyup.wav");
       await fetch("/music/snowflower_3keydown.wav");
 
-      // console.log(songTitle);
-      // console.log(singer);
-      // console.log(songLyrics);
-      // console.log(songFile);
-      // console.log(songGender);
-      // console.log(songMale);
-      // console.log(songMaleUp);
-      // console.log(songMaleDown);
-      // console.log(songFemale);
-      // console.log(songFemaleUp);
-      // console.log(songFemaleDown);
-      // console.log(vocalMale);
-      // console.log(vocalMaleUp);
-      // console.log(vocalMaleDown);
-      // console.log(vocalFemale);
-      // console.log(vocalFemaleUp);
-      // console.log(vocalFemaleDown);
-
       console.log("true received");
-
-      // 다운이 다 되면 아래를 보냄
-      // socket.emit("game_ready", true, () => {
-      //   console.log("game_ready true sended to server");
-      // });
     });
   }
 
   return (
     <>
-      {/* <div style={{ backgroundColor: "black", color: "white", width: "80px" }}>
-        {`${playersScore[0]}, `}
-        {`${playersScore[1]}, `}
-        {playersScore[2]}
-      </div> */}
       <GameUI
         decibel={decibel}
         playersScore={playersScore}
@@ -274,8 +223,7 @@ export default function Game() {
         itemList={itemList}
         useItem={useItem}
         offItem={offItem}
-        hideLoading={hideLoading}
-        loading={loading}
+        isLoadComplete={isLoadComplete}
         progress={progress}
       />
       <Sound
@@ -283,10 +231,8 @@ export default function Game() {
         setDecibel={setDecibel}
         setPlayersScore={setPlayersScore}
         activeItem={activeItem}
-        hideLoading={hideLoading}
-        setHideLoading={setHideLoading}
-        loading={loading}
-        setLoading={setLoading}
+        isLoadComplete={isLoadComplete}
+        setIsLoadComplete={setIsLoadComplete}
         progress={progress}
         setProgress={setProgress}
       />

@@ -16,33 +16,25 @@ export default function GameUI(props: IGameUIProps) {
 
   return (
     <>
-      {!props.hideLoading && ( // 로딩 화면
+      {!props.isLoadComplete && ( // 로딩 화면
         <>
           <S.LoadingBackground>
-            {props.loading ? (
-              <S.LoadingMessage>잠시만 기다려주세요.</S.LoadingMessage>
-            ) : (
-              <></>
-            )}
-            {props.loading ? (
-              <S.LoadingBarWrapper>
-                Loading...
-                <S.LoadingBar>
-                  <S.LoadingGauge
-                    style={{
-                      width: `${Number(props.progress)}%`,
-                    }}
-                  />
-                </S.LoadingBar>
-              </S.LoadingBarWrapper>
-            ) : (
-              <S.LoadingMessage>게임이 시작됩니다!</S.LoadingMessage>
-            )}
+            <S.LoadingMessage>잠시만 기다려주세요.</S.LoadingMessage>
+            <S.LoadingBarWrapper>
+              Loading...
+              <S.LoadingBar>
+                <S.LoadingGauge
+                  style={{
+                    width: `${Number(props.progress)}%`,
+                  }}
+                />
+              </S.LoadingBar>
+            </S.LoadingBarWrapper>
             <S.MatchButtonWrapper></S.MatchButtonWrapper>
           </S.LoadingBackground>
         </>
       )}
-      {props.hideLoading && (
+      {props.isLoadComplete && (
         // 로딩화면 끝, 게임 시작
         <>
           <Graphic
