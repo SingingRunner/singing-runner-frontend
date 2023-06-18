@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IRival } from "../Game.types";
