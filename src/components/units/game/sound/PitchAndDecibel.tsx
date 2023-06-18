@@ -1,15 +1,9 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
-import * as PitchFinder from "pitchfinder";
 import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IRival } from "../Game.types";
 import { tempRivals } from "../../game/tempDummyData";
-const pitchDetector = PitchFinder.AMDF({
-  sampleRate: 44100,
-  minFrequency: 82,
-  maxFrequency: 1000,
-});
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -18,11 +12,6 @@ const pitchToMIDINoteValue = (pitch: number): number => {
   const midiNoteValue = Math.round(A4MIDINoteValue + pitchOffset);
 
   return midiNoteValue;
-};
-
-const calculatePitch = (audioData: Float32Array): number | null => {
-  const pitch = pitchDetector(audioData);
-  return pitch;
 };
 
 const calculateDecibel = (value: number): number => {
@@ -188,8 +177,39 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     audioContext = new window.AudioContext();
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
     analyzer = audioContext.createAnalyser();
-    analyzer.fftSize = 8192;
+    analyzer.fftSize = 2048;
     mediaStreamSource.connect(analyzer);
+    const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
+    pitchWorker.addEventListener("message", (event) => {
+      const pitch: number = event.data.pitch;
+      console.log(pitch, new Date().getTime() - event.data.time);
+      if (pitch != null && pitch > 0) {
+        avgPitch += pitchToMIDINoteValue(pitch);
+        pitchSamples++;
+      }
+      const currentTime = event.data.time;
+      if (startTime === 0 && currentTime != null) {
+        startTime = currentTime;
+      }
+      if (currentTime != null) {
+        const elapsedTime = currentTime - startTime;
+        if (elapsedTime > avgPitchWindowSize) {
+          if (pitchSamples <= 0) {
+            pitchAveragesRef.current.push(0);
+            currentIdx++;
+            ignoreCount++;
+          } else {
+            const averagePitch = avgPitch / pitchSamples;
+            const avgMIDINoteValue = Math.round(averagePitch);
+            pitchAveragesRef.current.push(avgMIDINoteValue);
+            calculateScore(avgMIDINoteValue, currentIdx);
+          }
+          avgPitch = 0;
+          pitchSamples = 0;
+          startTime = currentTime;
+        }
+      }
+    });
 
     const bufferLength = analyzer.frequencyBinCount;
     const dataArray = new Float32Array(bufferLength);
@@ -205,35 +225,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       const avg = sum / frequencyArray.length;
       const decibel = calculateDecibel(avg);
       propsRef.current.setDecibel(decibel);
-      const pitch = calculatePitch(dataArray);
-      if (pitch != null && pitch > 0) {
-        avgPitch += pitchToMIDINoteValue(pitch);
-        pitchSamples++;
-      }
-
-      const currentTime = audioContext?.currentTime;
-      if (startTime === 0 && currentTime != null) {
-        startTime = currentTime;
-      }
-
-      if (currentTime != null) {
-        const elapsedTime = currentTime - startTime;
-        if (elapsedTime >= avgPitchWindowSize) {
-          if (pitchSamples < 0) {
-            pitchAveragesRef.current.push(0);
-            currentIdx++;
-            ignoreCount++;
-          } else {
-            const averagePitch = avgPitch / pitchSamples;
-            const avgMIDINoteValue = Math.round(averagePitch);
-            pitchAveragesRef.current.push(avgMIDINoteValue);
-            calculateScore(avgMIDINoteValue, currentIdx);
-          }
-          avgPitch = 0;
-          pitchSamples = 0;
-          startTime = currentTime;
-        }
-      }
+      pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
 
       requestAnimationFrame(processAudio);
     };
