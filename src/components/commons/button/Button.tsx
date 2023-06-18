@@ -3,6 +3,8 @@ interface IButtonProps {
   buttonType: buttonType;
   text: string;
   onClick?: () => void;
+  isFixedAtBottom?: boolean; // 화면의 맨 밑에 붙어있는 버튼
+  isFixedAtBottomSecond?: boolean; // 화면의 맨 밑에 있는 버튼 바로 위의 버튼
 }
 export enum buttonType {
   "GRADAION",
@@ -18,7 +20,12 @@ export enum buttonType {
 
 export default function Button(props: IButtonProps) {
   return (
-    <S.Button onClick={props.onClick} buttonType={props.buttonType}>
+    <S.Button
+      onClick={props.onClick}
+      buttonType={props.buttonType}
+      isFixedAtBottom={props.isFixedAtBottom}
+      isFixedAtBottomSecond={props.isFixedAtBottomSecond}
+    >
       {props.text}
     </S.Button>
   );

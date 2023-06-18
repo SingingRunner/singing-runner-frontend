@@ -1,6 +1,10 @@
 import styled from "@emotion/styled";
 import { buttonType } from "./Button";
-
+interface IButtonProps {
+  isFixedAtBottomSecond: boolean | undefined;
+  isFixedAtBottom: boolean | undefined;
+  buttonType: buttonType;
+}
 export const Button = styled.button`
   width: calc(100% - 32px);
   height: 40px;
@@ -13,7 +17,23 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  ${(props: { buttonType: buttonType }) => {
+  ${(props: IButtonProps) => {
+    return props.isFixedAtBottomSecond
+      ? `
+    position: fixed;
+    bottom: 56px;
+    `
+      : ``;
+  }}
+  ${(props: IButtonProps) => {
+    return props.isFixedAtBottom
+      ? `
+    position: fixed;
+    bottom: 0;
+    `
+      : ``;
+  }}
+  ${(props: IButtonProps) => {
     switch (props.buttonType) {
       case buttonType.GRADAION:
         return `
