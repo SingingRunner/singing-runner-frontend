@@ -49,7 +49,7 @@ export default function Modal(props: IModalProps) {
             // 텍스트가 두 줄인 경우
             <S.Text>
               <p>
-                <span>{props.hilightText}</span>
+                {props.hilightText && <span>{props.hilightText}</span>}
                 {props.firstText}
               </p>
               <p>{props.secondText}</p>
