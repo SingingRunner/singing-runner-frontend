@@ -2,9 +2,13 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-import { useRecoilValue } from "recoil";
-import { usersIdInfoState } from "../../../commons/store";
+// import { useRecoilValue } from "recoil";
+// import { usersIdInfoState } from "../../../commons/store";
+import { ITEM_DURATION } from "./itemInfo/ItemInfo";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../commons/store";
+import { IRival } from "./Game.types";
 
 const INIT_ITEM_EFFECT = {
   mute: false,
@@ -14,22 +18,36 @@ const INIT_ITEM_EFFECT = {
   keyUp: false,
   shield: false,
 };
-const ITEM_DURATION = 5000; // 아이템 지속 시간
-const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
+
+const ITEM_GET_INTERVAL = 15000; // 아이템 발생 텀
+const UNMUTE_DECIBEL = -65; // mute 아이템을 해제시키는 데시벨 크기
 
 export default function Game() {
-  const socket = useContext(SocketContext);
-  const usersIdInfo = useRecoilValue(usersIdInfoState);
-
-  // ⭐️ 총 플레이어 수
   const totalPlayers = 3;
-  // ⭐️ 현재의 mrKey를 저장하는 상태
-  const [mrKey, setMrKey] = useState("origin");
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
+  // 현재 플레이어의 정보
+  const userInfo = useRecoilValue(userInfoState);
+
+  // 라이벌 정보
+  const [rivals, setRivals] = useState<IRival[]>();
+
+  useEffect(() => {
+    // rival 수에 따라서 position 조정
+  }, [rivals]);
+
+  // ⭐️ 현재의 mrKey를 저장하는 상태 -> 현재 유저의 기본 설정값으로 초기화
+  const [mrKey, setMrKey] = useState(userInfo.userKeynote);
+
   // mute 아이템 발동 시 측정한 데시벨의 상태
   const [decibel, setDecibel] = useState(0);
   // mute 공격을 당한 경우, 데시벨 측정 시작을 위한 상태
   const [isMuteActive, setIsMuteActive] = useState(false);
-  // 모든 유저의 점수를 관리하는 상태
+
+  // 모든 유저의 점수를 관리하는 상태 (현재 플레이어, rival0, rival1)
   const [playersScore, setPlayersScore] = useState([0, 0, 0]);
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [activeItem, setActiveItem] = useState({ ...INIT_ITEM_EFFECT });
@@ -69,11 +87,11 @@ export default function Game() {
         // 아이템이 눈사람 | 음소거 -> 현재 플레이어와 공격자가 아닌 플레이어 적용
         if (data instanceof Object) {
           onItem(data.item);
-          for (let i = 1; i < 3; i++) {
-            if (data.user === usersIdInfo[i]) continue; // 공격자 제외
-            // if (data.user === usersIdInfo[0]) continue; // 현재 플레이어는 위에서 onItem으로 바로 적용되므로 제외
-            // changePlayersActiveItem(i, data.item);
-          }
+          // for (let i = 1; i < 3; i++) {
+          // if (data.user === usersIdInfo[i]) continue; // 공격자 제외
+          // if (data.user === usersIdInfo[0]) continue; // 현재 플레이어는 위에서 onItem으로 바로 적용되므로 제외
+          // changePlayersActiveItem(i, data.item);
+          // }
         }
 
         // 아이템이 키업 | 키다운 -> 모두에게 적용
@@ -87,11 +105,11 @@ export default function Game() {
 
       // 다른 유저가 아이템에서 탈출
       socket.on("escape_item", (data) => {
-        usersIdInfo.forEach((user, i) => {
-          if (user === data) {
-            changePlayersActiveItem(i, "");
-          }
-        });
+        // usersIdInfo.forEach((user, i) => {
+        //   if (user === data) {
+        //     changePlayersActiveItem(i, "");
+        //   }
+        // });
       });
     }
   }, [socket]);
@@ -126,7 +144,7 @@ export default function Game() {
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
     console.log("decibel", decibel);
-    if (isMuteActive && decibel > -60) offItem("mute");
+    if (isMuteActive && decibel > UNMUTE_DECIBEL) offItem("mute");
   };
 
   useEffect(() => {
@@ -227,6 +245,7 @@ export default function Game() {
         progress={progress}
       />
       <Sound
+        setRivals={setRivals}
         mrKey={mrKey}
         setDecibel={setDecibel}
         setPlayersScore={setPlayersScore}

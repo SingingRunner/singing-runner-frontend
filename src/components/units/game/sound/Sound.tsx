@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
+import { IRival } from "../Game.types";
 
 const songFiles = [
   "/music/jjanggu_mr.wav",
@@ -22,6 +23,7 @@ interface ISoundProps {
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
+  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
 }
 
 export default function Sound(props: ISoundProps) {
@@ -144,6 +146,7 @@ export default function Sound(props: ISoundProps) {
         setDecibel={props.setDecibel}
         setPlayersScore={props.setPlayersScore}
         sources={sources}
+        setRivals={props.setRivals}
       />
     </>
   );

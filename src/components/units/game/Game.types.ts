@@ -29,3 +29,8 @@ export interface IGameUIProps {
   isLoadComplete: boolean;
   progress: number;
 }
+
+export interface IRival {
+  userId: string;
+  character: string;
+}

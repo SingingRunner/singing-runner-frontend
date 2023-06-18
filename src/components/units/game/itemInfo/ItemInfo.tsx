@@ -15,6 +15,8 @@ interface IItemInfoProps {
   };
 }
 
+export const ITEM_DURATION = 8000; // 아이템 지속 시간
+
 function ItemInfo(props: IItemInfoProps) {
   return (
     <>
@@ -73,7 +75,8 @@ const ItemInfoWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: ${fadeIn} 0.5s forwards, ${fadeOut} 0.5s 4s forwards;
+  animation: ${fadeIn} 0.5s forwards,
+    ${fadeOut} 0.5s ${ITEM_DURATION}ms forwards;
 `;
 
 const Msg = styled.div`

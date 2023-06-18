@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
 import * as PitchFinder from "pitchfinder";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../../commons/store";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-
+import { IRival } from "../Game.types";
+import { tempRivals } from "../../game/tempDummyData";
 const pitchDetector = PitchFinder.AMDF({
   sampleRate: 44100,
   minFrequency: 82,
@@ -69,13 +70,17 @@ interface IPitchAndDecibelProps {
   setDecibel: Dispatch<SetStateAction<number>>;
   setPlayersScore: Dispatch<SetStateAction<number[]>>;
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
+  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
-  const socket = useContext(SocketContext);
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
-  const [, setUserIdInfoState] = useRecoilState(usersIdInfoState);
 
   const avgPitchWindowSize = 3;
   let avgPitch: number = 0;
@@ -97,12 +102,16 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const gameReady = (userData) => {
     console.log("arrive time: ", new Date().getTime());
     const sources = propsRef.current.sources;
-    sources.current.forEach((source, i) => {
+    sources.current.forEach((source) => {
       source.start();
     });
-    const myId = socket?.id;
-    const otherUsers = userData.filter((user: any) => user !== myId);
-    setUserIdInfoState([myId, ...otherUsers]);
+    // const myId = socket?.id;
+    // const otherUsers = userData.filter((user: any) => user !== myId);
+    // setUserIdInfoState([myId, ...otherUsers]);
+
+    // 🚨 현재 유저 제외한 라이벌들의 정보 저장 (캐릭터 정보 포함)
+    props.setRivals(tempRivals);
+
     // setIsLoadCompleteAll(true);
     navigator.mediaDevices
       .getUserMedia({ audio: true })
