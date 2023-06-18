@@ -71,6 +71,7 @@ interface IPitchAndDecibelProps {
   setPlayersScore: Dispatch<SetStateAction<number[]>>;
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
   setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
+  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
@@ -100,25 +101,25 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [props]);
 
   const gameReady = (userData) => {
-    console.log("arrive time: ", new Date().getTime());
     const sources = propsRef.current.sources;
     sources.current.forEach((source) => {
       source.start();
     });
+
     // const myId = socket?.id;
     // const otherUsers = userData.filter((user: any) => user !== myId);
     // setUserIdInfoState([myId, ...otherUsers]);
 
     // 🚨 현재 유저 제외한 라이벌들의 정보 저장 (캐릭터 정보 포함)
-    props.setRivals(tempRivals);
-
-    // setIsLoadCompleteAll(true);
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(handleAudioStream)
       .catch((error) => {
         console.error("Error accessing microphone:", error);
       });
+
+    props.setIsLoadComplete(true);
+    props.setRivals(tempRivals);
   };
 
   useEffect(() => {
@@ -239,12 +240,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
     processAudio();
   };
-
-  useEffect(() => {
-    if (propsRef.current.isLoadComplete) {
-      socket?.emit("game_ready");
-    }
-  }, [propsRef.current.isLoadComplete]);
 
   return null;
 }
