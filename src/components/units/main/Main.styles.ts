@@ -94,6 +94,22 @@ export const ImageWrapper = styled.div`
   position: relative;
   top: 35%;
 `;
+export const ImageLogo = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 0px;
+  width: 300px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+`;
+export const ImageVectorLeft = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-1000%, -0%);
+  top: 0px;
+  width: 16px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+`;
 export const ImageEllipse = styled.img`
   position: absolute;
   left: 50%;
@@ -184,4 +200,9 @@ export const BasicButton = styled.button`
     border: 2px solid #bd00fe;
     color: white;
   }
+`;
+export const MainBody = styled.div`
+  background-color: #1A1128;
+  height: calc(100% - 108px);
+  padding: 28px 16px 0px 16px;
 `;

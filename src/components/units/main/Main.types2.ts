@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
-
 export interface IMainUIProps {
   isClicked: boolean;
   handleClick: () => void;
@@ -16,7 +14,6 @@ export interface IMainUIProps {
   singer: string;
   setShowWaiting: (flag: boolean) => void;
   showWaiting: boolean;
-  setDummyUserId: Dispatch<SetStateAction<string>>;
   handleLoginClick: () => void;
   isLoginClicked: boolean;
   handleSignupClick: () => void;
@@ -30,4 +27,5 @@ export interface IMainUIProps {
   passwordCheck: string;
   nickname: string;
   handleEmailChange: () => void;
+  
 }

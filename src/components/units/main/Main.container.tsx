@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, ChangeEvent } from "react";
 import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
@@ -19,8 +19,44 @@ const Main = () => {
   const [isBattleClicked, setIsBattleClicked] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [isLoginClicked, setIsLoginClicked] = useState(false);
+  const [isSignupClicked, setIsSignupClicked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+    setEmailError("");
+  };
+
+  // const onChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setEmail(event.target.value);
+  // };
+
+  const onChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
+  const onChangePasswordCheck = (event: ChangeEvent<HTMLInputElement>) => {
+    setPasswordCheck(event.target.value);
+  };
+
+  const onChangeNickname = (event: ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
+  };
 
   const router = useRouter();
+
+  const handleSignupClick = () => {
+    setIsSignupClicked(true);
+  };
+
+  const handleLoginClick = () => {
+    setIsLoginClicked(true);
+  };
 
   const handleChangeAddress = () => {
     // 인게임 화면으로 전환
@@ -93,7 +129,6 @@ const Main = () => {
     const newSocket = socketConnect();
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
-    newSocket.on("disconnect", () => {});
   };
 
   const handleMatchCancel = () => {
@@ -170,6 +205,19 @@ const Main = () => {
     setShowWaiting,
     showWaiting,
     setDummyUserId,
+    handleLoginClick,
+    isLoginClicked,
+    handleSignupClick,
+    isSignupClicked,
+    email,
+    onChangePassword,
+    password,
+    onChangePasswordCheck,
+    passwordCheck,
+    onChangeNickname,
+    nickname,
+    handleEmailChange,
+    emailError,
   };
 
   return <MainUI {...props} />;
