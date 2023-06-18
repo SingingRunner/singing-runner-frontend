@@ -5,7 +5,7 @@ import { io, Socket } from "socket.io-client";
 // SocketContext 생성
 export interface ISocketContext {
   socket: Socket | null;
-  socketConnect: () => void;
+  socketConnect: () => Socket;
   socketDisconnect: () => void;
 }
 
@@ -24,6 +24,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     /* 로컬 테스트 시 사용 */
     // const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
+    return newSocket;
   };
 
   const socketDisconnect = () => {

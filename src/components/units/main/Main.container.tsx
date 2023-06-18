@@ -88,14 +88,12 @@ const Main = () => {
   };
 
   const handleBattleModeClick = () => {
-    // 소켓 연결
-    if (socket === null) socketConnect();
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
-    if (socket) {
-      // 소켓 연결 => 유저 정보 보내기
-      socket.emit("match_making", { UserMatchDto, accept: true });
-      socket.on("disconnect", () => {});
-    }
+    // 소켓 연결
+    const newSocket = socketConnect();
+    // 소켓 연결 => 유저 정보 보내기
+    newSocket.emit("match_making", { UserMatchDto, accept: true });
+    newSocket.on("disconnect", () => {});
   };
 
   const handleMatchCancel = () => {
