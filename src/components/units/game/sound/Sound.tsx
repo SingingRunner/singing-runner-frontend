@@ -1,6 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+} from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { IRival } from "../Game.types";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 const songFiles = [
   "/music/jjanggu_mr.wav",
@@ -27,6 +35,10 @@ interface ISoundProps {
 }
 
 export default function Sound(props: ISoundProps) {
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
   const [isFrozen, setFrozen] = useState(false);
@@ -105,8 +117,7 @@ export default function Sound(props: ISoundProps) {
           }
           return gainNode;
         });
-
-        props.setIsLoadComplete(true);
+        socket?.emit("game_ready");
       } catch (err) {
         console.log(err);
       }
@@ -147,6 +158,7 @@ export default function Sound(props: ISoundProps) {
         setPlayersScore={props.setPlayersScore}
         sources={sources}
         setRivals={props.setRivals}
+        setIsLoadComplete={props.setIsLoadComplete}
       />
     </>
   );
