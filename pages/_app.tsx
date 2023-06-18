@@ -24,13 +24,13 @@ const assetFiles = [
   "/game/item/keyDown.png",
   "/game/item/keyUp.png",
   "/game/item/mute.png",
-  "/game/item/shield.png",
   "/game/player/profile/cat0.png",
   "/game/player/profile/cat1.png",
   "/game/player/profile/cat2.png",
-  "/game/player/cat.glb",
+  "/game/player/beluga.glb",
+  "/game/player/husky.glb",
+  "/game/player/puma.glb",
   "/game/player/snowman.glb",
-  // Add more asset file paths as needed
 ];
 
 function getAsAttribute(filePath: string) {

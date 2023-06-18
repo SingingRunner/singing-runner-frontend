@@ -1,9 +1,15 @@
 // SocketContext.tsx
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 // SocketContext 생성
-export const SocketContext = createContext<Socket | null>(null);
+export interface ISocketContext {
+  socket: Socket | null;
+  socketConnect: () => void;
+  socketDisconnect: () => void;
+}
+
+export const SocketContext = createContext<ISocketContext | null>(null);
 
 interface SocketProviderProps {
   children: React.ReactNode;
@@ -12,13 +18,24 @@ interface SocketProviderProps {
 export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  useEffect(() => {
+  const socketConnect = () => {
+    /* 🚨 배포 시 사용 */
     const newSocket = io("https://injungle.shop", { path: "/api/socket.io" });
+    /* 로컬 테스트 시 사용 */
+    // const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
-    // return () => newSocket.disconnect();
-  }, []);
+  };
+
+  const socketDisconnect = () => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(null);
+    }
+  };
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{ socket, socketConnect, socketDisconnect }}>
+      {children}
+    </SocketContext.Provider>
   );
 };

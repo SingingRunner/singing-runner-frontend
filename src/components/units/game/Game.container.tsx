@@ -4,6 +4,7 @@ import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { useRecoilValue } from "recoil";
 import { usersIdInfoState } from "../../../commons/store";
+import { ITEM_DURATION } from "./itemInfo/ItemInfo";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
 const INIT_ITEM_EFFECT = {
@@ -14,11 +15,16 @@ const INIT_ITEM_EFFECT = {
   keyUp: false,
   shield: false,
 };
-const ITEM_DURATION = 5000; // 아이템 지속 시간
-const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
+
+const ITEM_GET_INTERVAL = 15000; // 아이템 발생 텀
+const UNMUTE_DECIBEL = -65; // mute 아이템을 해제시키는 데시벨 크기
 
 export default function Game() {
-  const socket = useContext(SocketContext);
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const usersIdInfo = useRecoilValue(usersIdInfoState);
 
   // ⭐️ 총 플레이어 수
@@ -126,7 +132,7 @@ export default function Game() {
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
     console.log("decibel", decibel);
-    if (isMuteActive && decibel > -60) offItem("mute");
+    if (isMuteActive && decibel > UNMUTE_DECIBEL) offItem("mute");
   };
 
   useEffect(() => {

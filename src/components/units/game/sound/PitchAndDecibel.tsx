@@ -72,7 +72,11 @@ interface IPitchAndDecibelProps {
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
-  const socket = useContext(SocketContext);
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
   const [, setUserIdInfoState] = useRecoilState(usersIdInfoState);

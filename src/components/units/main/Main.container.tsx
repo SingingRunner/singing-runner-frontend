@@ -5,7 +5,11 @@ import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 
 const Main = () => {
-  const socket = useContext(SocketContext);
+  // 소켓, 소켓 연결하는 함수 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket, socketConnect } = socketContext;
+
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
@@ -69,11 +73,15 @@ const Main = () => {
 
   const handleClick = () => {
     setIsClicked(true);
+    // 소켓 연결
+    if (socket === null) socketConnect();
     // handleChangeAddress(); 테스트용
   };
 
-  const UserMatchDTO = {
-    userId: "1",
+  // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
+  const [dummyUserId, setDummyUserId] = useState("");
+  const UserMatchDto = {
+    userId: dummyUserId,
     userMmr: 1000,
     nickName: "Tom",
     userActive: "connect",
@@ -84,13 +92,13 @@ const Main = () => {
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
     if (socket) {
       // 소켓 연결 => 유저 정보 보내기
-      socket.emit("match_making", { UserMatchDTO, accept: true }); // 보낼 정보: UserMatchDTO = {userId, userMMR: number, nickName: string, userActive: userActiveStatus }
+      socket.emit("match_making", { UserMatchDto, accept: true });
       socket.on("disconnect", () => {});
     }
   };
 
   const handleMatchCancel = () => {
-    socket?.emit("match_making", { UserMatchDTO, accept: false }); // 매칭 취소 백엔드에 알림.
+    socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
   };
@@ -162,6 +170,7 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
+    setDummyUserId,
   };
 
   return <MainUI {...props} />;

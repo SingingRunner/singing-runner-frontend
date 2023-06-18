@@ -20,6 +20,12 @@ const MainUI = (props: IMainUIProps) => {
           </S.ImageWrapper>
           {props.isClicked && ( // 1-2. START 클릭 후 모드 선택 화면
             <>
+              <input
+                type="text"
+                onChange={(e) => {
+                  props.setDummyUserId(e.target.value);
+                }}
+              />
               <ButtonWrapper>
                 <S.BasicButton
                   onClick={props.handleBattleModeClick}
