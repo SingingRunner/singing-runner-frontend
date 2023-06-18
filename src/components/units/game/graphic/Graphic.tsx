@@ -97,21 +97,23 @@ export default function Graphic(props: IGrapicProps) {
     // 각 플레이어가 처음에 생성될 위치
     const playerPositions: THREE.Vector3[] = [
       new THREE.Vector3(0, 0, -5.5), // 가운데
-      new THREE.Vector3(-1.3, 0, -5.5), // 오른쪽
-      new THREE.Vector3(1.3, 0, -5.5), // 왼쪽
+      new THREE.Vector3(-1.5, 0, -5.5), // 오른쪽
+      new THREE.Vector3(1.5, 0, -5.5), // 왼쪽
     ];
 
+    const characters = ["beluga", "puma", "husky"];
     for (let i = 0; i < props.totalPlayers; i++) {
-      gltfLoader.load("/game/player/cat.glb", (gltf) => {
+      gltfLoader.load(`/game/player/${characters[i]}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
-        player.scale.set(0.005, 0.005, 0.005);
+        if (i === 0) player.scale.set(0.6, 0.6, 0.6);
+        else player.scale.set(0.7, 0.7, 0.7);
         player.position.copy(playerPositions[i]);
 
         if (gltf.animations && gltf.animations.length > 0) {
           // 로드한 gltf 파일에 애니메이션이 있으면
           const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
-          const action = mixer.clipAction(gltf.animations[0]); // 애니메이션을 재생할 action 생성
-          action.timeScale = 3.0; // 애니메이션 재생 속도
+          const action = mixer.clipAction(gltf.animations[13]); // 애니메이션을 재생할 action 생성
+          // action.timeScale = 0.4; // 애니메이션 재생 속도
           action.play(); // 애니메이션 재생
           mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
           // 아이템 효과로 애니메이션을 정지/재생 시키기 위해서 action을 저장해둠

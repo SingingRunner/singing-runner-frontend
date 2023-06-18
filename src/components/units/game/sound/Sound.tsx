@@ -1,5 +1,14 @@
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+} from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
+import { IRival } from "../Game.types";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 const songFiles = [
   "/music/jjanggu_mr.wav",
@@ -18,25 +27,28 @@ interface ISoundProps {
     keyUp: boolean;
     shield: boolean;
   };
-  hideLoading: boolean;
-  setHideLoading: Dispatch<SetStateAction<boolean>>;
-  loading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
+  isLoadComplete: boolean;
+  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
+  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
 }
+
 export default function Sound(props: ISoundProps) {
-  const [isLoadComplete, setLoadComplete] = useState(false);
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
   const [isFrozen, setFrozen] = useState(false);
   const [isMute, setMute] = useState(false);
-  const [ans1Array, setAns1Array] = useState<number[]>([]);
-  const [ans2Array, setAns2Array] = useState<number[]>([]);
-  const [ans3Array, setAns3Array] = useState<number[]>([]);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
   const sources = useRef<AudioBufferSourceNode[]>([]);
+  const [originAnswer, setOriginAnswer] = useState<number[]>([]);
+  const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
+  const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
 
   useEffect(() => {
     // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
@@ -74,18 +86,12 @@ export default function Sound(props: ISoundProps) {
         const ans1Text = await ans1.text();
         const ans2Text = await ans2.text();
         const ans3Text = await ans3.text();
-        const ans1ArrayTmp = ans1Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns1Array(ans1ArrayTmp);
-        const ans2ArrayTmp = ans2Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns2Array(ans2ArrayTmp);
-        const ans3ArrayTmp = ans3Text.split(",").map((value) => {
-          return Number(value);
-        });
-        setAns3Array(ans3ArrayTmp);
+        const ans1Array = ans1Text.split(",").map((value) => Number(value));
+        setOriginAnswer(ans1Array);
+        const ans2Array = ans2Text.split(",").map((value) => Number(value));
+        setKeyUpAnswer(ans2Array);
+        const ans3Array = ans3Text.split(",").map((value) => Number(value));
+        setKeyDownAnswer(ans3Array);
         const response = await Promise.all(
           songFiles.map((file) => fetch(file))
         );
@@ -111,10 +117,7 @@ export default function Sound(props: ISoundProps) {
           }
           return gainNode;
         });
-
-        props.setHideLoading(true);
-        props.setLoading(false);
-        setLoadComplete(true);
+        socket?.emit("game_ready");
       } catch (err) {
         console.log(err);
       }
@@ -138,18 +141,11 @@ export default function Sound(props: ISoundProps) {
 
   return (
     <>
-      {/* <MR
-        mrKey={props.mrKey}
-        isLoadComplete={isLoadComplete}
-        setLoadComplete={setLoadComplete}
-        sources={sources}
-      /> */}
-
       <PitchAndDecibel
-        isLoadComplete={isLoadComplete}
-        originAnswer={ans1Array}
-        keyUpAnswer={ans2Array}
-        keyDownAnswer={ans3Array}
+        isLoadComplete={props.isLoadComplete}
+        originAnswer={originAnswer}
+        keyUpAnswer={keyUpAnswer}
+        keyDownAnswer={keyDownAnswer}
         isKeyUp={isKeyUp}
         isKeyDown={isKeyDown}
         isFrozen={isFrozen}
@@ -161,6 +157,8 @@ export default function Sound(props: ISoundProps) {
         setDecibel={props.setDecibel}
         setPlayersScore={props.setPlayersScore}
         sources={sources}
+        setRivals={props.setRivals}
+        setIsLoadComplete={props.setIsLoadComplete}
       />
     </>
   );

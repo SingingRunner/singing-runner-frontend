@@ -26,7 +26,11 @@ export interface IGameUIProps {
   useItem: (item: string) => void;
   offItem: (item: string) => void;
   decibel: number;
-  hideLoading: boolean;
-  loading: boolean;
+  isLoadComplete: boolean;
   progress: number;
+}
+
+export interface IRival {
+  userId: string;
+  character: string;
 }
