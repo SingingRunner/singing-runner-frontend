@@ -28,6 +28,8 @@ export interface IGameUIProps {
   decibel: number;
   isLoadComplete: boolean;
   progress: number;
+  startTime: number;
+  currentTime: number;
 }
 
 export interface IRival {
