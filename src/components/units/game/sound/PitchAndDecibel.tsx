@@ -117,9 +117,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   useEffect(() => {
     const scoreListener = (data) => {
+      console.log(data);
+      console.log(usersIdInfo);
       usersIdInfo.forEach((userId, i) => {
         if (userId === data.user) {
-          props.setPlayersScore((prev) => {
+          console.log(userId);
+          propsRef.current.setPlayersScore((prev) => {
             const newScore = [...prev];
             newScore[i] = data.score;
             return newScore;
@@ -155,8 +158,9 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
     if (answer[idx] === 0) {
       ignoreCount++;
+    } else {
+      totalScore += score;
     }
-    totalScore += score;
     if (++currentIdx !== ignoreCount) {
       currentScore = Math.round(totalScore / (currentIdx - ignoreCount));
     }
@@ -167,7 +171,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     });
 
     // 서버에 현재 유저의 점수 전송
-    console.log(currentScore);
     socket?.emit("score", currentScore);
 
     return currentScore;
@@ -196,8 +199,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         if (elapsedTime > avgPitchWindowSize) {
           if (pitchSamples <= 0) {
             pitchAveragesRef.current.push(0);
-            currentIdx++;
-            ignoreCount++;
+            calculateScore(0, currentIdx);
           } else {
             const averagePitch = avgPitch / pitchSamples;
             const avgMIDINoteValue = Math.round(averagePitch);
