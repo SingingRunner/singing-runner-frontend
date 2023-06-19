@@ -167,13 +167,35 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     });
 
     // 서버에 현재 유저의 점수 전송
-    console.log(currentScore);
     socket?.emit("score", currentScore);
 
     return currentScore;
   };
 
   const handleAudioStream = (stream: MediaStream) => {
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks: Blob[] = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+    mediaRecorder.onstop = (e) => {
+      const blob = new Blob(chunks, { type: "audio/ogg" });
+      const audioURL = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = audioURL;
+      // 추후 수정 필요
+      a.download = "audio.ogg";
+      a.click();
+      // 여기에 게임 종료 이벤트 추가하면 됨
+    };
+    mediaRecorder.start();
+
+    console.log(propsRef.current.sources.current[0]);
+    propsRef.current.sources.current[0].onended = () => {
+      mediaRecorder.stop();
+    };
+
     audioContext = new window.AudioContext();
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
     analyzer = audioContext.createAnalyser();
