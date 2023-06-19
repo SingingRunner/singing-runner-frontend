@@ -61,6 +61,8 @@ interface IPitchAndDecibelProps {
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
   setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
+  setStartTime: Dispatch<SetStateAction<number>>;
+  setCurrentTime: Dispatch<SetStateAction<number>>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
@@ -94,6 +96,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     sources.current.forEach((source) => {
       source.start();
     });
+    props.setStartTime(new Date().getTime());
 
     // const myId = socket?.id;
     // const otherUsers = userData.filter((user: any) => user !== myId);
@@ -238,6 +241,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const frequencyArray = new Uint8Array(bufferLength);
 
     const processAudio = () => {
+      props.setCurrentTime(new Date().getTime());
       analyzer?.getFloatTimeDomainData(dataArray);
       analyzer?.getByteFrequencyData(frequencyArray);
       let sum = 0;

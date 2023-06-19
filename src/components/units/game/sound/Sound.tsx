@@ -32,6 +32,8 @@ interface ISoundProps {
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
   setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
+  setStartTime: Dispatch<SetStateAction<number>>;
+  setCurrentTime: Dispatch<SetStateAction<number>>;
 }
 
 export default function Sound(props: ISoundProps) {
@@ -159,6 +161,8 @@ export default function Sound(props: ISoundProps) {
         sources={sources}
         setRivals={props.setRivals}
         setIsLoadComplete={props.setIsLoadComplete}
+        setStartTime={props.setStartTime}
+        setCurrentTime={props.setCurrentTime}
       />
     </>
   );
