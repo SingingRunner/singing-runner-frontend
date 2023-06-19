@@ -28,15 +28,13 @@ interface ILyricProps {
 
 function Lyric(props: ILyricProps) {
   const [lyricIdx, setLyricIdx] = useState(0);
-  const realIdx = useRef(0);
   const endLyric = useRef(data[0].timeStamp);
 
   useEffect(() => {
     const { startTime, currentTime } = props;
     const diff = Math.floor((currentTime - startTime) / 100) * 100;
     if (diff >= endLyric.current && lyricIdx < data.length - 1) {
-      endLyric.current = data[realIdx.current + 1].timeStamp;
-      realIdx.current++;
+      endLyric.current = data[lyricIdx + 1].timeStamp;
       setLyricIdx((prev) => prev + 1);
     }
   }, [props]);
