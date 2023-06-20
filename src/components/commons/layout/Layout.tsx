@@ -10,7 +10,6 @@ interface ILayoutProps {
 const NO_LAYOUT = ["/game"];
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
-  console.log(router.asPath);
 
   return (
     <>

@@ -101,19 +101,16 @@ export default function Graphic(props: IGrapicProps) {
       new THREE.Vector3(1.5, 0, -5.5), // 왼쪽
     ];
 
-    const characters = ["beluga", "puma", "husky"];
-    for (let i = 0; i < props.totalPlayers; i++) {
+    const characters = props.playersInfo.map((player) => player.character);
+    for (let i = 0; i < props.playersInfo.length; i++) {
       gltfLoader.load(`/game/player/${characters[i]}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
-        if (i === 0) player.scale.set(0.6, 0.6, 0.6);
-        else player.scale.set(0.7, 0.7, 0.7);
+        player.scale.set(0.7, 0.7, 0.7);
         player.position.copy(playerPositions[i]);
 
         if (gltf.animations && gltf.animations.length > 0) {
-          // 로드한 gltf 파일에 애니메이션이 있으면
           const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
           const action = mixer.clipAction(gltf.animations[13]); // 애니메이션을 재생할 action 생성
-          // action.timeScale = 0.4; // 애니메이션 재생 속도
           action.play(); // 애니메이션 재생
           mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
           // 아이템 효과로 애니메이션을 정지/재생 시키기 위해서 action을 저장해둠
@@ -175,9 +172,9 @@ export default function Graphic(props: IGrapicProps) {
 
   useEffect(() => {
     if (players) {
-      const mid = props.playersScore[0];
-      const right = props.playersScore[1];
-      const left = props.playersScore[2];
+      const mid = props.playersInfo[0].score;
+      const right = props?.playersInfo[1]?.score;
+      const left = props?.playersInfo[2]?.score;
 
       if (mid > right && playersMovedPosition[0] <= playersMovedPosition[1]) {
         movePlayer(0, "forward");
@@ -212,7 +209,7 @@ export default function Graphic(props: IGrapicProps) {
         movePlayer(2, "backward");
       }
     }
-  }, [props.playersScore]);
+  }, [props.playersInfo]);
 
   /** player의 위치를 1씩 이동하는 함수 */
   const movePlayer = (index: number, direction: "forward" | "backward") => {

@@ -38,8 +38,7 @@ export default function GameUI(props: IGameUIProps) {
         // 로딩화면 끝, 게임 시작
         <>
           <Graphic
-            playersScore={props.playersScore}
-            totalPlayers={props.totalPlayers}
+            playersInfo={props.playersInfo}
             activeItem={props.activeItem}
             setActiveItem={props.setActiveItem}
             playersActiveItem={props.playersActiveItem}
@@ -48,15 +47,17 @@ export default function GameUI(props: IGameUIProps) {
           />
           <S.Wrapper>
             {isItemActivated && <S.ItemEffectWrapper />}
-            {/* ⭐️ 제목 - 가수 */}
-            <S.Title>짱구는 못말려 - Various Artists</S.Title>
+            {/* 🚨 제목 - 가수 */}
+            <S.Title>
+              {props.songInfo.title} - {props.songInfo.singer}
+            </S.Title>
             <Lyric startTime={props.startTime} />
             <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
             <RankList
+              playersInfo={props.playersInfo}
               playersActiveItem={props.playersActiveItem}
-              playersScore={props.playersScore}
             />
-            <ItemList itemList={props.itemList} useItem={props.useItem} />
+            <ItemList />
           </S.Wrapper>
         </>
       )}

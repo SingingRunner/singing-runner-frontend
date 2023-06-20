@@ -1,7 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface IGameUIProps {
-  playersScore: number[];
+  songInfo: {
+    title: string;
+    singer: string;
+  };
+  playersInfo: IPlayersInfo[];
   totalPlayers: number;
   activeItem: {
     mute: boolean;
@@ -22,8 +26,6 @@ export interface IGameUIProps {
     }>
   >;
   playersActiveItem: string[];
-  itemList: string[];
-  useItem: (item: string) => void;
   offItem: (item: string) => void;
   decibel: number;
   isLoadComplete: boolean;
@@ -31,7 +33,9 @@ export interface IGameUIProps {
   startTime: number;
 }
 
-export interface IRival {
+export interface IPlayersInfo {
   userId: string;
   character: string;
+  activeItem: string;
+  score: number;
 }

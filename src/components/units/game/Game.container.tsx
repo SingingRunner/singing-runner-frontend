@@ -2,13 +2,11 @@
 import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
-// import { useRecoilValue } from "recoil";
-// import { usersIdInfoState } from "../../../commons/store";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useRecoilValue } from "recoil";
 import { userInfoState } from "../../../commons/store";
-import { IRival } from "./Game.types";
+import { IPlayersInfo } from "./Game.types";
 
 const INIT_ITEM_EFFECT = {
   mute: false,
@@ -19,7 +17,6 @@ const INIT_ITEM_EFFECT = {
   shield: false,
 };
 
-const ITEM_GET_INTERVAL = 15000; // 아이템 발생 텀
 const UNMUTE_DECIBEL = -65; // mute 아이템을 해제시키는 데시벨 크기
 
 export default function Game() {
@@ -29,15 +26,19 @@ export default function Game() {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
+  const [songInfo, setSongInfo] = useState({ title: "", singer: "" });
   // 현재 플레이어의 정보
   const userInfo = useRecoilValue(userInfoState);
 
-  // 라이벌 정보
-  const [rivals, setRivals] = useState<IRival[]>();
-
-  useEffect(() => {
-    // rival 수에 따라서 position 조정
-  }, [rivals]);
+  // 전체 유저의 정보
+  const [playersInfo, setPlayersInfo] = useState<IPlayersInfo[]>([
+    {
+      userId: userInfo.userId,
+      character: userInfo.character,
+      activeItem: "",
+      score: 0,
+    },
+  ]);
 
   // ⭐️ 현재의 mrKey를 저장하는 상태 -> 현재 유저의 기본 설정값으로 초기화
   const [mrKey, setMrKey] = useState(userInfo.userKeynote);
@@ -46,9 +47,6 @@ export default function Game() {
   const [decibel, setDecibel] = useState(0);
   // mute 공격을 당한 경우, 데시벨 측정 시작을 위한 상태
   const [isMuteActive, setIsMuteActive] = useState(false);
-
-  // 모든 유저의 점수를 관리하는 상태 (현재 플레이어, rival0, rival1)
-  const [playersScore, setPlayersScore] = useState([0, 0, 0]);
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [activeItem, setActiveItem] = useState({ ...INIT_ITEM_EFFECT });
   // 모든 유저들의 활성화된 아이템을 프로필 옆에 나타내기 위해 저장하는 상태 (["나", "오른쪽", "왼쪽"])
@@ -57,7 +55,6 @@ export default function Game() {
   // 로딩 화면을 관리하는 상태
   const [isLoadComplete, setIsLoadComplete] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [itemList, setItemList] = useState([""]);
   const [startTime, setStartTime] = useState(0);
 
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
@@ -169,77 +166,26 @@ export default function Game() {
     }
   };
 
-  // 가지고 있는 아이템 목록
-  useEffect(() => {
-    // 10초 간격으로 아이템 획득 요청
-    const interval = setInterval(() => {
-      socket?.emit("get_item");
-    }, ITEM_GET_INTERVAL);
-
-    // 🚨 아이템 받기
-    if (socket) {
-      socket.on("get_item", (item: string) => {
-        getItem(item);
-      });
-    }
-
-    return () => {
-      clearInterval(interval); // 컴포넌트가 언마운트될 때 interval을 정리합니다.
-    };
-  }, [socket]);
-
-  /** 아이템 획득 함수 */
-  const getItem = (item: string) => {
-    setItemList((prev) => {
-      const temp = [...prev];
-      if (temp.length === 2) {
-        // itemList에 아이템이 두 개 있을 때
-        temp.shift(); // 첫 번째 아이템을 제거
-      }
-      temp.push(item);
-      return temp;
-    });
-  };
-
-  /** 아이템 사용 함수 */
-  const useItem = (item: string) => {
-    /* 🚨 아이템 사용 */
-    socket?.emit("use_item", item);
-    setItemList((prev) => {
-      // 같은 아이템이 두 개 있으면 하나만 제거
-      if (prev[0] === prev[1]) return prev.slice(1);
-      return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
-    });
-    // keyUp과 keyDown은 현재 유저에게도 공격이 들어감
-    if (item === "keyUp" || item === "keyDown") onItem(item);
-    // ⭐️ 나머지 아이템들은 현재 유저를 제외한 나머지 플레이어들에게 아이템 공격 표시
-    if (item === "mute") {
-      changePlayersActiveItem(1, item);
-      changePlayersActiveItem(2, item);
-    }
-  };
-
   return (
     <>
       <GameUI
+        songInfo={songInfo}
+        playersInfo={playersInfo}
         decibel={decibel}
-        playersScore={playersScore}
         totalPlayers={totalPlayers}
         activeItem={activeItem}
         setActiveItem={setActiveItem}
         playersActiveItem={playersActiveItem}
-        itemList={itemList}
-        useItem={useItem}
         offItem={offItem}
         isLoadComplete={isLoadComplete}
         progress={progress}
         startTime={startTime}
       />
       <Sound
-        setRivals={setRivals}
+        setSongInfo={setSongInfo}
         mrKey={mrKey}
         setDecibel={setDecibel}
-        setPlayersScore={setPlayersScore}
+        setPlayersInfo={setPlayersInfo}
         activeItem={activeItem}
         isLoadComplete={isLoadComplete}
         setIsLoadComplete={setIsLoadComplete}

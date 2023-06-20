@@ -1,35 +1,27 @@
 import styled from "@emotion/styled";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { IPlayersInfo } from "../Game.types";
+import { userInfoState } from "../../../../commons/store";
+import { useRecoilValue } from "recoil";
 
-function RankList(props: IRankListProps) {
-  const [sortedData, setSortedData] = useState<
-    Array<{
-      activeItem: string;
-      score: number;
-      idx: number;
-    }>
-  >();
+export default function RankList(props: IRankListProps) {
+  // 현재 플레이어의 정보
+  const userInfo = useRecoilValue(userInfoState);
+  const [sortedData, setSortedData] = useState<IPlayersInfo[]>();
   useEffect(() => {
-    if (props.playersScore) {
-      const data = ["", "", ""].map((_, i) => ({
-        activeItem: props.playersActiveItem[i],
-        score: props.playersScore[i],
-        idx: i,
-      }));
-      const temp = data?.sort((a, b) => b.score - a.score);
-      setSortedData([...temp]);
-    }
-  }, [...props.playersScore, props.playersActiveItem]);
+    const temp = props.playersInfo?.sort((a, b) => b.score - a.score);
+    setSortedData([...temp]);
+  }, [props.playersInfo]);
 
   return (
     <RankWrapper>
       {sortedData?.map((el, i) => {
         return (
-          <Rank key={i} isCurrentUser={el.idx === 0}>
+          <Rank key={i} isCurrentUser={el.userId === userInfo.userId}>
             <span>{i + 1}</span>
             <Profile
-              isCurrentUser={el.idx === 0}
-              src={`/game/player/profile/cat2.png`}
+              isCurrentUser={el.userId === userInfo.userId}
+              src={`/game/player/profile/${el.character}.png`}
             />
             {el.activeItem && (
               <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
@@ -41,7 +33,6 @@ function RankList(props: IRankListProps) {
     </RankWrapper>
   );
 }
-export default memo(RankList);
 
 const RankWrapper = styled.div`
   display: flex;
@@ -97,5 +88,5 @@ const ItemEffect = styled.img`
 
 interface IRankListProps {
   playersActiveItem: string[];
-  playersScore: number[];
+  playersInfo: IPlayersInfo[];
 }

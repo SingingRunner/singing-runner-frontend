@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
+import { IPlayersInfo } from "../Game.types";
 
 export interface IGrapicProps {
-  playersScore: number[];
-  totalPlayers: number;
+  playersInfo: IPlayersInfo[];
   activeItem: {
     mute: boolean;
     frozen: boolean;

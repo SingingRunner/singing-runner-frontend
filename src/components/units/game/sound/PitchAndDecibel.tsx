@@ -1,9 +1,6 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
-import { useRecoilValue } from "recoil";
-import { usersIdInfoState } from "../../../../commons/store";
+import { useContext, useEffect, useRef } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { IRival } from "../Game.types";
-import { tempRivals } from "../../game/tempDummyData";
+import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -43,34 +40,12 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   else return 30;
 };
 
-interface IPitchAndDecibelProps {
-  isLoadComplete: boolean;
-  originAnswer: number[];
-  keyUpAnswer: number[];
-  keyDownAnswer: number[];
-  isKeyUp: boolean;
-  setKeyUp: Dispatch<SetStateAction<boolean>>;
-  isKeyDown: boolean;
-  setKeyDown: Dispatch<SetStateAction<boolean>>;
-  isFrozen: boolean;
-  setFrozen: Dispatch<SetStateAction<boolean>>;
-  isMute: boolean;
-  setMute: Dispatch<SetStateAction<boolean>>;
-  setDecibel: Dispatch<SetStateAction<number>>;
-  setPlayersScore: Dispatch<SetStateAction<number[]>>;
-  sources: React.MutableRefObject<AudioBufferSourceNode[]>;
-  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
-  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
-  setStartTime: Dispatch<SetStateAction<number>>;
-}
-
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
 
   const avgPitchWindowSize = 3000;
@@ -90,47 +65,36 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     propsRef.current = props;
   }, [props]);
 
-  const gameReady = (userData) => {
+  useEffect(() => {
+    socket?.on("game_ready", gameReady);
+    socket?.on("score", scoreListener);
+  }, [socket]);
+
+  const gameReady = () => {
     const sources = propsRef.current.sources;
     sources.current.forEach((source) => {
       source.start();
     });
     props.setStartTime(new Date().getTime());
-
-    // const myId = socket?.id;
-    // const otherUsers = userData.filter((user: any) => user !== myId);
-    // setUserIdInfoState([myId, ...otherUsers]);
-
-    // 🚨 현재 유저 제외한 라이벌들의 정보 저장 (캐릭터 정보 포함)
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(handleAudioStream)
       .catch((error) => {
         console.error("Error accessing microphone:", error);
       });
-
     props.setIsLoadComplete(true);
-    props.setRivals(tempRivals);
   };
 
-  useEffect(() => {
-    socket?.on("game_ready", gameReady);
-  }, [socket]);
-
-  useEffect(() => {
-    const scoreListener = (data) => {
-      usersIdInfo.forEach((userId, i) => {
-        if (userId === data.user) {
-          propsRef.current.setPlayersScore((prev) => {
-            const newScore = [...prev];
-            newScore[i] = data.score;
-            return newScore;
-          });
-        }
-      });
-    };
-    socket?.on("score", scoreListener);
-  }, [socket, usersIdInfo]);
+  const scoreListener = (data: ISocketScore) => {
+    props.setPlayersInfo((prev) => {
+      const temp = [...prev];
+      const idx = temp.findIndex(
+        (newScoreEl) => newScoreEl.userId === data.user
+      );
+      if (idx !== -1) temp[idx].score = data.score;
+      return temp;
+    });
+  };
 
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
@@ -163,11 +127,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     if (++currentIdx !== ignoreCount) {
       currentScore = Math.round(totalScore / (currentIdx - ignoreCount));
     }
-    propsRef.current.setPlayersScore((prev) => {
-      const newScore = [...prev];
-      newScore[0] = currentScore;
-      return newScore;
-    });
 
     // 서버에 현재 유저의 점수 전송
     socket?.emit("score", currentScore);
@@ -250,10 +209,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         propsRef.current.setDecibel(decibel);
       }
       pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
-
       requestAnimationFrame(processAudio);
     };
-
     processAudio();
   };
 
