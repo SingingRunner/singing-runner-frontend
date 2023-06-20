@@ -73,7 +73,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const usersIdInfo = useRecoilValue(usersIdInfoState);
   const pitchAveragesRef = useRef<number[]>([]);
 
-  const avgPitchWindowSize = 3;
+  const avgPitchWindowSize = 3000;
   let avgPitch: number = 0;
   let pitchSamples: number = 0;
   let startTime: number = 0;
@@ -245,8 +245,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         sum += frequencyArray[i];
       }
       const avg = sum / frequencyArray.length;
-      const decibel = calculateDecibel(avg);
-      propsRef.current.setDecibel(decibel);
+      if (props.isMute) {
+        const decibel = calculateDecibel(avg);
+        propsRef.current.setDecibel(decibel);
+      }
       pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
 
       requestAnimationFrame(processAudio);
