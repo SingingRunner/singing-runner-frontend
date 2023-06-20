@@ -77,56 +77,62 @@ export default function Sound(props: ISoundProps) {
   }, [props.activeItem]);
 
   useEffect(() => {
-    audioCtxRef.current = new window.AudioContext();
-    const audioCtx = audioCtxRef.current;
-    const fetchFiles = async () => {
-      try {
-        const ans1 = await fetch("/origin.txt");
-        const ans2 = await fetch("/keyUp.txt");
-        const ans3 = await fetch("/keyDown.txt");
-        const ans1Text = await ans1.text();
-        const ans2Text = await ans2.text();
-        const ans3Text = await ans3.text();
-        const ans1Array = ans1Text.split(",").map((value) => Number(value));
-        setOriginAnswer(ans1Array);
-        const ans2Array = ans2Text.split(",").map((value) => Number(value));
-        setKeyUpAnswer(ans2Array);
-        const ans3Array = ans3Text.split(",").map((value) => Number(value));
-        setKeyDownAnswer(ans3Array);
-        const response = await Promise.all(
-          songFiles.map((file) => fetch(file))
-        );
-        const arrayBuffers = await Promise.all(
-          response.map((res) => res.arrayBuffer())
-        );
-        const audioBuffers = await Promise.all(
-          arrayBuffers.map((data) => {
-            props.setProgress(props.progress + 30);
-            return audioCtx.decodeAudioData(data);
-          })
-        );
+    if (socket) {
+      socket.emit("loading");
+      audioCtxRef.current = new window.AudioContext();
+      const audioCtx = audioCtxRef.current;
+      const fetchFiles = async () => {
+        try {
+          console.log(props);
+          const ans1 = await fetch("/origin.txt");
+          const ans2 = await fetch("/keyUp.txt");
+          const ans3 = await fetch("/keyDown.txt");
+          const ans1Text = await ans1.text();
+          const ans2Text = await ans2.text();
+          const ans3Text = await ans3.text();
+          const ans1Array = ans1Text.split(",").map((value) => Number(value));
+          setOriginAnswer(ans1Array);
+          const ans2Array = ans2Text.split(",").map((value) => Number(value));
+          setKeyUpAnswer(ans2Array);
+          const ans3Array = ans3Text.split(",").map((value) => Number(value));
+          setKeyDownAnswer(ans3Array);
+          const response = await Promise.all(
+            songFiles.map(async (file) => {
+              const result = await fetch(file);
+              props.setProgress(props.progress + 30);
+              return result;
+            })
+          );
+          const arrayBuffers = await Promise.all(
+            response.map((res) => res.arrayBuffer())
+          );
+          const audioBuffers = await Promise.all(
+            arrayBuffers.map((data) => {
+              return audioCtx.decodeAudioData(data);
+            })
+          );
 
-        gainNodes.current = audioBuffers.map((buffer, i) => {
-          const gainNode = audioCtx.createGain();
-          gainNode.gain.value = 0; // Start all audios muted
-          const source = audioCtx.createBufferSource();
-          source.buffer = buffer;
-          source.connect(gainNode).connect(audioCtx.destination);
-          sources.current[i] = source;
-          if (i === 0) {
-            gainNode.gain.value = 1;
-          }
-          return gainNode;
-        });
-        socket?.emit("game_ready");
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchFiles().catch((err) => {
-      console.log(err);
-    });
-  }, []);
+          gainNodes.current = audioBuffers.map((buffer, i) => {
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0; // Start all audios muted
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(gainNode).connect(audioCtx.destination);
+            sources.current[i] = source;
+            if (i === 0) {
+              gainNode.gain.value = 1;
+            }
+            return gainNode;
+          });
+          socket?.emit("game_ready");
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      // 로딩 화면에서 소켓 통신으로 노래 data 받음
+      socket.on("loading", fetchFiles);
+    }
+  }, [socket]);
 
   const changeMRKey = (index: number) => {
     gainNodes.current.forEach((gainNode, i) => {

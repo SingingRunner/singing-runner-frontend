@@ -219,17 +219,6 @@ export default function Game() {
     }
   };
 
-  if (socket) {
-    // 로딩 화면에서 소켓 통신으로 노래 data 받음
-    socket.on("loading", async () => {
-      await fetch("/music/snowflower_origin.wav");
-      await fetch("/music/snowflower_3keyup.wav");
-      await fetch("/music/snowflower_3keydown.wav");
-
-      console.log("true received");
-    });
-  }
-
   return (
     <>
       <GameUI
