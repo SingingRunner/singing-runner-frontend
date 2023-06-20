@@ -62,7 +62,6 @@ interface IPitchAndDecibelProps {
   setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   setStartTime: Dispatch<SetStateAction<number>>;
-  setCurrentTime: Dispatch<SetStateAction<number>>;
 }
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
@@ -120,11 +119,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   useEffect(() => {
     const scoreListener = (data) => {
-      console.log(data);
-      console.log(usersIdInfo);
       usersIdInfo.forEach((userId, i) => {
         if (userId === data.user) {
-          console.log(userId);
           propsRef.current.setPlayersScore((prev) => {
             const newScore = [...prev];
             newScore[i] = data.score;
@@ -198,7 +194,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     };
     mediaRecorder.start();
 
-    console.log(propsRef.current.sources.current[0]);
     propsRef.current.sources.current[0].onended = () => {
       mediaRecorder.stop();
     };
@@ -211,7 +206,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     pitchWorker.addEventListener("message", (event) => {
       const pitch: number = event.data.pitch;
-      console.log(pitch, new Date().getTime() - event.data.time);
       if (pitch != null && pitch > 0) {
         avgPitch += pitchToMIDINoteValue(pitch);
         pitchSamples++;
@@ -244,7 +238,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const frequencyArray = new Uint8Array(bufferLength);
 
     const processAudio = () => {
-      props.setCurrentTime(new Date().getTime());
       analyzer?.getFloatTimeDomainData(dataArray);
       analyzer?.getByteFrequencyData(frequencyArray);
       let sum = 0;

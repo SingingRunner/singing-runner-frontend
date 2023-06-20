@@ -50,10 +50,7 @@ export default function GameUI(props: IGameUIProps) {
             {isItemActivated && <S.ItemEffectWrapper />}
             {/* ⭐️ 제목 - 가수 */}
             <S.Title>짱구는 못말려 - Various Artists</S.Title>
-            <Lyric
-              startTime={props.startTime}
-              currentTime={props.currentTime}
-            />
+            <Lyric startTime={props.startTime} />
             <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
             <RankList
               playersActiveItem={props.playersActiveItem}

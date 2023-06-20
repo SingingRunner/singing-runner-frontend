@@ -29,7 +29,6 @@ export interface IGameUIProps {
   isLoadComplete: boolean;
   progress: number;
   startTime: number;
-  currentTime: number;
 }
 
 export interface IRival {

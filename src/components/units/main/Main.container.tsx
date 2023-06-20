@@ -31,7 +31,6 @@ const Main = () => {
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
           console.log("accept true received");
-          socket.emit("loading");
           handleChangeAddress(); // 인게임 화면으로 전환
         } else {
           // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기

@@ -23,37 +23,43 @@ const data = [
 
 interface ILyricProps {
   startTime: number;
-  currentTime: number;
 }
 
 function Lyric(props: ILyricProps) {
   const [lyricIdx, setLyricIdx] = useState(0);
   const endLyric = useRef(data[0].timeStamp);
+  const lyricRef = useRef(0);
 
   useEffect(() => {
-    const { startTime, currentTime } = props;
-    const diff = Math.floor((currentTime - startTime) / 100) * 100;
-    if (diff >= endLyric.current && lyricIdx < data.length - 1) {
-      endLyric.current = data[lyricIdx + 1].timeStamp;
-      setLyricIdx((prev) => prev + 1);
+    if (props.startTime !== 0) {
+      console.log(props.startTime);
+      let cnt = 0;
+      const changeLyric = () => {
+        if (cnt++ % 3 === 0) {
+          const currentTime = new Date().getTime();
+          const diff = Math.floor((currentTime - props.startTime) / 100) * 100;
+          if (diff >= endLyric.current && lyricRef.current < data.length - 1) {
+            endLyric.current = data[lyricRef.current + 1].timeStamp;
+            setLyricIdx((prev) => prev + 1);
+            lyricRef.current++;
+          }
+        }
+        requestAnimationFrame(changeLyric);
+      };
+      changeLyric();
     }
-  }, [props]);
+  }, [props.startTime]);
 
   return (
     <LyricWrapper>
       {/* ⭐️ 탈주 메시지 */}
       {/* <DisconnectMsg>겁쟁이 “머기조”님이 탈주했습니다!</DisconnectMsg> */}
-      <TextWrapper>
-        <Text key={lyricIdx}>{data[lyricIdx].lyrics}</Text>
-        {lyricIdx < data.length - 1 ? (
-          <Text key={lyricIdx + 1}>{data[lyricIdx + 1].lyrics}</Text>
-        ) : (
-          <></>
-        )}
-        {/* {data.map((item, i) => (
-          <Text key={i}>{item.lyrics}</Text>
-        ))} */}
-      </TextWrapper>
+      <Text key={lyricIdx}>{data[lyricIdx].lyrics}</Text>
+      {lyricIdx < data.length - 1 ? (
+        <Text key={lyricIdx + 1}>{data[lyricIdx + 1].lyrics}</Text>
+      ) : (
+        <></>
+      )}
     </LyricWrapper>
   );
 }
@@ -85,14 +91,6 @@ const LyricWrapper = styled.div`
 //   color: #c70707;
 //   text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
 // `;
-
-const TextWrapper = styled.div`
-  overflow: scroll;
-  height: 70%;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
 
 const Text = styled.p`
   font-size: 16px;
