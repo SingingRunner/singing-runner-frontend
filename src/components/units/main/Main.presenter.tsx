@@ -4,7 +4,7 @@ import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
 
-const MainUI = (props: IMainUIProps) => {
+export default function MainUI(props: IMainUIProps) {
   return (
     <>
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
@@ -17,6 +17,4 @@ const MainUI = (props: IMainUIProps) => {
       {/* 4. 매칭 완료 후 대기 모달 */}
     </>
   );
-};
-
-export default MainUI;
+}

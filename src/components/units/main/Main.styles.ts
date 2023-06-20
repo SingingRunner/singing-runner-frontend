@@ -94,6 +94,44 @@ export const ImageWrapper = styled.div`
   position: relative;
   top: 35%;
 `;
+export const ImageLogo = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 0px;
+  width: 300px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+`
+;export const ImageWrapper2 = styled.div`
+display: flex;
+position: relative;
+justify-content: center;
+align-items: center;
+height: 100vh;
+/* overflow: hidden; */
+/* top: 35%; */
+`;
+export const ImageLogo2 = styled.img`
+
+position: absolute;
+width: 300px; /* Set the desired width */
+height: auto; /* Adjust the height proportionally */
+position: absolute;
+top: 35%;
+left: 45%;
+transform: translate(-50%, -50%);
+/* object-fit: cover; */
+/* left: 50%; */
+/* top: px; */
+`;
+export const ImageVectorLeft = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-1000%, -0%);
+  top: 0px;
+  width: 16px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+`;
 export const ImageEllipse = styled.img`
   position: absolute;
   left: 50%;
@@ -142,7 +180,7 @@ export const StartButton = styled.button`
   }
 `;
 export const MatchButton = styled.button`
-  width: 100%;
+  width: calc(100% - 32px);;
   justify-content: center;
   align-items: center;
   height: 48px;
@@ -153,6 +191,7 @@ export const MatchButton = styled.button`
   box-shadow: 0px 0px 15px 5px rgba(189, 0, 254, 0.5);
   color: #ffffff;
   transition: 0.25s;
+  margin-bottom: 16px;
 `;
 export const MatchCancelButton = styled.button`
   width: 100%;
@@ -184,4 +223,9 @@ export const BasicButton = styled.button`
     border: 2px solid #bd00fe;
     color: white;
   }
+`;
+export const MainBody = styled.div`
+  background-color: #1A1128;
+  height: calc(100% - 108px);
+  padding: 28px 16px 0px 16px;
 `;

@@ -35,7 +35,7 @@ export const Button = styled.button`
   }}
   ${(props: IButtonProps) => {
     switch (props.buttonType) {
-      case buttonType.GRADAION:
+      case buttonType.GRADATION:
         return `
         background: linear-gradient(90deg, #8b50f2 0%, #bd00fe 100%);
         box-shadow: 0px 0px 10px #bd00fe;

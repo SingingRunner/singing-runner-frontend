@@ -20,6 +20,10 @@ const Main = () => {
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
+  // const dummyClick = () => {
+  //   console.log("dummy");
+  // };
+
   const router = useRouter();
 
   const handleChangeAddress = () => {
@@ -92,7 +96,6 @@ const Main = () => {
     const newSocket = socketConnect();
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
-    newSocket.on("disconnect", () => {});
   };
 
   const handleMatchCancel = () => {

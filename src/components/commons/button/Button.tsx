@@ -7,7 +7,7 @@ interface IButtonProps {
   isFixedAtBottomSecond?: boolean; // 화면의 맨 밑에 있는 버튼 바로 위의 버튼
 }
 export enum buttonType {
-  "GRADAION",
+  "GRADATION",
   "EMPTY",
   "DISABLED",
   "ONECOLOR",
