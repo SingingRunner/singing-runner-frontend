@@ -17,17 +17,4 @@ export interface IMainUIProps {
   setShowWaiting: (flag: boolean) => void;
   showWaiting: boolean;
   setDummyUserId: Dispatch<SetStateAction<string>>;
-  handleLoginClick: () => void;
-  isLoginClicked: boolean;
-  handleSignupClick: () => void;
-  isSignupClicked: boolean;
-  onChangeEmail: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangePassword: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangePasswordCheck: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  email: string;
-  password: string;
-  passwordCheck: string;
-  nickname: string;
-  handleEmailChange: () => void;
 }
