@@ -59,7 +59,6 @@ export default function Game() {
   const [progress, setProgress] = useState(0);
   const [itemList, setItemList] = useState([""]);
   const [startTime, setStartTime] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
 
   /** 유저들의 활성화된 아이템을 변경하는 함수 */
   // 🚨 1 - 다른 유저들에게 공격이 들어가면 호출
@@ -246,7 +245,6 @@ export default function Game() {
         isLoadComplete={isLoadComplete}
         progress={progress}
         startTime={startTime}
-        currentTime={currentTime}
       />
       <Sound
         setRivals={setRivals}
@@ -259,7 +257,6 @@ export default function Game() {
         progress={progress}
         setProgress={setProgress}
         setStartTime={setStartTime}
-        setCurrentTime={setCurrentTime}
       />
     </>
   );
