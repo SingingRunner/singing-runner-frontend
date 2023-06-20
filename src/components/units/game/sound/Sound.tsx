@@ -1,44 +1,20 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-  useRef,
-  useContext,
-} from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
-import { IRival } from "../Game.types";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-
-const songFiles = [
-  "/music/jjanggu_mr.wav",
-  "/music/jjanggu_mr_3keyup.wav",
-  "/music/jjanggu_mr_3keydown.wav",
-];
-interface ISoundProps {
-  mrKey: string;
-  setDecibel: Dispatch<SetStateAction<number>>;
-  setPlayersScore: Dispatch<SetStateAction<number[]>>;
-  activeItem: {
-    mute: boolean;
-    frozen: boolean;
-    cloud: boolean;
-    keyDown: boolean;
-    keyUp: boolean;
-    shield: boolean;
-  };
-  isLoadComplete: boolean;
-  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
-  progress: number;
-  setProgress: Dispatch<SetStateAction<number>>;
-  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
-  setStartTime: Dispatch<SetStateAction<number>>;
-}
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../../commons/store";
+import {
+  ISocketGameSongData,
+  ISocketLoadingData,
+  ISoundProps,
+} from "./Sound.types";
 
 export default function Sound(props: ISoundProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
+
+  const userInfo = useRecoilValue(userInfoState);
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -81,9 +57,11 @@ export default function Sound(props: ISoundProps) {
       socket.emit("loading");
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
-      const fetchFiles = async () => {
+      /** 입장한 게임의 MR, 정답 데이터, 유저 정보(id & 캐릭터) 조회 */
+      const fetchRoomInfo = async (data: ISocketLoadingData) => {
         try {
-          console.log(props);
+          // 정답 데이터
+          getAnswerData(data.gameSong); // 🚨 정답 데이터 받을 때 쓰세요
           const ans1 = await fetch("/origin.txt");
           const ans2 = await fetch("/keyUp.txt");
           const ans3 = await fetch("/keyDown.txt");
@@ -96,13 +74,21 @@ export default function Sound(props: ISoundProps) {
           setKeyUpAnswer(ans2Array);
           const ans3Array = ans3Text.split(",").map((value) => Number(value));
           setKeyDownAnswer(ans3Array);
+
+          // MR 파일
+          const songFiles = getMR(data.gameSong);
+
           const response = await Promise.all(
-            songFiles.map(async (file) => {
+            songFiles.map(async (file, idx) => {
               const result = await fetch(file);
-              props.setProgress(props.progress + 30);
+              props.setProgress((prev) => {
+                if (idx === 2) return 100;
+                return props.progress + 30;
+              });
               return result;
             })
           );
+
           const arrayBuffers = await Promise.all(
             response.map((res) => res.arrayBuffer())
           );
@@ -124,15 +110,101 @@ export default function Sound(props: ISoundProps) {
             }
             return gainNode;
           });
+
+          // 유저 정보
+          props.setPlayersInfo((prev) => {
+            const newPlayersInfo = [...prev];
+            data.characterList.forEach((el, i) => {
+              // 현재 유저 제외하고 저장
+              if (el.userId !== userInfo.userId)
+                newPlayersInfo.push({
+                  userId: data.characterList[i].userId,
+                  character: data.characterList[i].character,
+                  activeItem: "",
+                  score: 0,
+                });
+            });
+            return newPlayersInfo;
+          });
+
+          // 곡 정보
+          props.setSongInfo({
+            title: data.gameSong.songTitle,
+            singer: data.gameSong.singer,
+          });
+
+          // 로딩 완료 신호 보내기
           socket?.emit("game_ready");
         } catch (err) {
           console.log(err);
         }
       };
-      // 로딩 화면에서 소켓 통신으로 노래 data 받음
-      socket.on("loading", fetchFiles);
+
+      socket.on("loading", fetchRoomInfo);
     }
   }, [socket]);
+
+  const getMR = (gameSong: ISocketGameSongData) => {
+    let keyOrigin: string;
+    let keyUp: string;
+    let keyDown: string;
+    switch (userInfo.userKeynote) {
+      case "male":
+        keyOrigin = gameSong.songMale;
+        keyUp = gameSong.songMaleUp;
+        keyDown = gameSong.songMaleDown;
+        break;
+      case "female":
+        keyOrigin = gameSong.songFemale;
+        keyUp = gameSong.songFemaleUp;
+        keyDown = gameSong.songFemaleDown;
+        break;
+      default:
+        keyOrigin =
+          gameSong.songGender === 0 ? gameSong.songMale : gameSong.songFemale;
+        keyUp =
+          gameSong.songGender === 0
+            ? gameSong.songMaleUp
+            : gameSong.songFemaleUp;
+        keyDown =
+          gameSong.songGender === 0
+            ? gameSong.songMaleDown
+            : gameSong.songFemaleDown;
+        break;
+    }
+    return [keyOrigin, keyUp, keyDown];
+  };
+
+  const getAnswerData = (gameSong: ISocketGameSongData) => {
+    let answerOrigin: number[];
+    let answerUp: number[];
+    let answerDown: number[];
+    switch (userInfo.userKeynote) {
+      case "male":
+        answerOrigin = gameSong.vocalMale;
+        answerUp = gameSong.vocalMaleUp;
+        answerDown = gameSong.vocalMaleDown;
+        break;
+      case "female":
+        answerOrigin = gameSong.vocalFemale;
+        answerUp = gameSong.vocalFemaleUp;
+        answerDown = gameSong.vocalFemaleDown;
+        break;
+      default:
+        answerOrigin =
+          gameSong.songGender === 0 ? gameSong.vocalMale : gameSong.vocalFemale;
+        answerUp =
+          gameSong.songGender === 0
+            ? gameSong.vocalMaleUp
+            : gameSong.vocalFemaleUp;
+        answerDown =
+          gameSong.songGender === 0
+            ? gameSong.vocalMaleDown
+            : gameSong.vocalFemaleDown;
+        break;
+    }
+    return [answerOrigin, answerUp, answerDown];
+  };
 
   const changeMRKey = (index: number) => {
     gainNodes.current.forEach((gainNode, i) => {
@@ -149,6 +221,7 @@ export default function Sound(props: ISoundProps) {
   return (
     <>
       <PitchAndDecibel
+        setPlayersInfo={props.setPlayersInfo}
         isLoadComplete={props.isLoadComplete}
         originAnswer={originAnswer}
         keyUpAnswer={keyUpAnswer}
@@ -162,9 +235,7 @@ export default function Sound(props: ISoundProps) {
         setFrozen={setFrozen}
         setMute={setMute}
         setDecibel={props.setDecibel}
-        setPlayersScore={props.setPlayersScore}
         sources={sources}
-        setRivals={props.setRivals}
         setIsLoadComplete={props.setIsLoadComplete}
         setStartTime={props.setStartTime}
       />

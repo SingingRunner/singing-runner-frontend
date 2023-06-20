@@ -6,12 +6,6 @@ import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 
-const songFiles = [
-  "/music/jjanggu_mr.wav",
-  "/music/jjanggu_mr_3keyup.wav",
-  "/music/jjanggu_mr_3keydown.wav",
-];
-
 const assetFiles = [
   "/game/floor/neon.png",
   "/game/item/effect/frozen.png",
@@ -24,12 +18,15 @@ const assetFiles = [
   "/game/item/keyDown.png",
   "/game/item/keyUp.png",
   "/game/item/mute.png",
-  "/game/player/profile/cat0.png",
-  "/game/player/profile/cat1.png",
-  "/game/player/profile/cat2.png",
   "/game/player/beluga.glb",
   "/game/player/husky.glb",
   "/game/player/puma.glb",
+  "/game/player/hare.glb",
+  "/game/player/lynx.glb",
+  "/game/player/moose.glb",
+  "/game/player/narwhal.glb",
+  "/game/player/puffin.glb",
+  "/game/player/snowLeopard.glb",
   "/game/player/snowman.glb",
 ];
 
@@ -54,7 +51,7 @@ function getAsAttribute(filePath: string) {
 }
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
-  const allFiles = [...assetFiles, ...songFiles];
+  const allFiles = [...assetFiles];
 
   return (
     <RecoilRoot>

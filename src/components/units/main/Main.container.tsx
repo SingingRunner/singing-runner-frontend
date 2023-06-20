@@ -42,7 +42,6 @@ const Main = () => {
       socket.on("match_making", (data) => {
         // 매칭 완료되면, 매칭된 유저 정보 받아오기
         const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
-        console.log(data);
         setSongTitle(songTitle);
         setSinger(singer);
 
@@ -77,13 +76,15 @@ const Main = () => {
   };
 
   // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  const [dummyUserId, setDummyUserId] = useState("");
+  const [dummyUserId, setDummyUserId] = useState("test99");
+  const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
     userId: dummyUserId,
     userMmr: 1000,
     nickName: "Tom",
     userActive: "connect",
     uerKeynote: "maleKey",
+    character: dummyCharacter,
   };
 
   const handleBattleModeClick = () => {
@@ -169,6 +170,7 @@ const Main = () => {
     setShowWaiting,
     showWaiting,
     setDummyUserId,
+    setDummyCharacter,
   };
 
   return <MainUI {...props} />;

@@ -17,4 +17,5 @@ export interface IMainUIProps {
   setShowWaiting: (flag: boolean) => void;
   showWaiting: boolean;
   setDummyUserId: Dispatch<SetStateAction<string>>;
+  setDummyCharacter: Dispatch<SetStateAction<string>>;
 }

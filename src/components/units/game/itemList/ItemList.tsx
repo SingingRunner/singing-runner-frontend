@@ -1,21 +1,59 @@
-// 현재 유저가 가지고 있는 아이템 목록
 import styled from "@emotion/styled";
+import { useContext, useEffect, useState } from "react";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
-interface IItemListProps {
-  itemList: string[];
-  useItem: (item: string) => void;
-}
+const ITEM_GET_INTERVAL = 20000; // 아이템 발생 텀
 
-export default function ItemList(props: IItemListProps) {
+export default function ItemList() {
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
+  const [itemList, setItemList] = useState<string[]>([]);
+
+  useEffect(() => {
+    // ITEM_GET_INTERVAL 간격으로 아이템 획득 요청
+    const interval = setInterval(() => {
+      socket?.emit("get_item");
+    }, ITEM_GET_INTERVAL);
+
+    socket?.on("get_item", (item: string) => {
+      getItem(item);
+    });
+
+    return () => {
+      clearInterval(interval); // 컴포넌트가 언마운트될 때 interval을 정리합니다.
+    };
+  }, [socket]);
+
+  /** 아이템 획득 함수 */
+  const getItem = (item: string) => {
+    setItemList((prev) => {
+      if (prev.length >= 2) return prev;
+      return [...prev, item];
+    });
+  };
+
+  /** 아이템 사용 함수 */
+  const useItem = (item: string) => {
+    socket?.emit("use_item", item);
+    setItemList((prev) => {
+      // 같은 아이템이 두 개 있으면 하나만 제거
+      if (prev[0] === prev[1]) return prev.slice(1);
+      return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
+    });
+  };
+
   return (
     <ItemWrapper>
-      {props.itemList
+      {itemList
         .filter((item) => item)
         .map((item, i) => (
           <img
             key={i}
             src={`/game/item/${item}.png`}
-            onClick={() => props.useItem(item)}
+            onClick={() => useItem(item)}
           />
         ))}
     </ItemWrapper>
