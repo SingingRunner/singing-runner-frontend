@@ -1,3 +1,4 @@
+import Draggable from "react-draggable";
 import styled from "@emotion/styled";
 import { memo, useEffect, useState, useRef } from "react";
 
@@ -23,6 +24,7 @@ const data = [
 
 interface ILyricProps {
   startTime: number;
+  isCloud: boolean;
 }
 
 function Lyric(props: ILyricProps) {
@@ -50,6 +52,41 @@ function Lyric(props: ILyricProps) {
     }
   }, [props.startTime]);
 
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    if (!isDragging) {
+      const timer = setInterval(() => {
+        setPosition((prevPosition) => {
+          const xMove =
+            prevPosition.x + 5 > 50
+              ? -(prevPosition.x + 5)
+              : prevPosition.x + 5;
+          const yMove =
+            prevPosition.y + 5 > 15
+              ? -(prevPosition.y + 5)
+              : prevPosition.y + 5;
+          return { x: xMove, y: yMove };
+        });
+      }, 100);
+
+      return () => {
+        clearInterval(timer);
+      };
+    }
+  }, [isDragging]);
+
+  // Drag 시작하면 자동 이동을 멈춤
+  const onStart = () => {
+    setDragging(true);
+  };
+
+  // Drag 끝나면 자동 이동을 다시 시작
+  const onStop = () => {
+    setDragging(false);
+  };
+
   return (
     <LyricWrapper>
       {/* ⭐️ 탈주 메시지 */}
@@ -59,6 +96,16 @@ function Lyric(props: ILyricProps) {
         <Text key={lyricIdx + 1}>{data[lyricIdx + 1].lyrics}</Text>
       ) : (
         <></>
+      )}
+      {props.isCloud && (
+        <Draggable
+          bounds="parent"
+          onStart={onStart}
+          onStop={onStop}
+          position={position}
+        >
+          <Cloud src="/game/item/effect/draggable_cloud.png" />
+        </Draggable>
       )}
     </LyricWrapper>
   );
@@ -72,7 +119,6 @@ const LyricWrapper = styled.div`
   justify-content: center;
   position: relative;
   margin: 0 16px;
-  padding: 20px 0;
   width: calc(100% - 32px);
   height: 112px;
   background: rgba(26, 17, 40, 0.74);
@@ -97,4 +143,9 @@ const Text = styled.p`
   line-height: 28px;
   text-align: center;
   color: #ffffff;
+`;
+
+const Cloud = styled.img`
+  position: absolute;
+  height: 80px;
 `;

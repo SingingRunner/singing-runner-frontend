@@ -4,7 +4,7 @@ import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRecoilValue } from "recoil";
 import { userInfoState } from "../../../../commons/store";
 
-const ITEM_GET_INTERVAL = 5000; // 아이템 발생 텀
+const ITEM_GET_INTERVAL = 20000; // 아이템 발생 텀
 
 export default function ItemList() {
   // 소켓 가져오기

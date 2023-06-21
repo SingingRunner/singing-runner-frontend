@@ -42,13 +42,17 @@ export default function GameUI(props: IGameUIProps) {
             playersInfo={props.playersInfo}
             offItem={props.offItem}
             decibel={props.decibel}
+            muteAttack={props.muteAttack}
           />
           <S.Wrapper>
             {isItemActivated && <S.ItemEffectWrapper />}
             <S.Title>
               {props.songInfo.title} - {props.songInfo.singer}
             </S.Title>
-            <Lyric startTime={props.startTime} />
+            <Lyric
+              startTime={props.startTime}
+              isCloud={props.appliedItems.includes("cloud")}
+            />
             <ItemInfo
               appliedItems={props.appliedItems}
               decibel={props.decibel}

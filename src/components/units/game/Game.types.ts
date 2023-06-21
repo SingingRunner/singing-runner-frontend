@@ -11,6 +11,11 @@ export interface IGameUIProps {
   isLoadComplete: boolean;
   progress: number;
   startTime: number;
+  muteAttack: {
+    mid: boolean;
+    right: boolean;
+    left: boolean;
+  };
 }
 
 export interface IPlayersInfo {

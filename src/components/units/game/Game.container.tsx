@@ -56,6 +56,12 @@ export default function Game() {
     }
   }, [userInfo]);
 
+  const [muteAttack, setMuteAttack] = useState({
+    mid: false,
+    right: false,
+    left: false,
+  });
+
   useEffect(() => {
     // 다른 유저로부터 공격이 들어옴
     socket?.on("use_item", (data: ISocketItem) => {
@@ -71,7 +77,11 @@ export default function Game() {
         temp.forEach((user, i) => {
           // frozen | mute | cloud -> 공격자 빼고 적용
           if (["mute", "cloud", "frozen"].includes(data.item)) {
-            if (user.userId !== data.userId) temp[i].activeItem = data.item;
+            if (user.userId !== data.userId) {
+              temp[i].activeItem = data.item;
+              if (data.item === "mute")
+                setMuteAttack((prev) => ({ ...prev, [user.position]: true }));
+            }
             // 공격자가 현재 유저가 아닌 경우 화면에 적용
           }
           // keyUp | keyDown -> 모두 적용
@@ -92,8 +102,11 @@ export default function Game() {
       setPlayersInfo((prev) => {
         const temp = [...prev];
         temp.forEach((user, i) => {
-          if (user.userId === data.userId && user.activeItem === data.item)
-            temp[i].activeItem = "";
+          if (user.userId === data.userId) {
+            if (user.activeItem === data.item) temp[i].activeItem = "";
+            if (data.item === "mute")
+              setMuteAttack((prev) => ({ ...prev, [user.position]: false }));
+          }
         });
         return temp;
       });
@@ -133,7 +146,7 @@ export default function Game() {
 
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
-    console.log("decibel", decibel);
+    // console.log("decibel", decibel);
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       setIsMuteActive(false);
       socket?.emit("escape_item", { item: "mute", userId: userInfo.userId });
@@ -155,6 +168,7 @@ export default function Game() {
         isLoadComplete={isLoadComplete}
         progress={progress}
         startTime={startTime}
+        muteAttack={muteAttack}
       />
       <Sound
         setSongInfo={setSongInfo}
