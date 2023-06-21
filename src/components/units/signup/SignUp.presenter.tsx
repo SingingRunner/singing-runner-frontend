@@ -3,33 +3,17 @@ import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
 import LoginHeader from "../../commons/layout/header/LoginHeader";
 import { ISignUpUIProps } from "./SignUp.types";
+import * as S from "./SignUp.styles";
 
 export default function SignUpUI(props: ISignUpUIProps) {
   return (
     <>
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div style={{ marginTop: "-8vh", marginBottom: "24vh" }}>
+      <S.SignUpContainer>
+        <S.SignUpHeaderWrapper>
           <LoginHeader />
-        </div>
-        <div style={{ display: "flex", marginBottom: "2px", width: "100%" }}>
-          <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexDirection: "column",
-              marginRight: "10px",
-            }}
-          >
+        </S.SignUpHeaderWrapper>
+        <S.InputButtonWrapper>
+          <S.InputErrorWrapper>
             <Input
               inputType={inputType.MEDIUM}
               type="text"
@@ -38,19 +22,19 @@ export default function SignUpUI(props: ISignUpUIProps) {
               onChange={props.handleEmailChange}
               onBlur={props.validateEmail}
             />
-            <div style={{ color: "red" }}>{props.emailErrorMessage}</div>
-          </div>
+            {!props.emailError ? (
+              <S.BlankShort />
+            ) : (
+              <S.Error>{props.emailError}</S.Error>
+            )}
+          </S.InputErrorWrapper>
           <Button
             buttonType={buttonType.SHORT}
             text="중복 확인"
             onClick={props.checkDuplicateEmail}
           />
-        </div>
-        <div
-          style={{
-            width: "100%",
-          }}
-        >
+        </S.InputButtonWrapper>
+        <S.PasswordWrapper>
           <Input
             inputType={inputType.LONG}
             type="password"
@@ -58,19 +42,13 @@ export default function SignUpUI(props: ISignUpUIProps) {
             value={props.password}
             onChange={props.handlePasswordChange}
           />
-          {!props.passwordErrorMessage ? (
-            <div style={{ display: "flex", height: "18px" }}></div>
+          {!props.passwordError ? (
+            <S.BlankShort />
           ) : (
-            <div style={{ height: "18px", color: "red" }}>
-              {props.passwordErrorMessage}
-            </div>
+            <S.Error>{props.passwordError}</S.Error>
           )}
-        </div>
-        <div
-          style={{
-            width: "100%",
-          }}
-        >
+        </S.PasswordWrapper>
+        <S.PasswordWrapper>
           <Input
             inputType={inputType.LONG}
             type="password"
@@ -78,23 +56,14 @@ export default function SignUpUI(props: ISignUpUIProps) {
             value={props.passwordCheck}
             onChange={props.handlePasswordCheckChange}
           />
-          {!props.passwordCheckErrorMessage ? (
-            <div style={{ display: "flex", height: "18px" }}></div>
+          {!props.passwordCheckError ? (
+            <S.BlankShort />
           ) : (
-            <div style={{ height: "18px", color: "red" }}>
-              {props.passwordCheckErrorMessage}
-            </div>
+            <S.Error>{props.passwordCheckError}</S.Error>
           )}
-        </div>
-        <div style={{ display: "flex", width: "100%" }}>
-          <div
-            style={{
-              display: "flex",
-              flex: 1,
-              flexDirection: "column",
-              marginRight: "10px",
-            }}
-          >
+        </S.PasswordWrapper>
+        <S.InputButtonWrapper>
+          <S.InputErrorWrapper>
             <Input
               inputType={inputType.MEDIUM}
               type="text"
@@ -102,25 +71,19 @@ export default function SignUpUI(props: ISignUpUIProps) {
               value={props.nickname}
               onChange={props.handleNicknameChange}
             />
-            {!props.nicknameErrorMessage ? (
-              <>
-                <div style={{ height: "160px" }}></div>
-              </>
+            {!props.nicknameError ? (
+              <S.BlankLong />
             ) : (
-              <>
-                <div style={{ height: "160px", color: "red" }}>
-                  {props.nicknameErrorMessage}
-                </div>
-              </>
+              <S.ErrorNickname>{props.nicknameError}</S.ErrorNickname>
             )}
-          </div>
+          </S.InputErrorWrapper>
           <Button
             buttonType={buttonType.SHORT}
             text="중복 확인"
             onClick={props.dummyClick}
           />
-        </div>
-      </div>
+        </S.InputButtonWrapper>
+      </S.SignUpContainer>
       <ButtonWrapper>
         <Button
           buttonType={
@@ -130,9 +93,7 @@ export default function SignUpUI(props: ISignUpUIProps) {
           }
           text="가입 완료"
           onClick={
-            props.isSignUpButtonEnabled
-              ? props.handleSignUpFinishClick
-              : props.dummyClick
+            props.isSignUpButtonEnabled ? props.onClickSignUp : props.dummyClick
           }
         />
       </ButtonWrapper>
