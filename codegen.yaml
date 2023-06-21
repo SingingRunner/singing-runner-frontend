@@ -1,0 +1,7 @@
+schema: http://localhost:3000/graphql
+generates:
+  ./src/commons/types/generated/types.ts:
+    plugins:
+      - "@graphql-codegen/typescript"
+    config:
+      typesPrefix: I

@@ -1,23 +1,50 @@
 import styled from "@emotion/styled";
 
-export const ImageWrapper = styled.div`
+export const SignUpContainer = styled.div`
+  height: 100vh;
+  background-color: #1A1128;
   position: relative;
-  top: 35%;
-`;
-export const ImageLogo = styled.img`
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  top: 0px;
-  width: 300px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `
-export const ImageVectorLeft = styled.img`
-  position: absolute;
-  left: 50%;
-  transform: translate(-1000%, -0%);
-  top: 0px;
-  width: 16px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+
+export const SignUpHeaderWrapper = styled.div`
+  margin-top: -8vh;
+  margin-bottom: 24vh;
 `;
 
+export const InputButtonWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const InputErrorWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-right: 10px;
+`;
+
+export const Error = styled.div`
+  height: 18px;
+  color: red;
+`;
+
+export const ErrorNickname = styled.div`
+  height: 160px;
+  color: red;
+`;
+
+export const BlankShort = styled.div`
+  height: 18px;
+`;
+
+export const BlankLong = styled.div`
+  height: 160px;
+`;
+
+export const PasswordWrapper = styled.div`
+  width: 100%;
+`;

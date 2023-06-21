@@ -1,12 +1,12 @@
 export interface ILoginUIProps {
   email: string;
   password: string;
-  emailErrorMessage: string;
+  emailError: string;
   handleEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  passwordErrorMessage: string;
+  passwordError: string;
   handlePasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   validateEmail: () => void;
   dummyClick: () => void;
-  handleLoginClick: () => void;
+  onClickLogin: () => void;
   isLoginButtonEnabled: boolean;
 }
