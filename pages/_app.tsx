@@ -5,6 +5,7 @@ import { RecoilRoot } from "recoil";
 import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
+import ApolloSetting from "../src/components/commons/apollo";
 
 const assetFiles = [
   "/game/floor/neon.png",
@@ -55,22 +56,24 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
 
   return (
     <RecoilRoot>
-      <SocketProvider>
-        <Global styles={globalStyles} />
-        <Head>
-          {allFiles.map((file, index) => (
-            <link
-              key={index}
-              rel="preload"
-              href={file}
-              as={getAsAttribute(file)}
-            />
-          ))}
-        </Head>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </SocketProvider>
+      <ApolloSetting>
+        <SocketProvider>
+          <Global styles={globalStyles} />
+          <Head>
+            {allFiles.map((file, index) => (
+              <link
+                key={index}
+                rel="preload"
+                href={file}
+                as={getAsAttribute(file)}
+              />
+            ))}
+          </Head>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SocketProvider>
+      </ApolloSetting>
     </RecoilRoot>
   );
 }

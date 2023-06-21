@@ -3,25 +3,16 @@ import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
 import LoginHeader from "../../commons/layout/header/LoginHeader";
 import { ILoginUIProps } from "./Login.types";
+import * as S from "./Login.styles";
 
 export default function LoginUI(props: ILoginUIProps) {
   return (
     <>
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div style={{ marginTop: "-60px", marginBottom: "200px" }}>
+      <S.LoginContainer>
+        <S.LoginHeaderWrapper>
           <LoginHeader />
-        </div>
-        <div style={{ width: "100%" }}>
+        </S.LoginHeaderWrapper>
+        <S.InputWrapper>
           <Input
             inputType={inputType.LONG}
             type="text"
@@ -30,9 +21,9 @@ export default function LoginUI(props: ILoginUIProps) {
             onChange={props.handleEmailChange}
             onBlur={props.validateEmail}
           />
-          <div style={{ height:"18px", color: "red" }}>{props.emailErrorMessage}</div>
-        </div>
-        <div style={{ width: "100%" }}>
+          <S.EmailError>{props.emailError}</S.EmailError>
+        </S.InputWrapper>
+        <S.InputWrapper>
           <Input
             inputType={inputType.LONG}
             type="password"
@@ -40,15 +31,13 @@ export default function LoginUI(props: ILoginUIProps) {
             value={props.password}
             onChange={props.handlePasswordChange}
           />
-          {!props.passwordErrorMessage ? (
-            <div style={{ display: "flex", height: "240px" }}></div>
+          {!props.passwordError ? (
+            <S.Blank />
           ) : (
-            <div style={{ height: "240px", color: "red" }}>
-              {props.passwordErrorMessage}
-            </div>
+            <S.PasswordError>{props.passwordError}</S.PasswordError>
           )}
-        </div>
-      </div>
+        </S.InputWrapper>
+      </S.LoginContainer>
 
       <ButtonWrapper>
         <Button
@@ -59,9 +48,7 @@ export default function LoginUI(props: ILoginUIProps) {
           }
           text="로그인"
           onClick={
-            props.isLoginButtonEnabled
-              ? props.handleLoginClick
-              : props.dummyClick
+            props.isLoginButtonEnabled ? props.onClickLogin : props.dummyClick
           }
         />
       </ButtonWrapper>
