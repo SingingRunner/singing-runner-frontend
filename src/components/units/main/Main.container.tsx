@@ -75,8 +75,6 @@ const Main = () => {
 
   const handleClick = () => {
     setIsClicked(true);
-
-    // handleChangeAddress(); 테스트용
   };
 
   // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
@@ -174,6 +172,7 @@ const Main = () => {
     showWaiting,
     setDummyUserId,
     setDummyCharacter,
+    dummyCharacter,
   };
 
   return <MainUI {...props} />;

@@ -23,7 +23,7 @@ export const ItemEffectWrapper = styled.div`
   height: 100vh;
   border: 10px solid transparent;
   /* box-shadow: 0 0 10px 10px transparent inset; */
-  animation: ${fullScreenFlash} 1s ease-in-out 4;
+  animation: ${fullScreenFlash} 1s infinite;
 `;
 export const Title = styled.div`
   display: flex;
@@ -67,7 +67,7 @@ export const LoadingBar = styled.div`
   position: absolute;
   width: 100%;
   height: 30px;
-  backgroundColor: #ffffff,
+  background-color: #ffffff;
 `;
 export const LoadingGauge = styled.div`
   position: absolute;

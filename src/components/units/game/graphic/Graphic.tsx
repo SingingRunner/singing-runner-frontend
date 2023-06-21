@@ -1,8 +1,11 @@
 // Graphic.tsx
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useContext } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { IGrapicProps } from "./Graphic.types";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../../commons/store";
 
 declare global {
   interface Window {
@@ -10,13 +13,22 @@ declare global {
   }
 }
 
-const MAX_POSITION = 10;
-const MIN_POSITION = -3;
 const SNOWMAN_DAMAGE_INTERVAL = 3.5;
 
 export default function Graphic(props: IGrapicProps) {
-  const [players, setPlayers] = useState<THREE.Object3D[]>([]);
-  const [actions, setActions] = useState<THREE.AnimationAction[]>([]);
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
+  const userInfo = useRecoilValue(userInfoState);
+
+  const [players, setPlayers] = useState<{
+    mid: THREE.Object3D | undefined;
+    right: THREE.Object3D | undefined;
+    left: THREE.Object3D | undefined;
+  }>();
+  // const [actions, setActions] = useState<THREE.AnimationAction[]>([]);
   const [isStop, setIsStop] = useState<boolean[]>([]);
   const currentPlayerRef = useRef<THREE.Object3D | null>(null); // 현재 유저의 플레이어를 가리키는 ref
 
@@ -93,7 +105,6 @@ export default function Graphic(props: IGrapicProps) {
     scene.add(floor);
 
     /* players */
-
     // 각 플레이어가 처음에 생성될 위치
     const playerPositions: THREE.Vector3[] = [
       new THREE.Vector3(0, 0, -5.5), // 가운데
@@ -114,11 +125,11 @@ export default function Graphic(props: IGrapicProps) {
           action.play(); // 애니메이션 재생
           mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
           // 아이템 효과로 애니메이션을 정지/재생 시키기 위해서 action을 저장해둠
-          setActions((actions) => {
-            const newActions = [...actions];
-            newActions[i] = action;
-            return newActions;
-          });
+          // setActions((actions) => {
+          //   const newActions = [...actions];
+          //   newActions[i] = action;
+          //   return newActions;
+          // });
         }
 
         player.traverse((child) => {
@@ -127,8 +138,12 @@ export default function Graphic(props: IGrapicProps) {
         scene.add(player);
 
         setPlayers((players) => {
-          const newPlayers = [...players];
-          newPlayers[i] = player;
+          const newPlayers =
+            i === 0
+              ? { mid: player, right: players?.right, left: players?.left }
+              : i === 1
+              ? { right: player, mid: players?.mid, left: players?.left }
+              : { left: player, mid: players?.mid, right: players?.right };
           return newPlayers;
         });
 
@@ -167,194 +182,128 @@ export default function Graphic(props: IGrapicProps) {
     animate();
   }, [players, isStop]);
 
-  /* 실시간 채점 */
-  const [playersMovedPosition, setPlayersMovedPosition] = useState([0, 0, 0]);
-
   useEffect(() => {
-    if (players) {
-      const mid = props.playersInfo[0].score;
-      const right = props?.playersInfo[1]?.score;
-      const left = props?.playersInfo[2]?.score;
-
-      if (mid > right && playersMovedPosition[0] <= playersMovedPosition[1]) {
-        movePlayer(0, "forward");
-        movePlayer(1, "backward");
-      } else if (
-        mid < right &&
-        playersMovedPosition[0] >= playersMovedPosition[1]
-      ) {
-        movePlayer(0, "backward");
-        movePlayer(1, "forward");
-      }
-      if (mid > left && playersMovedPosition[0] <= playersMovedPosition[2]) {
-        movePlayer(0, "forward");
-        movePlayer(2, "backward");
-      } else if (
-        mid < left &&
-        playersMovedPosition[0] >= playersMovedPosition[2]
-      ) {
-        movePlayer(0, "backward");
-        movePlayer(2, "forward");
-      }
-
-      if (right > mid && playersMovedPosition[1] < MAX_POSITION) {
-        movePlayer(1, "forward");
-      } else if (right < mid && playersMovedPosition[1] > MIN_POSITION) {
-        movePlayer(1, "backward");
-      }
-
-      if (left > mid && playersMovedPosition[2] < MAX_POSITION) {
-        movePlayer(2, "forward");
-      } else if (left < mid && playersMovedPosition[2] > MIN_POSITION) {
-        movePlayer(2, "backward");
-      }
-    }
+    if (props.playersInfo.length === 1) return; // 플레이어가 한명이면 이동하지 않음
+    adjustPlayerPosition();
   }, [props.playersInfo]);
 
-  /** player의 위치를 1씩 이동하는 함수 */
-  const movePlayer = (index: number, direction: "forward" | "backward") => {
-    if (!players[index]) return;
-    if (!players[index].visible) return;
-    if (
-      playersMovedPosition[index] > MAX_POSITION ||
-      playersMovedPosition[index] < MIN_POSITION
-    )
-      return;
-    const moveAmount = direction === "forward" ? 1 : -1;
-    players[index].position.z += moveAmount;
-    setPlayersMovedPosition((prev) => {
-      const newPlayersMovedPosition = [...prev];
-      newPlayersMovedPosition[index] += moveAmount;
-      return newPlayersMovedPosition;
-    });
+  /** 현재 유저와의 점수 차이에 따라 rival들의 위치를 이동하는 함수 */
+  const adjustPlayerPosition = () => {
+    const [baseScore, rightScore, leftScore] = [
+      props.playersInfo.filter((el) => el.position === "mid")[0].score,
+      props.playersInfo.filter((el) => el.position === "right")[0].score,
+      props.playersInfo.filter((el) => el.position === "left")?.[0]?.score,
+    ];
+    movePlayer("right", Math.round(((rightScore - baseScore) / 3) * 10) / 10);
+    // 왼쪽 플레이어가 없을 수도 있음 (2명일 때)
+    if (leftScore)
+      movePlayer("left", Math.round(((leftScore - baseScore) / 3) * 10) / 10);
+  };
+
+  /** player의 z 위치를 이동하는 함수 */
+  const movePlayer = (position: string, targetPosition: number) => {
+    if (!players?.[position]) return;
+    if (!players?.[position].visible) return;
+    players[position].position.z = targetPosition - 5.5;
   };
 
   /* 전체 유저 아이템 효과 */
-  useEffect(() => {
-    props.playersActiveItem.forEach((item, index) => {
-      // 음소거 아이템 공격 -> 멈춤
-      if (item === "mute") stopPlayer(index);
-      // 눈사람 아이템 공격 -> 눈사람으로 변신
-      // else if (item === "frozen") switchPlayerToSnowman(index);
-      else if (item === "frozen") switchPlayerToSnowman(index);
-      // 아이템 해제 -> 재생, 눈사람 해제
-      else if (item === "") {
-        startPlayer(index);
-        // if (snowmans[index] && index !== 0) {
-        // if (index !== 0) {
-        // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
-        switchSnowmanToPlayer(index);
-        // }
-      }
-    });
-  }, [...props.playersActiveItem]);
-
-  /** player의 애니메이션 재생을 멈추는 함수 */
-  const stopPlayer = (index: number) => {
-    if (!players[index]) return;
-    if (!players[index].visible) return;
-
-    if (actions[index]) {
-      actions[index].stop(); // 애니메이션 정지
-    }
-
-    setIsStop((isStop) => {
-      const newIsStop = [...isStop];
-      newIsStop[index] = true; // 멈춘 상태로 업데이트
-      return newIsStop;
-    });
-  };
-
-  /** player의 애니메이션을 다시 재생하는 함수 */
-  const startPlayer = (index: number) => {
-    if (!players[index]) return;
-    if (!players[index].visible) return;
-
-    if (actions[index]) {
-      actions[index].play(); // 애니메이션 재생
-    }
-
-    setIsStop((isStop) => {
-      const newIsStop = [...isStop];
-      newIsStop[index] = false; // 재생 상태로 업데이트
-      return newIsStop;
-    });
-  };
+  // useEffect(() => {
+  //   props.playersActiveItem.forEach((item, index) => {
+  //     // 음소거 아이템 공격 -> 멈춤
+  //     if (item === "mute") stopPlayer(index);
+  //     // 눈사람 아이템 공격 -> 눈사람으로 변신
+  //     // else if (item === "frozen") switchPlayerToSnowman(index);
+  //     else if (item === "frozen") switchPlayerToSnowman(index);
+  //     // 아이템 해제 -> 재생, 눈사람 해제
+  //     else if (item === "") {
+  //       startPlayer(index);
+  //       // if (snowmans[index] && index !== 0) {
+  //       // if (index !== 0) {
+  //       // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
+  //       switchSnowmanToPlayer(index);
+  //       // }
+  //     }
+  //   });
+  // }, [...props.playersActiveItem]);
 
   /* 눈사람 아이템 */
   const [snowmans] = useState<THREE.Object3D | null[]>([]);
   const [, setSnowmanHealth] = useState(0); // 현재 유저의 눈사람 체력
 
   /** 플레이어를 눈사람으로 바꾸는 함수 */
-  const switchPlayerToSnowman = (index: number) => {
-    if (snowmans[index]) return; // If the snowman is already loaded, do not load again
-    // load the snowman
-    const gltfLoader = new GLTFLoader();
-    if (!players[index]) return;
-    gltfLoader.load("/game/player/snowman.glb", (gltf) => {
-      const snowman = gltf.scene.children[0];
-      snowman.scale.set(0.02, 0.02, 0.02);
-      snowman.position.copy(players[index].position);
-      snowman.rotateZ(Math.PI);
-      snowman.traverse((child) => {
-        child.castShadow = true;
-      });
-      snowman.name = "snowman";
+  // const switchPlayerToSnowman = (index: number) => {
+  //   if (snowmans[index]) return; // If the snowman is already loaded, do not load again
+  //   // load the snowman
+  //   const gltfLoader = new GLTFLoader();
+  //   if (!players[index]) return;
+  //   gltfLoader.load("/game/player/snowman.glb", (gltf) => {
+  //     const snowman = gltf.scene.children[0];
+  //     snowman.scale.set(0.02, 0.02, 0.02);
+  //     snowman.position.copy(players[index].position);
+  //     snowman.rotateZ(Math.PI);
+  //     snowman.traverse((child) => {
+  //       child.castShadow = true;
+  //     });
+  //     snowman.name = "snowman";
 
-      // 현재 유저의 player가 눈사람이 된 경우, health bar를 추가한다.
-      if (index === 0) {
-        addHealthBar(snowman);
-        setSnowmanHealth(100);
-      }
+  //     // 현재 유저의 player가 눈사람이 된 경우, health bar를 추가한다.
+  //     if (index === 0) {
+  //       addHealthBar(snowman);
+  //       setSnowmanHealth(100);
+  //     }
 
-      // 플레이어 숨기기
-      if (window.scene && players[index]) {
-        players[index].visible = false;
-        snowmans[index] = snowman;
-      }
+  //     // 플레이어 숨기기
+  //     if (window.scene && players[index]) {
+  //       players[index].visible = false;
+  //       snowmans[index] = snowman;
+  //     }
 
-      // 눈사람 추가
-      if (window.scene) {
-        window.scene.add(snowman);
-      }
-    });
-  };
+  //     // 눈사람 추가
+  //     if (window.scene) {
+  //       window.scene.add(snowman);
+  //     }
+  //   });
+  // };
 
   // 눈사람 체력 게이지를 가리키는 ref
   const snowmanHealthBarRef = useRef<THREE.Mesh | null>();
 
   /** 현재 유저의 눈사람에 체력 게이지를 추가하는 함수 */
   // 타 유저의 눈사람에는 체력 게이지를 추가하지 않음
-  const addHealthBar = (snowman: THREE.Object3D) => {
-    const geometry = new THREE.BoxGeometry(100, 10, 10);
-    const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
-    const healthBar = new THREE.Mesh(geometry, material);
-    healthBar.rotation.x = Math.PI / 2;
-    healthBar.position.y = snowman.position.y;
-    healthBar.position.z = snowman.position.z + snowman.scale.z + 130;
-    snowman.add(healthBar); // snowman의 자식으로 추가
-    snowmanHealthBarRef.current = healthBar;
-  };
+  // const addHealthBar = (snowman: THREE.Object3D) => {
+  //   const geometry = new THREE.BoxGeometry(100, 10, 10);
+  //   const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
+  //   const healthBar = new THREE.Mesh(geometry, material);
+  //   healthBar.rotation.x = Math.PI / 2;
+  //   healthBar.position.y = snowman.position.y;
+  //   healthBar.position.z = snowman.position.z + snowman.scale.z + 130;
+  //   snowman.add(healthBar); // snowman의 자식으로 추가
+  //   snowmanHealthBarRef.current = healthBar;
+  // };
 
   /** 눈사람을 다시 플레이어로 바꾸는 함수 */
-  const switchSnowmanToPlayer = (index: number) => {
-    // 플레이어 노출
-    if (players[index]) players[index].visible = true;
-    else if (currentPlayerRef.current) currentPlayerRef.current.visible = true;
+  // const switchSnowmanToPlayer = (index: number) => {
+  //   // 플레이어 노출
+  //   if (players[index]) players[index].visible = true;
+  //   else if (currentPlayerRef.current) currentPlayerRef.current.visible = true;
 
-    // 눈사람 제거
-    if (snowmans[index]) window.scene.remove(snowmans[index]);
-    snowmans[index] = null;
-    snowmanHealthBarRef.current = null;
-  };
+  //   // 눈사람 제거
+  //   if (snowmans[index]) window.scene.remove(snowmans[index]);
+  //   snowmans[index] = null;
+  //   snowmanHealthBarRef.current = null;
+  // };
 
-  /** 눈사람의 체력을 10씩 감소하는 함수 */
+  /** 눈사람의 체력을 SNOWMAN_DAMAGE_INTERVAL씩 감소하는 함수 */
   const reduceSnowmanHealth = () => {
     if (!snowmans[0]) return;
     if (snowmans[0]) playCrashSound();
     setSnowmanHealth((health) => {
       if (health <= 5) {
-        switchSnowmanToPlayer(0); // 눈사람 체력이 0이 되면 플레이어로 전환
+        socket?.emit("escape_item", {
+          item: "frozen",
+          userId: userInfo.userId,
+        });
         props.offItem("frozen");
       }
       const newHealth = Math.max(health - SNOWMAN_DAMAGE_INTERVAL, 0);

@@ -4,6 +4,10 @@ import { IPlayersInfo } from "../Game.types";
 import { userInfoState } from "../../../../commons/store";
 import { useRecoilValue } from "recoil";
 
+interface IRankListProps {
+  playersInfo: IPlayersInfo[];
+}
+
 export default function RankList(props: IRankListProps) {
   // 현재 플레이어의 정보
   const userInfo = useRecoilValue(userInfoState);
@@ -85,8 +89,3 @@ const ItemEffect = styled.img`
   width: 28px;
   height: 28px;
 `;
-
-interface IRankListProps {
-  playersActiveItem: string[];
-  playersInfo: IPlayersInfo[];
-}
