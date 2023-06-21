@@ -28,29 +28,16 @@ export default function Sound(props: ISoundProps) {
   const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
 
   useEffect(() => {
-    // 값이 true인 속성의 키 찾기(현재 실행되고 있는 아이템)
-    for (const key in props.activeItem) {
-      if (Object.prototype.hasOwnProperty.call(props.activeItem, key)) {
-        switch (key) {
-          case "keyUp":
-            if (props.activeItem[key]) setKeyUp(true);
-            else setKeyUp(false);
-            break;
-          case "keyDown":
-            if (props.activeItem[key]) setKeyDown(true);
-            else setKeyDown(false);
-            break;
-          case "frozen":
-            if (props.activeItem[key]) setFrozen(true);
-            else setFrozen(false);
-            break;
-          case "mute":
-            if (props.activeItem[key]) setMute(true);
-            else setMute(false);
-        }
-      }
-    }
-  }, [props.activeItem]);
+    // 현재 실행되고 있는 아이템
+    if (props.appliedItems.includes("keyUp")) setKeyUp(true);
+    else setKeyUp(false);
+    if (props.appliedItems.includes("keyDown")) setKeyDown(true);
+    else setKeyDown(false);
+    if (props.appliedItems.includes("frozen")) setFrozen(true);
+    else setFrozen(false);
+    if (props.appliedItems.includes("mute")) setMute(true);
+    else setMute(false);
+  }, [props.appliedItems]);
 
   useEffect(() => {
     if (socket) {
@@ -115,14 +102,16 @@ export default function Sound(props: ISoundProps) {
           props.setPlayersInfo((prev) => {
             const newPlayersInfo = [...prev];
             data.characterList.forEach((el, i) => {
-              // 현재 유저 제외하고 저장
-              if (el.userId !== userInfo.userId)
+              // 현재 유저 제외하고 추가
+              if (el.userId !== userInfo.userId) {
                 newPlayersInfo.push({
                   userId: data.characterList[i].userId,
                   character: data.characterList[i].character,
                   activeItem: "",
                   score: 0,
+                  position: newPlayersInfo.length < 2 ? "right" : "left",
                 });
+              }
             });
             return newPlayersInfo;
           });
@@ -230,10 +219,6 @@ export default function Sound(props: ISoundProps) {
         isKeyDown={isKeyDown}
         isFrozen={isFrozen}
         isMute={isMute}
-        setKeyUp={setKeyUp}
-        setKeyDown={setKeyDown}
-        setFrozen={setFrozen}
-        setMute={setMute}
         setDecibel={props.setDecibel}
         sources={sources}
         setIsLoadComplete={props.setIsLoadComplete}

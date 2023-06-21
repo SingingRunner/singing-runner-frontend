@@ -1,14 +1,18 @@
 import styled from "@emotion/styled";
 import { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../../commons/store";
 
-const ITEM_GET_INTERVAL = 20000; // 아이템 발생 텀
+const ITEM_GET_INTERVAL = 5000; // 아이템 발생 텀
 
 export default function ItemList() {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
+
+  const userInfo = useRecoilValue(userInfoState);
 
   const [itemList, setItemList] = useState<string[]>([]);
 
@@ -37,7 +41,7 @@ export default function ItemList() {
 
   /** 아이템 사용 함수 */
   const useItem = (item: string) => {
-    socket?.emit("use_item", item);
+    socket?.emit("use_item", { item, userId: userInfo.userId });
     setItemList((prev) => {
       // 같은 아이템이 두 개 있으면 하나만 제거
       if (prev[0] === prev[1]) return prev.slice(1);
