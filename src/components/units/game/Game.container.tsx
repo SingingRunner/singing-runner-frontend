@@ -36,6 +36,8 @@ export default function Game() {
   const [decibel, setDecibel] = useState(0);
   // mute 공격을 당한 경우, 데시벨 측정 시작을 위한 상태
   const [isMuteActive, setIsMuteActive] = useState(false);
+  // frozen 공격을 당한 경우, 캐릭터를 눈사람으로 만들기 위한 상태
+  const [isFrozenActive, setIsFrozenActive] = useState(false);
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [appliedItems, setAppliedItems] = useState<string[]>([]);
 
@@ -103,7 +105,7 @@ export default function Game() {
         const temp = [...prev];
         temp.forEach((user, i) => {
           if (user.userId === data.userId) {
-            if (user.activeItem === data.item) temp[i].activeItem = "";
+            temp[i].activeItem = "";
             if (data.item === "mute")
               setMuteAttack((prev) => ({ ...prev, [user.position]: false }));
           }
@@ -122,10 +124,11 @@ export default function Game() {
     if (item === "keyUp") setMrKey("keyUp");
     else if (item === "keyDown") setMrKey("keyDown");
     else if (item === "mute") setIsMuteActive(true);
+    else if (item === "frozen") setIsFrozenActive(true);
 
     // 아이템 효과 종료 처리
     // frozen 아이템은 유저가 직접 종료
-    // if (item === "frozen") return;
+    if (item === "frozen") return;
     // 나머지 아이템은 ITEM_DURATION 뒤에 자동 종료
     setTimeout(() => {
       socket?.emit("escape_item", { item, userId: userInfo.userId });
@@ -138,10 +141,13 @@ export default function Game() {
       const temp = [...prev];
       // 처음으로 일치하는 요소 삭제
       const index = temp.findIndex((i) => i === item);
+      // 🚨 눈사람은 탈출하면 모두 제거
+      if (item === "frozen") return temp.filter((el) => el !== "frozen");
       if (index !== -1) temp.splice(index, 1);
       return temp;
     });
     if (item === "keyUp" || item === "keyDown") setMrKey("origin");
+    else if (item === "frozen") setIsFrozenActive(false);
   };
 
   /** 데시벨을 측정하는 함수 */
@@ -169,6 +175,7 @@ export default function Game() {
         progress={progress}
         startTime={startTime}
         muteAttack={muteAttack}
+        isFrozenActive={isFrozenActive}
       />
       <Sound
         setSongInfo={setSongInfo}

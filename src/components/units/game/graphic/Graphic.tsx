@@ -38,6 +38,8 @@ export default function Graphic(props: IGrapicProps) {
   const [isStop, setIsStop] = useState<boolean[]>([]);
   const currentPlayerRef = useRef<THREE.Object3D | null>(null); // 현재 유저의 플레이어를 가리키는 ref
 
+  const [snowmans, setSnowmans] = useState<THREE.Object3D[]>([]);
+
   const canvasRef = useRef<HTMLDivElement>(null);
   const mixers: THREE.AnimationMixer[] = [];
   const gltfLoader = new GLTFLoader();
@@ -195,6 +197,11 @@ export default function Graphic(props: IGrapicProps) {
     animate();
   }, [players, isStop]);
 
+  useEffect(() => {
+    if (props.isFrozenActive) switchPlayerToSnowman("mid");
+    else switchSnowmanToPlayer("mid");
+  }, [props.isFrozenActive]);
+
   const onSpinAction = (position: string) => {
     if (actions?.[position]) {
       actions[position][0].stop();
@@ -211,7 +218,6 @@ export default function Graphic(props: IGrapicProps) {
   };
 
   useEffect(() => {
-    console.log("MUTE_ATTACKS", props.muteAttack);
     if (props.muteAttack.mid) onSpinAction("mid");
     else onRunAction("mid");
     if (props.muteAttack.right) onSpinAction("right");
@@ -245,108 +251,100 @@ export default function Graphic(props: IGrapicProps) {
     players[position].position.z = targetPosition - 5.5;
   };
 
-  /* 전체 유저 아이템 효과 */
-  // useEffect(() => {
-  //   props.playersActiveItem.forEach((item, index) => {
-  //     // 음소거 아이템 공격 -> 멈춤
-  //     if (item === "mute") stopPlayer(index);
-  //     // 눈사람 아이템 공격 -> 눈사람으로 변신
-  //     // else if (item === "frozen") switchPlayerToSnowman(index);
-  //     else if (item === "frozen") switchPlayerToSnowman(index);
-  //     // 아이템 해제 -> 재생, 눈사람 해제
-  //     else if (item === "") {
-  //       startPlayer(index);
-  //       // if (snowmans[index] && index !== 0) {
-  //       // if (index !== 0) {
-  //       // 본인이 눈사람이 된 경우는 reduceSnowmanHealth에서 처리하므로 여기서는 타 유저들만 처리
-  //       switchSnowmanToPlayer(index);
-  //       // }
-  //     }
-  //   });
-  // }, [...props.playersActiveItem]);
-
   /* 눈사람 아이템 */
   const [, setSnowmanHealth] = useState(0); // 현재 유저의 눈사람 체력
 
   /** 플레이어를 눈사람으로 바꾸는 함수 */
-  // const switchPlayerToSnowman = (position: string) => {
-  //   // if (snowmans[index]) return; // If the snowman is already loaded, do not load again
-  //   // load the snowman
-  //   const gltfLoader = new GLTFLoader();
-  //   if (!players?.[position]) return;
-  //   gltfLoader.load("/game/player/snowman.glb", (gltf) => {
-  //     const snowman = gltf.scene.children[0];
-  //     snowman.scale.set(0.02, 0.02, 0.02);
-  //     snowman.position.copy(players[position].position);
-  //     snowman.rotateZ(Math.PI);
-  //     snowman.traverse((child) => {
-  //       child.castShadow = true;
-  //     });
-  //     snowman.name = "snowman";
+  const switchPlayerToSnowman = (position: string) => {
+    let isSnowman = false;
+    setSnowmans((prev) => {
+      if (prev.length !== 0) {
+        isSnowman = true;
+        // setSnowmanHealth(100);
+      }
+      return prev;
+    });
+    if (isSnowman) return;
 
-  //     // 현재 유저의 player가 눈사람이 된 경우, health bar를 추가한다.
-  //     // if (index === 0) {
-  //     //   addHealthBar(snowman);
-  //     //   setSnowmanHealth(100);
-  //     // }
+    const gltfLoader = new GLTFLoader();
+    if (!players?.[position]) return;
+    if (snowmans.length) return;
+    gltfLoader.load("/game/player/snowman.glb", (gltf) => {
+      const snowman = gltf.scene.children[0];
+      snowman.scale.set(0.02, 0.02, 0.02);
+      snowman.position.copy(players[position].position);
+      snowman.rotateZ(Math.PI);
+      snowman.traverse((child) => {
+        child.castShadow = true;
+      });
+      snowman.name = "snowman";
 
-  //     // 플레이어 숨기기
-  //     if (window.scene && players[position]) {
-  //       players[position].visible = false;
-  //     }
+      // 현재 유저의 player가 눈사람이 된 경우, health bar를 추가한다.
+      if (position === "mid") {
+        addHealthBar(snowman);
+        setSnowmanHealth(100);
+      }
 
-  //     // 눈사람 추가
-  //     if (window.scene) {
-  //       window.scene.add(snowman);
-  //       setSnowmans((prev) => ({ ...prev, [position]: snowman }));
-  //     }
-  //   });
-  // };
+      // 플레이어 숨기기
+      if (window.scene && players[position]) {
+        players[position].visible = false;
+      }
+
+      // 눈사람 추가
+      if (window.scene) {
+        window.scene.add(snowman);
+        setSnowmans((prev) => [...prev, snowman]);
+      }
+    });
+  };
 
   // 눈사람 체력 게이지를 가리키는 ref
   const snowmanHealthBarRef = useRef<THREE.Mesh | null>();
 
   /** 현재 유저의 눈사람에 체력 게이지를 추가하는 함수 */
   // 타 유저의 눈사람에는 체력 게이지를 추가하지 않음
-  // const addHealthBar = (snowman: THREE.Object3D) => {
-  //   const geometry = new THREE.BoxGeometry(100, 10, 10);
-  //   const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
-  //   const healthBar = new THREE.Mesh(geometry, material);
-  //   healthBar.rotation.x = Math.PI / 2;
-  //   healthBar.position.y = snowman.position.y;
-  //   healthBar.position.z = snowman.position.z + snowman.scale.z + 130;
-  //   snowman.add(healthBar); // snowman의 자식으로 추가
-  //   snowmanHealthBarRef.current = healthBar;
-  // };
+  const addHealthBar = (snowman: THREE.Object3D) => {
+    const geometry = new THREE.BoxGeometry(100, 10, 10);
+    const material = new THREE.MeshBasicMaterial({ color: "#00ff00" });
+    const healthBar = new THREE.Mesh(geometry, material);
+    healthBar.rotation.x = Math.PI / 2;
+    healthBar.position.y = snowman.position.y;
+    healthBar.position.z = snowman.position.z + snowman.scale.z + 130;
+    snowman.add(healthBar); // snowman의 자식으로 추가
+    snowmanHealthBarRef.current = healthBar;
+  };
 
   /** 눈사람을 다시 플레이어로 바꾸는 함수 */
-  // const switchSnowmanToPlayer = (position: string) => {
-  //   // 플레이어 노출
-  //   if (!players?.[position]) return;
-  //   if (players[position]) players[position].visible = true;
-  //   // else if (currentPlayerRef.current) currentPlayerRef.current.visible = true;
+  const switchSnowmanToPlayer = (position: string) => {
+    // 플레이어 노출
+    if (!players?.[position]) return;
+    if (players[position]) players[position].visible = true;
 
-  //   // 눈사람 제거
-  //   setSnowmans((prev) => {
-  //     if (prev[position]) window.scene.remove(prev[position]);
-  //     return { ...prev, [position]: null };
-  //   });
-  //   // if (snowmans[position]) window.scene.remove(snowmans[position]);
-  //   // snowmans[index] = null;
-  //   // snowmanHealthBarRef.current = null;
-  // };
+    // 눈사람 제거
+    setSnowmans((prev) => {
+      prev.forEach((el) => {
+        window.scene.remove(el);
+      });
+      return [];
+    });
+  };
 
   /** 눈사람의 체력을 SNOWMAN_DAMAGE_INTERVAL씩 감소하는 함수 */
   const reduceSnowmanHealth = () => {
-    if (!snowmans[0]) return;
-    if (snowmans[0]) playCrashSound();
+    let isSnowman = false;
+    setSnowmans((prev) => {
+      if (prev.length !== 0) isSnowman = true;
+      return prev;
+    });
+    if (!isSnowman) return;
+
+    playCrashSound();
     setSnowmanHealth((health) => {
       if (health <= 5) {
         socket?.emit("escape_item", {
           item: "frozen",
           userId: userInfo.userId,
         });
-        props.offItem("frozen");
       }
       const newHealth = Math.max(health - SNOWMAN_DAMAGE_INTERVAL, 0);
       if (snowmanHealthBarRef.current)

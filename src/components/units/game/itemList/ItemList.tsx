@@ -23,6 +23,7 @@ export default function ItemList() {
     }, ITEM_GET_INTERVAL);
 
     socket?.on("get_item", (item: string) => {
+      if (item === "empty") return; // 🚨 백엔드 수정 후 제거
       getItem(item);
     });
 
