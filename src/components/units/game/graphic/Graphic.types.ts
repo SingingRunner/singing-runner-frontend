@@ -13,4 +13,5 @@ export interface IGrapicProps {
   isFrozenActive: boolean;
   isFrozenActiveRight: boolean;
   isFrozenActiveLeft: boolean;
+  isTerminated: boolean;
 }

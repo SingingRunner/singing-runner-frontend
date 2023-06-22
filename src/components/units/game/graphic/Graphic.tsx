@@ -6,6 +6,9 @@ import { IGrapicProps } from "./Graphic.types";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRecoilValue } from "recoil";
 import { userInfoState } from "../../../../commons/store";
+import { gsap } from "gsap";
+import { useRouter } from "next/router";
+import Button, { buttonType } from "../../../commons/button/Button";
 
 declare global {
   interface Window {
@@ -13,7 +16,7 @@ declare global {
   }
 }
 
-const SNOWMAN_DAMAGE_INTERVAL = 3.5;
+const SNOWMAN_DAMAGE_INTERVAL = 2.5;
 
 export default function Graphic(props: IGrapicProps) {
   // 소켓 가져오기
@@ -35,19 +38,18 @@ export default function Graphic(props: IGrapicProps) {
     left: THREE.AnimationAction[] | undefined;
   }>();
 
-  const [isStop, setIsStop] = useState<boolean[]>([]);
-  const currentPlayerRef = useRef<THREE.Object3D | null>(null); // 현재 유저의 플레이어를 가리키는 ref
-
   const [snowmans, setSnowmans] = useState<THREE.Object3D[]>([]);
   const [snowmansRight, setSnowmansRight] = useState<THREE.Object3D[]>([]);
   const [snowmansLeft, setSnowmansLeft] = useState<THREE.Object3D[]>([]);
 
+  let playerLength = 0;
   const canvasRef = useRef<HTMLDivElement>(null);
   const mixers: THREE.AnimationMixer[] = [];
   const gltfLoader = new GLTFLoader();
   let renderer: THREE.WebGLRenderer;
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null);
   let floorTexture: THREE.Texture;
 
   /* 그래픽 초기화 */
@@ -75,6 +77,9 @@ export default function Graphic(props: IGrapicProps) {
     camera.position.y = 5;
     camera.position.x = 0;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    cameraRef.current = camera;
 
     /* Light */
     const ambientLight = new THREE.AmbientLight("white", 0.5);
@@ -129,17 +134,21 @@ export default function Graphic(props: IGrapicProps) {
         const player = gltf.scene.children[0];
         player.scale.set(0.7, 0.7, 0.7);
         player.position.copy(playerPositions[i]);
+        if (i === 0) {
+          const bbox = new THREE.Box3().setFromObject(gltf.scene);
+          playerLength = bbox.max.y - bbox.min.y;
+        }
 
         if (gltf.animations && gltf.animations.length > 0) {
           const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
           const action = mixer.clipAction(gltf.animations[13]); // 애니메이션을 재생할 action 생성
-          const rollAction = mixer.clipAction(gltf.animations[12]);
+          const bounceAction = mixer.clipAction(gltf.animations[1]);
           const spinAction = mixer.clipAction(gltf.animations[15]);
           action.play(); // 애니메이션 재생
           mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
           // 아이템 효과로 애니메이션을 정지/재생 시키기 위해서 action을 저장해둠
           setActions((actions) => {
-            const arr = [action, rollAction, spinAction];
+            const arr = [action, bounceAction, spinAction];
             const newActions =
               i === 0
                 ? { mid: arr, right: actions?.right, left: actions?.left }
@@ -164,15 +173,6 @@ export default function Graphic(props: IGrapicProps) {
               : { left: player, mid: players?.mid, right: players?.right };
           return newPlayers;
         });
-
-        setIsStop((isStop) => {
-          const newIsStop = [...isStop];
-          newIsStop[i] = false;
-          return newIsStop;
-        });
-
-        // 최초로 생성된 (가운데에 위치한) 플레이어를 currentPlayer로 저장해둠
-        if (i === 0) currentPlayerRef.current = player;
       });
     }
 
@@ -185,6 +185,41 @@ export default function Graphic(props: IGrapicProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (props.isTerminated) moveCameraToPlayer();
+  }, [props.isTerminated]);
+
+  const terminateAudio = new Audio("/game/terminate/cloud_chaser.mp3");
+  const moveCameraToPlayer = () => {
+    const camera = cameraRef.current;
+    if (camera) {
+      gsap.to(camera.position, {
+        duration: 8,
+        x: 0.6,
+        y: playerLength + 1.3,
+        z: -2.5,
+        onUpdate: () => {
+          camera.updateProjectionMatrix();
+          camera.lookAt(new THREE.Vector3(0, 1, -5.5));
+        },
+      });
+
+      const clock = new THREE.Clock();
+      const animate = () => {
+        requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+        for (const mixer of mixers) {
+          mixer.update(delta);
+        }
+        if (renderer) renderer.render(scene, camera);
+      };
+      animate();
+    }
+
+    terminateAudio.play();
+    onBounceAction("mid");
+  };
+
   /* animation */
   useEffect(() => {
     const clock = new THREE.Clock();
@@ -196,11 +231,10 @@ export default function Graphic(props: IGrapicProps) {
         mixer.update(delta);
       }
       if (floorTexture) floorTexture.offset.y += 0.004;
-
       if (renderer) renderer.render(scene, camera);
     };
     animate();
-  }, [players, isStop]);
+  }, [players]);
 
   useEffect(() => {
     if (props.isFrozenActive) switchPlayerToSnowman("mid");
@@ -220,6 +254,13 @@ export default function Graphic(props: IGrapicProps) {
       actions[position][0].stop();
       actions[position][1].stop();
       actions[position][2].play();
+    }
+  };
+  const onBounceAction = (position: string) => {
+    if (actions?.[position]) {
+      actions[position][0].stop();
+      actions[position][2].stop();
+      actions[position][1].play();
     }
   };
   const onRunAction = (position: string) => {
@@ -393,7 +434,7 @@ export default function Graphic(props: IGrapicProps) {
 
     playCrashSound();
     setSnowmanHealth((health) => {
-      if (health <= 5) {
+      if (health <= SNOWMAN_DAMAGE_INTERVAL) {
         socket?.emit("escape_item", {
           item: "frozen",
           userId: userInfo.userId,
@@ -436,5 +477,26 @@ export default function Graphic(props: IGrapicProps) {
     soundCounterRef.current = 0;
   };
 
-  return <div ref={canvasRef} />;
+  const router = useRouter();
+  const onClickButton = () => {
+    terminateAudio.pause();
+    // 🚨 게임 종료 화면으로 이동하도록 변경 예정
+    router.push("/main");
+  };
+
+  return (
+    <>
+      <div ref={canvasRef} />
+      {props.isTerminated && (
+        <div style={{ zIndex: 1, margin: "0 16px", position: "absolute" }}>
+          <Button
+            buttonType={buttonType.GRADATION}
+            text="게임 종료"
+            isFixedAtBottom
+            onClick={onClickButton}
+          />
+        </div>
+      )}
+    </>
+  );
 }

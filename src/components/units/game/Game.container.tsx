@@ -21,6 +21,9 @@ export default function Game() {
   const [progress, setProgress] = useState(0);
   const [startTime, setStartTime] = useState(0);
 
+  // 게임 종료 여부
+  const [isTerminated, setIsTerminated] = useState(false);
+
   const [songInfo, setSongInfo] = useState({ title: "", singer: "" });
 
   // 현재 플레이어의 정보
@@ -188,6 +191,7 @@ export default function Game() {
         isFrozenActive={isFrozenActive}
         isFrozenActiveRight={isFrozenActiveRight}
         isFrozenActiveLeft={isFrozenActiveLeft}
+        isTerminated={isTerminated}
       />
       <Sound
         setSongInfo={setSongInfo}
@@ -200,6 +204,7 @@ export default function Game() {
         progress={progress}
         setProgress={setProgress}
         setStartTime={setStartTime}
+        setIsTerminated={setIsTerminated}
       />
     </>
   );

@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 
 interface IRankListProps {
   playersInfo: IPlayersInfo[];
+  isTerminated: boolean;
 }
 
 export default function RankList(props: IRankListProps) {
@@ -18,16 +19,20 @@ export default function RankList(props: IRankListProps) {
   }, [props.playersInfo]);
 
   return (
-    <RankWrapper>
+    <RankWrapper isTerminated={props.isTerminated}>
       {sortedData?.map((el, i) => {
         return (
-          <Rank key={i} isCurrentUser={el.userId === userInfo.userId}>
+          <Rank
+            key={i}
+            isCurrentUser={el.userId === userInfo.userId}
+            isTerminated={props.isTerminated}
+          >
             <span>{i + 1}</span>
             <Profile
               isCurrentUser={el.userId === userInfo.userId}
               src={`/game/player/profile/${el.character}.png`}
             />
-            {el.activeItem && (
+            {el.activeItem && !props.isTerminated && (
               <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
             )}
             <span>{el.score}</span>
@@ -41,21 +46,39 @@ export default function RankList(props: IRankListProps) {
 const RankWrapper = styled.div`
   display: flex;
   flex-direction: column;
+
   position: fixed;
   top: 200px;
   left: 8px;
+  ${(props: { isTerminated: boolean }) => {
+    return props.isTerminated
+      ? `
+        flex-direction: row;
+        aign-items: center;
+        justify-content: center;
+        width: 100%;
+        top: 120px;
+        left: 0;
+        `
+      : ``;
+  }}
 `;
 
 const Rank = styled.div`
   position: relative;
   margin-bottom: 10px;
+  ${(props: { isTerminated: boolean; isCurrentUser: boolean }) => {
+    return props.isTerminated ? `margin: 0 16px;` : ``;
+  }}
   span:first-of-type {
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: ${(props: { isCurrentUser: boolean }) =>
-      props.isCurrentUser ? `#6400ff` : ` #1a1128`};
+    background-color: ${(props: {
+      isTerminated: boolean;
+      isCurrentUser: boolean;
+    }) => (props.isCurrentUser ? `#6400ff` : ` #1a1128`)};
     width: 22px;
     height: 22px;
     border-radius: 100%;
