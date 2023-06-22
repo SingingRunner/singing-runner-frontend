@@ -159,7 +159,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       // 추후 수정 필요
       a.download = "audio.ogg";
       a.click();
-      // 여기에 게임 종료 이벤트 추가하면 됨
+      socket?.emit("game_terminated", {
+        userId: userInfo.userId,
+        score: currentScore,
+      });
     };
     mediaRecorder.start();
 
