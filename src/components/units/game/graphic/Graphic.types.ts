@@ -5,4 +5,9 @@ export interface IGrapicProps {
   playersInfo: IPlayersInfo[];
   offItem: (item: string) => void;
   decibel: number;
+  muteAttack: {
+    mid: boolean;
+    right: boolean;
+    left: boolean;
+  };
 }
