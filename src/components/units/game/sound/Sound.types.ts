@@ -17,6 +17,7 @@ export interface ISoundProps {
   setProgress: Dispatch<SetStateAction<number>>;
   setStartTime: Dispatch<SetStateAction<number>>;
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
+  setIsTerminated: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ISocketLoadingData {

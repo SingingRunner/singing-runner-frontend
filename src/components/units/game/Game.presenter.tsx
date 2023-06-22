@@ -46,22 +46,30 @@ export default function GameUI(props: IGameUIProps) {
             isFrozenActive={props.isFrozenActive}
             isFrozenActiveRight={props.isFrozenActiveRight}
             isFrozenActiveLeft={props.isFrozenActiveLeft}
+            isTerminated={props.isTerminated}
           />
           <S.Wrapper>
-            {isItemActivated && <S.ItemEffectWrapper />}
+            {!props.isTerminated && isItemActivated && <S.ItemEffectWrapper />}
             <S.Title>
               {props.songInfo.title} - {props.songInfo.singer}
             </S.Title>
-            <Lyric
-              startTime={props.startTime}
-              isCloud={props.appliedItems.includes("cloud")}
+            {!props.isTerminated && (
+              <Lyric
+                startTime={props.startTime}
+                isCloud={props.appliedItems.includes("cloud")}
+              />
+            )}
+            {!props.isTerminated && (
+              <ItemInfo
+                appliedItems={props.appliedItems}
+                decibel={props.decibel}
+              />
+            )}
+            <RankList
+              playersInfo={props.playersInfo}
+              isTerminated={props.isTerminated}
             />
-            <ItemInfo
-              appliedItems={props.appliedItems}
-              decibel={props.decibel}
-            />
-            <RankList playersInfo={props.playersInfo} />
-            <ItemList />
+            {!props.isTerminated && <ItemList />}
           </S.Wrapper>
         </>
       )}

@@ -15,6 +15,7 @@ export interface IPitchAndDecibelProps {
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   setStartTime: Dispatch<SetStateAction<number>>;
+  setIsTerminated: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ISocketScore {

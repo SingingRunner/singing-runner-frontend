@@ -19,6 +19,7 @@ export interface IGameUIProps {
   isFrozenActive: boolean;
   isFrozenActiveRight: boolean;
   isFrozenActiveLeft: boolean;
+  isTerminated: boolean;
 }
 
 export interface IPlayersInfo {

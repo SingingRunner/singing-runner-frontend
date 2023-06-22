@@ -16,6 +16,7 @@
     "apollo-upload-client": "^17.0.0",
     "graphql": "^16.6.0",
     "graphql-request": "^6.1.0",
+    "gsap": "^3.12.1",
     "howler": "^2.2.3",
     "next": "12.1.0",
     "pitchfinder": "^2.3.2",
