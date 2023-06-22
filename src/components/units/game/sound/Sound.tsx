@@ -70,7 +70,7 @@ export default function Sound(props: ISoundProps) {
               const result = await fetch(file);
               props.setProgress((prev) => {
                 if (idx === 2) return 100;
-                return props.progress + 30;
+                return prev + 30;
               });
               return result;
             })
