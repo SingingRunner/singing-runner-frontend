@@ -1,6 +1,6 @@
 import Button, { buttonType } from "../../../commons/button/Button";
 import ButtonWrapper from "../../../commons/buttons/wrapper";
-import Modal from '../../../commons/layout/modal/Modal';
+import Modal from '../../../commons/modal/Modal';
 import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
 
 export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
@@ -26,7 +26,6 @@ export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
           text="나가기"
           onClick={props.onClickExit}
         />
-      <div onClick={props.onClickFinalLogout} style={{ height: "44px", marginLeft: "144px", fontSize: "16px", color: "white" }}>로그아웃</div>
       </ButtonWrapper>
       {props.isLogoutClicked && <>
         <Modal
@@ -34,6 +33,8 @@ export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
         firstText="로그아웃 하시겠습니까?"
         buttonText='예'
         leftButtonText='아니오'
+        onClickRight={props.onClickFinalLogout}
+        onClickLeft={props.onClickCancelLogout}
         ></Modal>
       </>}
     </>

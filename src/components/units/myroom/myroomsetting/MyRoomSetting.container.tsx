@@ -62,6 +62,9 @@ export default function MyRoomSetting() {
     setIsLogoutClicked(true);
   }
 
+  const onClickCancelLogout = () => {
+    setIsLogoutClicked(false);
+  }
 
   const onClickFinalLogout = async () => {
     try {
@@ -88,6 +91,7 @@ export default function MyRoomSetting() {
     onClickLogout,
     isLogoutClicked,
     onClickFinalLogout,
+    onClickCancelLogout,
   };
 
   return <MyRoomSettingUI {...props} />;
