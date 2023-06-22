@@ -13,6 +13,8 @@ interface IModalProps {
   /* 노래 정보 */
   songTitle?: string;
   singer?: string;
+  onClickRight: () => void;
+  onClickLeft?: () => void;
 }
 
 export default function Modal(props: IModalProps) {
@@ -58,13 +60,19 @@ export default function Modal(props: IModalProps) {
           {!props.leftButtonText ? (
             // 버튼이 한 개인 경우
             <S.ButtonWrapper>
-              <S.SingleButton>{props.buttonText}</S.SingleButton>
+              <S.SingleButton onClick={props.onClickRight}>
+                {props.buttonText}
+              </S.SingleButton>
             </S.ButtonWrapper>
           ) : (
             // 버튼이 두 개인 경우
             <S.ButtonWrapper>
-              <S.DoubleButton isLeft>{props.leftButtonText}</S.DoubleButton>
-              <S.DoubleButton>{props.buttonText}</S.DoubleButton>
+              <S.DoubleButton onClick={props.onClickLeft} isLeft>
+                {props.leftButtonText}
+              </S.DoubleButton>
+              <S.DoubleButton onClick={props.onClickRight}>
+                {props.buttonText}
+              </S.DoubleButton>
             </S.ButtonWrapper>
           )}
         </S.Wrapper>
