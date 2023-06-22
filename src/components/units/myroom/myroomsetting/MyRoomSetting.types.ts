@@ -4,4 +4,5 @@ export interface IMyRoomSettingUIProps {
   onClickLogout: () => void;
   isLogoutClicked: boolean;
   onClickFinalLogout: () => void;
+  onClickCancelLogout: () => void;
 }
