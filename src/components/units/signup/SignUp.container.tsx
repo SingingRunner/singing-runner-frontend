@@ -7,21 +7,17 @@ import {
   IMutation,
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
-import { useSetRecoilState } from 'recoil';
-import { userInfoState } from '../../../commons/store';
+import { useSetRecoilState } from "recoil";
+import { userInfoState } from "../../../commons/store";
 
 const REGISTER_USER = gql`
   mutation RegisterUser($newUser: UserRegisterDto!) {
     registerUser(newUser: $newUser) {
-      userId
-      userEmail
-      nickname
-      userActive
-      userKeynote
-      userMmr
-      userPoint
-      character
-      deletedAt
+      accessToken
+      user {
+        userId
+        character
+      }
     }
   }
 `;
@@ -32,8 +28,7 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
-  const [passwordCheckError, setPasswordCheckError] =
-    useState("");
+  const [passwordCheckError, setPasswordCheckError] = useState("");
   const [nickname, setNickname] = useState("");
   const [nicknameError, setNicknameError] = useState("");
   // 가입 완료 버튼 활성화 여부를 상태로 관리
@@ -55,19 +50,20 @@ export default function SignUp() {
       };
 
       const { data } = await registerUser({ variables: { newUser } });
+      const registeredUser = data?.registerUser.user;
 
-      const registeredUser = data?.registerUser;
-      // 회원가입 성공 후 처리 로직 작성
-
+      // 회원가입 성공
       alert("회원가입을 축하합니다.");
+
+      // 유저 정보 저장
       setUserInfo({
-        userId: registeredUser?.userId || '',
-        character: registeredUser?.character || '',
-        userKeynote: "origin" // TODO: 추후 수정
+        userId: registeredUser?.userId || "",
+        character: registeredUser?.character || "",
+        userKeynote: "origin", // TODO: 추후 수정
       });
+      console.log("registeredUser: ", registeredUser);
 
       router.push("/signup/starting");
-      console.log(data);
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);
@@ -117,16 +113,12 @@ export default function SignUp() {
     if (enteredNickname === "") {
       setNicknameError("");
     } else if (specialCharactersRegex.test(enteredNickname)) {
-      setNicknameError(
-        "* 닉네임에는 한글, 영어, 숫자만 입력 가능합니다."
-      );
+      setNicknameError("* 닉네임에는 한글, 영어, 숫자만 입력 가능합니다.");
     } else if (
       koreanContainsOnlyConsonantsRegex.test(enteredNickname) ||
       koreanContainsOnlyVowelsRegex.test(enteredNickname)
     ) {
-      setNicknameError(
-        "* 닉네임에 한글 모음, 자음만 사용하실 수는 없습니다."
-      );
+      setNicknameError("* 닉네임에 한글 모음, 자음만 사용하실 수는 없습니다.");
     } else if (whitespaceRegex.test(enteredNickname)) {
       setNicknameError("* 닉네임에 띄어쓰기를 사용할 수 없습니다.");
     } else if (enteredNickname.length < 2 || enteredNickname.length > 6) {

@@ -20,9 +20,15 @@ const Main = () => {
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
-  // const dummyClick = () => {
-  //   console.log("dummy");
+  // const onClickSocial = () => {
+  //   // 친구 화면으로 전환
+  //   router.push("/social");
   // };
+
+  const onClickMyRoom = () => {
+    // 내 방 화면으로 전환
+    router.push("/myroom");
+  };
 
   const router = useRouter();
 
@@ -172,6 +178,7 @@ const Main = () => {
     showWaiting,
     setDummyUserId,
     setDummyCharacter,
+    onClickMyRoom,
     dummyCharacter,
   };
 

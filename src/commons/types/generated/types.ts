@@ -15,14 +15,19 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
-export type IAuth = {
-  __typename?: 'Auth';
+export type IAuthDto = {
+  __typename?: 'AuthDto';
   accessToken: Scalars['String']['output'];
   user: IUser;
 };
 
-export type IAuthUser = {
-  __typename?: 'AuthUser';
+export type IAuthTokenDto = {
+  __typename?: 'AuthTokenDto';
+  accessToken: Scalars['String']['output'];
+};
+
+export type IAuthUserDto = {
+  __typename?: 'AuthUserDto';
   character: Scalars['String']['output'];
   nickname: Scalars['String']['output'];
   userActive: Scalars['Int']['output'];
@@ -31,6 +36,7 @@ export type IAuthUser = {
   userKeynote: Scalars['Int']['output'];
   userMmr: Scalars['Int']['output'];
   userPoint: Scalars['Int']['output'];
+  userTier: Scalars['String']['output'];
 };
 
 export type IGameSongDto = {
@@ -52,14 +58,20 @@ export type IGameSongDto = {
 
 export type IMutation = {
   __typename?: 'Mutation';
-  loginUser: IAuth;
-  refreshAccessToken: IToken;
-  registerUser: IUser;
+  loginUser: IAuthDto;
+  logout: Scalars['String']['output'];
+  refreshAccessToken: IAuthTokenDto;
+  registerUser: IAuthDto;
 };
 
 
 export type IMutationLoginUserArgs = {
   userLoginDto: IUserLoginDto;
+};
+
+
+export type IMutationLogoutArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
@@ -69,19 +81,20 @@ export type IMutationRegisterUserArgs = {
 
 export type IQuery = {
   __typename?: 'Query';
-  fetchUser: IAuthUser;
+  fetchUser: IAuthUserDto;
+  fetchUserGuard: IAuthUserDto;
   searchSong: Array<IGameSongDto>;
+};
+
+
+export type IQueryFetchUserArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
 export type IQuerySearchSongArgs = {
   keyword: Scalars['String']['input'];
   page: Scalars['Int']['input'];
-};
-
-export type IToken = {
-  __typename?: 'Token';
-  accessToken: Scalars['String']['output'];
 };
 
 export type IUser = {
