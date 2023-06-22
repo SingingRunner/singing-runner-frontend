@@ -39,6 +39,8 @@ export default function Graphic(props: IGrapicProps) {
   const currentPlayerRef = useRef<THREE.Object3D | null>(null); // 현재 유저의 플레이어를 가리키는 ref
 
   const [snowmans, setSnowmans] = useState<THREE.Object3D[]>([]);
+  const [snowmansRight, setSnowmansRight] = useState<THREE.Object3D[]>([]);
+  const [snowmansLeft, setSnowmansLeft] = useState<THREE.Object3D[]>([]);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const mixers: THREE.AnimationMixer[] = [];
@@ -201,6 +203,14 @@ export default function Graphic(props: IGrapicProps) {
     if (props.isFrozenActive) switchPlayerToSnowman("mid");
     else switchSnowmanToPlayer("mid");
   }, [props.isFrozenActive]);
+  useEffect(() => {
+    if (props.isFrozenActiveRight) switchPlayerToSnowman("right");
+    else switchSnowmanToPlayer("right");
+  }, [props.isFrozenActiveRight]);
+  useEffect(() => {
+    if (props.isFrozenActiveLeft) switchPlayerToSnowman("left");
+    else switchSnowmanToPlayer("left");
+  }, [props.isFrozenActiveLeft]);
 
   const onSpinAction = (position: string) => {
     if (actions?.[position]) {
@@ -257,18 +267,35 @@ export default function Graphic(props: IGrapicProps) {
   /** 플레이어를 눈사람으로 바꾸는 함수 */
   const switchPlayerToSnowman = (position: string) => {
     let isSnowman = false;
-    setSnowmans((prev) => {
-      if (prev.length !== 0) {
-        isSnowman = true;
-        // setSnowmanHealth(100);
-      }
-      return prev;
-    });
+    if (position === "mid")
+      setSnowmans((prev) => {
+        if (prev.length !== 0) {
+          isSnowman = true;
+          // setSnowmanHealth(100);
+        }
+        return prev;
+      });
+    else if (position === "right")
+      setSnowmansRight((prev) => {
+        if (prev.length !== 0) {
+          isSnowman = true;
+        }
+        return prev;
+      });
+    else if (position === "left")
+      setSnowmansLeft((prev) => {
+        if (prev.length !== 0) {
+          isSnowman = true;
+        }
+        return prev;
+      });
     if (isSnowman) return;
 
     const gltfLoader = new GLTFLoader();
     if (!players?.[position]) return;
-    if (snowmans.length) return;
+    if (position === "mid" && snowmans.length) return;
+    if (position === "right" && snowmansRight.length) return;
+    if (position === "left" && snowmansLeft.length) return;
     gltfLoader.load("/game/player/snowman.glb", (gltf) => {
       const snowman = gltf.scene.children[0];
       snowman.scale.set(0.02, 0.02, 0.02);
@@ -293,7 +320,11 @@ export default function Graphic(props: IGrapicProps) {
       // 눈사람 추가
       if (window.scene) {
         window.scene.add(snowman);
-        setSnowmans((prev) => [...prev, snowman]);
+        if (position === "mid") setSnowmans((prev) => [...prev, snowman]);
+        else if (position === "right")
+          setSnowmansRight((prev) => [...prev, snowman]);
+        else if (position === "left")
+          setSnowmansLeft((prev) => [...prev, snowman]);
       }
     });
   };
@@ -321,12 +352,28 @@ export default function Graphic(props: IGrapicProps) {
     if (players[position]) players[position].visible = true;
 
     // 눈사람 제거
-    setSnowmans((prev) => {
-      prev.forEach((el) => {
-        window.scene.remove(el);
+    if (position === "mid") {
+      setSnowmans((prev) => {
+        prev.forEach((el) => {
+          window.scene.remove(el);
+        });
+        return [];
       });
-      return [];
-    });
+    } else if (position === "right") {
+      setSnowmansRight((prev) => {
+        prev.forEach((el) => {
+          window.scene.remove(el);
+        });
+        return [];
+      });
+    } else if (position === "left") {
+      setSnowmansLeft((prev) => {
+        prev.forEach((el) => {
+          window.scene.remove(el);
+        });
+        return [];
+      });
+    }
   };
 
   /** 눈사람의 체력을 SNOWMAN_DAMAGE_INTERVAL씩 감소하는 함수 */

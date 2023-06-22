@@ -44,6 +44,8 @@ export default function GameUI(props: IGameUIProps) {
             decibel={props.decibel}
             muteAttack={props.muteAttack}
             isFrozenActive={props.isFrozenActive}
+            isFrozenActiveRight={props.isFrozenActiveRight}
+            isFrozenActiveLeft={props.isFrozenActiveLeft}
           />
           <S.Wrapper>
             {isItemActivated && <S.ItemEffectWrapper />}

@@ -38,6 +38,8 @@ export default function Game() {
   const [isMuteActive, setIsMuteActive] = useState(false);
   // frozen 공격을 당한 경우, 캐릭터를 눈사람으로 만들기 위한 상태
   const [isFrozenActive, setIsFrozenActive] = useState(false);
+  const [isFrozenActiveRight, setIsFrozenActiveRight] = useState(false);
+  const [isFrozenActiveLeft, setIsFrozenActiveLeft] = useState(false);
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [appliedItems, setAppliedItems] = useState<string[]>([]);
 
@@ -83,6 +85,10 @@ export default function Game() {
               temp[i].activeItem = data.item;
               if (data.item === "mute")
                 setMuteAttack((prev) => ({ ...prev, [user.position]: true }));
+              if (data.item === "frozen") {
+                if (user.position === "right") setIsFrozenActiveRight(true);
+                else if (user.position === "left") setIsFrozenActiveLeft(true);
+              }
             }
             // 공격자가 현재 유저가 아닌 경우 화면에 적용
           }
@@ -95,7 +101,7 @@ export default function Game() {
       });
     });
 
-    // 다른 유저가 아이템에서 탈출
+    // 아이템에서 탈출
     socket?.on("escape_item", (data: ISocketItem) => {
       // 탈출한 유저가 현재 유저인 경우
       if (data.userId === userInfo.userId) {
@@ -108,6 +114,10 @@ export default function Game() {
             temp[i].activeItem = "";
             if (data.item === "mute")
               setMuteAttack((prev) => ({ ...prev, [user.position]: false }));
+            if (data.item === "frozen") {
+              if (user.position === "right") setIsFrozenActiveRight(false);
+              else if (user.position === "left") setIsFrozenActiveLeft(false);
+            }
           }
         });
         return temp;
@@ -176,6 +186,8 @@ export default function Game() {
         startTime={startTime}
         muteAttack={muteAttack}
         isFrozenActive={isFrozenActive}
+        isFrozenActiveRight={isFrozenActiveRight}
+        isFrozenActiveLeft={isFrozenActiveLeft}
       />
       <Sound
         setSongInfo={setSongInfo}
