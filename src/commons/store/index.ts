@@ -1,6 +1,7 @@
 import { atom, selector } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 import { getAccessToken } from "../libraries/getAccessToken";
+import { IRoomInfoState } from "../../components/units/custom/Custom.types";
 
 interface IUserInfoState {
   userId: string;
@@ -25,4 +26,10 @@ export const refreshAccessTokenLoadable = selector({
     const newAccessToken = await getAccessToken();
     return newAccessToken;
   },
+});
+
+// custom 방 정보
+export const roomInfoState = atom<IRoomInfoState>({
+  key: `roomInfoState${uuidv4()}`,
+  default: { mode: "아이템", singer: "", songTitle: "" },
 });

@@ -6,6 +6,7 @@ export const Background = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   height: 100vh;
+  padding-top: 52px;
 `;
 export const Body = styled.div`
   height: calc(100% - 108px);
