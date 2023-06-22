@@ -3,16 +3,60 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
+import { ChangeEvent, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userInfoState } from "../../../commons/store";
 
 export default function MainUI(props: IMainUIProps) {
+  // 🚨 임시 가데이터 - 여기부터
+  const [, setUserInfo] = useRecoilState(userInfoState);
+  const changeUserId = (e: ChangeEvent<HTMLInputElement>) => {
+    props.setDummyUserId(e.target.value);
+    setUserInfo((prev) => ({ ...prev, userId: e.target.value }));
+  };
+  const changeCharacter = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    props.setDummyCharacter(selectedValue);
+    setUserInfo((prev) => ({ ...prev, character: event.target.value }));
+  };
+  const getRandomOption = () => {
+    const options = [
+      "beluga",
+      "puma",
+      "husky",
+      "hare",
+      "lynx",
+      "snowLeopard",
+      "narwhal",
+      "puffin",
+    ];
+    const randomCharacter = options[Math.floor(Math.random() * options.length)];
+    setUserInfo((prev) => ({ ...prev, character: randomCharacter }));
+    return randomCharacter;
+  };
+  useEffect(() => {
+    props.setDummyCharacter(getRandomOption());
+  }, [props.setDummyCharacter]);
+  // 🚨 임시 가데이터 - 여기까지
   return (
     <>
       {/* <img src='/icon/social.png' onClick={props.onClickSocial}  /> */}
       <img style={{width: "24px", height: "auto", position: "absolute", marginTop:"-60px", marginLeft: "312px"}} src='/icon/myroom.png' onClick={props.onClickMyRoom}  />
-      <span style={{color: "white"}}>아이디: </span>
-      <input onChange={(e) => props.setDummyUserId(e.target.value)} />
-      <span style={{color: "white"}}>캐릭터: </span>
-      <input onChange={(e) => props.setDummyCharacter(e.target.value)} />
+      {/* 🚨 임시 가데이터 - 여기부터 */}
+      아이디
+      <input onChange={changeUserId} />
+      캐릭터
+      <select value={props.dummyCharacter} onChange={changeCharacter}>
+        <option value="beluga">하늘색고래</option>
+        <option value="puma">황토색무언가</option>
+        <option value="husky">개</option>
+        <option value="hare">토끼ㅋ</option>
+        <option value="lynx">주황색?점박이</option>
+        <option value="snowLeopard">회색점박이</option>
+        <option value="narwhal">퍼런고래</option>
+        <option value="puffin">새</option>
+      </select>
+      {/* 🚨 임시 가데이터 - 여기까지 */}
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}
       {props.isBattleClicked && <AfterClickBattle {...props} />}

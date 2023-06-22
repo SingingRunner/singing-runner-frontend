@@ -11,8 +11,8 @@ export default function GameUI(props: IGameUIProps) {
   // 아이템이 활성화 되어 있을 때, 화면 테두리 애니메이션을 보여주기 위한 상태
   const [isItemActivated, setIsItemActivated] = useState(false);
   useEffect(() => {
-    setIsItemActivated(Object.values(props.activeItem).some((value) => value));
-  }, [props.activeItem]);
+    setIsItemActivated(props.appliedItems.length > 0);
+  }, [props.appliedItems]);
 
   return (
     <>
@@ -38,26 +38,38 @@ export default function GameUI(props: IGameUIProps) {
         // 로딩화면 끝, 게임 시작
         <>
           <Graphic
+            appliedItems={props.appliedItems}
             playersInfo={props.playersInfo}
-            activeItem={props.activeItem}
-            setActiveItem={props.setActiveItem}
-            playersActiveItem={props.playersActiveItem}
             offItem={props.offItem}
             decibel={props.decibel}
+            muteAttack={props.muteAttack}
+            isFrozenActive={props.isFrozenActive}
+            isFrozenActiveRight={props.isFrozenActiveRight}
+            isFrozenActiveLeft={props.isFrozenActiveLeft}
+            isTerminated={props.isTerminated}
           />
           <S.Wrapper>
-            {isItemActivated && <S.ItemEffectWrapper />}
-            {/* 🚨 제목 - 가수 */}
+            {!props.isTerminated && isItemActivated && <S.ItemEffectWrapper />}
             <S.Title>
               {props.songInfo.title} - {props.songInfo.singer}
             </S.Title>
-            <Lyric startTime={props.startTime} />
-            <ItemInfo activeItem={props.activeItem} decibel={props.decibel} />
+            {!props.isTerminated && (
+              <Lyric
+                startTime={props.startTime}
+                isCloud={props.appliedItems.includes("cloud")}
+              />
+            )}
+            {!props.isTerminated && (
+              <ItemInfo
+                appliedItems={props.appliedItems}
+                decibel={props.decibel}
+              />
+            )}
             <RankList
               playersInfo={props.playersInfo}
-              playersActiveItem={props.playersActiveItem}
+              isTerminated={props.isTerminated}
             />
-            <ItemList />
+            {!props.isTerminated && <ItemList />}
           </S.Wrapper>
         </>
       )}

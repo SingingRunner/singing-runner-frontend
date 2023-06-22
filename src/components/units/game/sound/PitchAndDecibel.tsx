@@ -1,6 +1,8 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../../commons/store";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -46,9 +48,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
+  const userInfo = useRecoilValue(userInfoState);
+
   const pitchAveragesRef = useRef<number[]>([]);
 
-  const avgPitchWindowSize = 3000;
+  const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
   let pitchSamples: number = 0;
   let startTime: number = 0;
@@ -89,13 +93,14 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     props.setPlayersInfo((prev) => {
       const temp = [...prev];
       const idx = temp.findIndex(
-        (newScoreEl) => newScoreEl.userId === data.user
+        (newScoreEl) => newScoreEl.userId === data.userId
       );
       if (idx !== -1) temp[idx].score = data.score;
       return temp;
     });
   };
 
+  const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     let answer: number[] = [];
@@ -129,7 +134,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     }
 
     // 서버에 현재 유저의 점수 전송
-    socket?.emit("score", currentScore);
+    setPrevScore((prev) => {
+      if (prev !== currentScore) {
+        socket?.emit("score", { userId: userInfo.userId, score: currentScore });
+      }
+      return currentScore;
+    });
 
     return currentScore;
   };
@@ -149,7 +159,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       // 추후 수정 필요
       a.download = "audio.ogg";
       a.click();
-      // 여기에 게임 종료 이벤트 추가하면 됨
+      socket?.emit("game_terminated", {
+        userId: userInfo.userId,
+        score: currentScore,
+      });
+      props.setIsTerminated(true);
     };
     mediaRecorder.start();
 
@@ -204,7 +218,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         sum += frequencyArray[i];
       }
       const avg = sum / frequencyArray.length;
-      if (props.isMute) {
+      if (propsRef.current.isMute) {
         const decibel = calculateDecibel(avg);
         propsRef.current.setDecibel(decibel);
       }

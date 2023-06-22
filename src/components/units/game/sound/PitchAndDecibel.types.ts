@@ -8,20 +8,17 @@ export interface IPitchAndDecibelProps {
   keyUpAnswer: number[];
   keyDownAnswer: number[];
   isKeyUp: boolean;
-  setKeyUp: Dispatch<SetStateAction<boolean>>;
   isKeyDown: boolean;
-  setKeyDown: Dispatch<SetStateAction<boolean>>;
   isFrozen: boolean;
-  setFrozen: Dispatch<SetStateAction<boolean>>;
   isMute: boolean;
-  setMute: Dispatch<SetStateAction<boolean>>;
   setDecibel: Dispatch<SetStateAction<number>>;
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   setStartTime: Dispatch<SetStateAction<number>>;
+  setIsTerminated: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ISocketScore {
   score: number;
-  user: string;
+  userId: string;
 }

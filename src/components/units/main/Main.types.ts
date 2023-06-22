@@ -20,4 +20,5 @@ export interface IMainUIProps {
   setDummyCharacter: Dispatch<SetStateAction<string>>;
   // onClickSocial: () => void;
   onClickMyRoom: () => void;
+  dummyCharacter: string;
 }

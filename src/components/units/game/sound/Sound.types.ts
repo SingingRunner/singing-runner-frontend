@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IPlayersInfo } from "../Game.types";
 
 export interface ISoundProps {
+  appliedItems: string[];
   setSongInfo: Dispatch<
     SetStateAction<{
       title: string;
@@ -10,20 +11,13 @@ export interface ISoundProps {
   >;
   mrKey: string;
   setDecibel: Dispatch<SetStateAction<number>>;
-  activeItem: {
-    mute: boolean;
-    frozen: boolean;
-    cloud: boolean;
-    keyDown: boolean;
-    keyUp: boolean;
-    shield: boolean;
-  };
   isLoadComplete: boolean;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   progress: number;
   setProgress: Dispatch<SetStateAction<number>>;
   setStartTime: Dispatch<SetStateAction<number>>;
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
+  setIsTerminated: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface ISocketLoadingData {

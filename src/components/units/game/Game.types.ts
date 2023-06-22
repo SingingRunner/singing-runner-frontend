@@ -1,36 +1,25 @@
-import { Dispatch, SetStateAction } from "react";
-
 export interface IGameUIProps {
+  appliedItems: string[];
+
   songInfo: {
     title: string;
     singer: string;
   };
   playersInfo: IPlayersInfo[];
-  totalPlayers: number;
-  activeItem: {
-    mute: boolean;
-    frozen: boolean;
-    cloud: boolean;
-    keyDown: boolean;
-    keyUp: boolean;
-    shield: boolean;
-  };
-  setActiveItem: Dispatch<
-    SetStateAction<{
-      mute: boolean;
-      frozen: boolean;
-      cloud: boolean;
-      keyDown: boolean;
-      keyUp: boolean;
-      shield: boolean;
-    }>
-  >;
-  playersActiveItem: string[];
   offItem: (item: string) => void;
   decibel: number;
   isLoadComplete: boolean;
   progress: number;
   startTime: number;
+  muteAttack: {
+    mid: boolean;
+    right: boolean;
+    left: boolean;
+  };
+  isFrozenActive: boolean;
+  isFrozenActiveRight: boolean;
+  isFrozenActiveLeft: boolean;
+  isTerminated: boolean;
 }
 
 export interface IPlayersInfo {
@@ -38,4 +27,10 @@ export interface IPlayersInfo {
   character: string;
   activeItem: string;
   score: number;
+  position: string;
+}
+
+export interface ISocketItem {
+  userId: string;
+  item: string;
 }
