@@ -52,7 +52,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const pitchAveragesRef = useRef<number[]>([]);
 
-  const avgPitchWindowSize = 3000;
+  const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
   let pitchSamples: number = 0;
   let startTime: number = 0;
