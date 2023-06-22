@@ -14,8 +14,8 @@ export default function AfterClickBattle(props: IMainUIProps) {
       }}
     >
       <S.ImageWrapper>
-        <S.ImageCat src="../images/cat.png" alt="Cat" />
-        <S.ImageMic src="../images/microphone.png" alt="Microphone" />
+        <S.ImageCat src="/images/cat.png" alt="Cat" />
+        <S.ImageMic src="/images/microphone.png" alt="Microphone" />
       </S.ImageWrapper>
       <ButtonWrapper>
         <S.MatchButton>

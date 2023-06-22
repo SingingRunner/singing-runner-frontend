@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil";
 import { v4 as uuidv4 } from "uuid";
-import { getAccessToken } from '../libraries/getAccessToken';
+import { getAccessToken } from "../libraries/getAccessToken";
 
 interface IUserInfoState {
   userId: string;
@@ -24,5 +24,5 @@ export const refreshAccessTokenLoadable = selector({
   get: async () => {
     const newAccessToken = await getAccessToken();
     return newAccessToken;
-  }
-})
+  },
+});
