@@ -48,6 +48,7 @@ export default function Graphic(props: IGrapicProps) {
   let renderer: THREE.WebGLRenderer;
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
+  let floorTexture: THREE.Texture;
 
   /* 그래픽 초기화 */
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function Graphic(props: IGrapicProps) {
     /* floor */
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const textureLoader = new THREE.TextureLoader();
-    const floorTexture = textureLoader.load("/game/floor/neon.png");
+    floorTexture = textureLoader.load("/game/floor/neon.png");
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(10, 10); // Repeat the texture 10 times in both directions
@@ -194,6 +195,8 @@ export default function Graphic(props: IGrapicProps) {
       for (const mixer of mixers) {
         mixer.update(delta);
       }
+      if (floorTexture) floorTexture.offset.y += 0.004;
+
       if (renderer) renderer.render(scene, camera);
     };
     animate();
@@ -248,17 +251,20 @@ export default function Graphic(props: IGrapicProps) {
       props.playersInfo.filter((el) => el.position === "right")[0].score,
       props.playersInfo.filter((el) => el.position === "left")?.[0]?.score,
     ];
-    movePlayer("right", Math.round(((rightScore - baseScore) / 3) * 10) / 10);
+    movePlayer("right", Math.round(((rightScore - baseScore) / 2) * 10) / 10);
     // 왼쪽 플레이어가 없을 수도 있음 (2명일 때)
     if (leftScore)
-      movePlayer("left", Math.round(((leftScore - baseScore) / 3) * 10) / 10);
+      movePlayer("left", Math.round(((leftScore - baseScore) / 2) * 10) / 10);
   };
 
   /** player의 z 위치를 이동하는 함수 */
   const movePlayer = (position: string, targetPosition: number) => {
     if (!players?.[position]) return;
     if (!players?.[position].visible) return;
-    players[position].position.z = targetPosition - 5.5;
+    const moveAmount =
+      players[position].position.z - (targetPosition - 5.5) > 0 ? -0.1 : +0.1;
+    players[position].position.z =
+      Math.round((Number(players[position].position.z) + moveAmount) * 10) / 10;
   };
 
   /* 눈사람 아이템 */
