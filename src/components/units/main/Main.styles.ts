@@ -92,7 +92,7 @@ export const ModalBackground = styled.div`
 `;
 export const ImageWrapper = styled.div`
   position: relative;
-  top: 35%;
+  top: 30%;
 `;
 export const ImageLogo = styled.img`
   position: absolute;
@@ -101,28 +101,6 @@ export const ImageLogo = styled.img`
   top: 0px;
   width: 300px; /* Set the desired width */
   height: auto; /* Adjust the height proportionally */
-`
-;export const ImageWrapper2 = styled.div`
-display: flex;
-position: relative;
-justify-content: center;
-align-items: center;
-height: 100vh;
-/* overflow: hidden; */
-/* top: 35%; */
-`;
-export const ImageLogo2 = styled.img`
-
-position: absolute;
-width: 300px; /* Set the desired width */
-height: auto; /* Adjust the height proportionally */
-position: absolute;
-top: 35%;
-left: 45%;
-transform: translate(-50%, -50%);
-/* object-fit: cover; */
-/* left: 50%; */
-/* top: px; */
 `;
 export const ImageVectorLeft = styled.img`
   position: absolute;
@@ -148,6 +126,8 @@ export const ImageCat = styled.img`
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 200px;
+  height: auto;
 `;
 export const ImageMic = styled.img`
   position: absolute;
@@ -180,7 +160,7 @@ export const StartButton = styled.button`
   }
 `;
 export const MatchButton = styled.button`
-  width: calc(100% - 32px);;
+  width: calc(100% - 32px);
   justify-content: center;
   align-items: center;
   height: 48px;
@@ -225,7 +205,7 @@ export const BasicButton = styled.button`
   }
 `;
 export const MainBody = styled.div`
-  background-color: #1A1128;
+  background-color: #1a1128;
   height: calc(100% - 108px);
   padding: 28px 16px 0px 16px;
 `;

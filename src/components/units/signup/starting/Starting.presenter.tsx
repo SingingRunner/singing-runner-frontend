@@ -17,7 +17,7 @@ export default function StartingUI(props: IStartingUIProps) {
         <Button
           buttonType={buttonType.GRADATION}
           text="선택 완료"
-          onClick={props.handleCharacterChooseClick}
+          onClick={props.onClickComplete}
         />
       </ButtonWrapper>
     </>

@@ -7,9 +7,11 @@ import AfterClickBattle from "./sections/afterclickbattle";
 export default function MainUI(props: IMainUIProps) {
   return (
     <>
-      아이디
+      {/* <img src='/icon/social.png' onClick={props.onClickSocial}  /> */}
+      <img style={{width: "24px", height: "auto", position: "absolute", marginTop:"-60px", marginLeft: "312px"}} src='/icon/myroom.png' onClick={props.onClickMyRoom}  />
+      <span style={{color: "white"}}>아이디: </span>
       <input onChange={(e) => props.setDummyUserId(e.target.value)} />
-      캐릭터
+      <span style={{color: "white"}}>캐릭터: </span>
       <input onChange={(e) => props.setDummyCharacter(e.target.value)} />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}

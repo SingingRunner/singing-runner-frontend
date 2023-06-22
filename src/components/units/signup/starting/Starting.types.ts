@@ -1,3 +1,3 @@
 export interface IStartingUIProps {
-  handleCharacterChooseClick: () => void;
+  onClickComplete: () => void;
 }

@@ -5,12 +5,12 @@ export default function Starting() {
 
   const router = useRouter();
 
-  const handleCharacterChooseClick = () => {
+  const onClickComplete = () => {
     router.push("/main");
   };
 
   const props = {
-    handleCharacterChooseClick,
+    onClickComplete,
   };
 
   return <StartingUI {...props} />;
