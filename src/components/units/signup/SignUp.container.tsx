@@ -162,7 +162,7 @@ export default function SignUp() {
   const handlePasswordChange = (e) => {
     const enteredPassword = e.target.value;
     const passwordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
 
     if (enteredPassword === "") {
       setPasswordError("");

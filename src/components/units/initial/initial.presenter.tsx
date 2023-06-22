@@ -20,7 +20,7 @@ export default function InitialUI(props: IInitialUIProps) {
       >
         <div style={{ marginTop: "20vh" }}>
           <S.ImageWrapper>
-            <S.ImageLogo src="../images/game_logo.png" alt="logo" />
+            <S.ImageLogo src="/images/game_logo.png" alt="logo" />
           </S.ImageWrapper>
         </div>
       </div>

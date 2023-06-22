@@ -14,8 +14,8 @@ export default function BeforeClickModes(props: IMainUIProps) {
       }}
     >
       <S.ImageWrapper>
-        <S.ImageCat src="../images/cat.png" alt="Cat" />
-        <S.ImageMic src="../images/microphone.png" alt="Microphone" />
+        <S.ImageCat src="/images/cat.png" alt="Cat" />
+        <S.ImageMic src="/images/microphone.png" alt="Microphone" />
       </S.ImageWrapper>
       {props.isClicked && ( // 1-2. START 클릭 후 모드 선택 화면
         <>

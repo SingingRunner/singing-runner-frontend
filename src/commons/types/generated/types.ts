@@ -21,6 +21,18 @@ export type IAuth = {
   user: IUser;
 };
 
+export type IAuthUser = {
+  __typename?: 'AuthUser';
+  character: Scalars['String']['output'];
+  nickname: Scalars['String']['output'];
+  userActive: Scalars['Int']['output'];
+  userEmail: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
+  userKeynote: Scalars['Int']['output'];
+  userMmr: Scalars['Int']['output'];
+  userPoint: Scalars['Int']['output'];
+};
+
 export type IGameSongDto = {
   __typename?: 'GameSongDto';
   singer: Scalars['String']['output'];
@@ -57,13 +69,8 @@ export type IMutationRegisterUserArgs = {
 
 export type IQuery = {
   __typename?: 'Query';
-  isAuthenticated: Scalars['String']['output'];
+  fetchUser: IAuthUser;
   searchSong: Array<IGameSongDto>;
-};
-
-
-export type IQueryIsAuthenticatedArgs = {
-  token: Scalars['String']['input'];
 };
 
 

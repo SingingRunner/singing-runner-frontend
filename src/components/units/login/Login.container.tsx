@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
-import { accessTokenState } from "../../../commons/store";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { accessTokenState, userInfoState } from "../../../commons/store";
 import LoginUI from "./Login.presenter";
 import { ILoginUIProps } from "./Login.types";
 import { gql, useMutation } from "@apollo/client";
@@ -41,6 +41,7 @@ export default function Login() {
   const [isLoginButtonEnabled, setLoginButtonEnabled] = useState(false);
 
   const [, setAccessToken] = useRecoilState(accessTokenState);
+  const setUserInfo = useSetRecoilState(userInfoState);
 
   useEffect(() => {
     // 유효성 검사 결과 => 가입 완료 버튼 활성화 여부 업데이트.
@@ -58,7 +59,7 @@ export default function Login() {
 
   const onClickLogin = async (): Promise<void> => {
     try {
-      // 1. 로그인 뮤테이션 날려서 accessToken 받아오기
+      // 1. 로그인 뮤테이션으로 accessToken 받아오기
       const result = await loginUser({
         variables: {
           userLoginDto: {
@@ -68,17 +69,29 @@ export default function Login() {
         },
       });
       const accessToken = result.data?.loginUser.accessToken;
-      console.log(accessToken);
+      const loginUserInfo = result.data?.loginUser.user; // 로그인 유저 정보
 
-      // 2. 받아온 accessToken을 global state에 저장하기
+      console.log("userInfo: ", loginUserInfo);
+      console.log("accessToken: ", accessToken);
+
+      // 2-1. 로그인 유저 정보를 global state에 저장
+      setUserInfo({
+        userId: loginUserInfo?.userId || "",
+        character: loginUserInfo?.character || "",
+        userKeynote: "origin", // TODO: 추후 수정
+      });
+
       if (accessToken === undefined) {
         alert("로그인에 실패했습니다! 다시 시도해주세요!");
         return;
       }
+
+      // 2-2. accessToken을 global state에 저장
       setAccessToken(accessToken);
-      alert("로그인에 성공했습니다!")
-      // 3. 로그인 성공 페이지로 이동하기
-      void router.push("/main");
+      alert("로그인에 성공했습니다!");
+      
+      // 3. 로그인 성공 후 메인 페이지로 이동
+      router.push("/main");
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message);

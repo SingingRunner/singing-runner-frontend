@@ -8,9 +8,9 @@ export default function StartingUI(props: IStartingUIProps) {
     <>
       <S.Container>
         <S.ImageWrapper>
-          <S.ImageVectorLeft src="../images/Vector_left.png" alt="vector" />
-          <S.ImageLogo src="../images/game_logo.png" alt="logo" />
-          <S.ImageVectorRight src="../images/Vector_right.png" alt="vector" />
+          <S.ImageVectorLeft src="/images/Vector_left.png" alt="vector" />
+          <S.ImageLogo src="/images/game_logo.png" alt="logo" />
+          <S.ImageVectorRight src="/images/Vector_right.png" alt="vector" />
         </S.ImageWrapper>
       </S.Container>
       <ButtonWrapper>
