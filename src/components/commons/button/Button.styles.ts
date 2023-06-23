@@ -131,6 +131,16 @@ export const Button = styled.button`
         font-size: 14px;
         margin: 0 0 0 12px;
         `;
+      case buttonType.SHORT_GRAY:
+        return `
+        border: 2px solid #C7C7C7;
+        background: #C7C7C7;
+        min-width: 92px;
+        max-width: 92px;
+        font-size: 14px;
+        margin: 0 0 0 12px;
+        height: 30px;
+        `;
       case buttonType.SHORT_DISABLED:
         return `
         border: 2px solid #C7C7C7;
