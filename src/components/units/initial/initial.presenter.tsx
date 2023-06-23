@@ -1,6 +1,6 @@
 import Button, { buttonType } from "../../commons/button/Button";
 import * as S from "../main/Main.styles";
-import { IInitialUIProps } from './initial.types';
+import { IInitialUIProps } from './Initial.types';
 
 export default function InitialUI(props: IInitialUIProps) {
   return (
