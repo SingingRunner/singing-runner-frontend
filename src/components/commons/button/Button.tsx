@@ -20,6 +20,7 @@ export enum buttonType {
   "SHORT_SELECT",
   "SHORT_SELECT_EMPTY",
   "SHORT_PINK",
+  "SHORT_GRAY",
   "SHORT_DISABLED",
   "FILTER",
 }
