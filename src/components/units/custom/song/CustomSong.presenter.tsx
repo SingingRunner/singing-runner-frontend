@@ -23,9 +23,8 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
         text={props.filter}
         onClick={props.onClickFilter}
       />
-
       <ListItem
-        butonText="선택"
+        buttonText="선택"
         buttonType={buttonType.SHORT}
         onClick={() => props.onClickSong("노래제목")}
       >
@@ -35,7 +34,7 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
         </S.SongWrapper>
       </ListItem>
       <ListItem
-        butonText="선택"
+        buttonText="선택"
         buttonType={buttonType.SHORT}
         onClick={() => props.onClickSong("노래제목")}
       >
