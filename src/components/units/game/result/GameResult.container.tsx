@@ -1,6 +1,6 @@
 import { gameResultState, userIdState } from "../../../../commons/store";
 import { useRecoilState } from "recoil";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { FETCH_USER } from "./GameResult.queries";
 import GameResultUI from "./GameResult.presenter";
@@ -8,8 +8,14 @@ import {
   IQuery,
   IQueryFetchUserArgs,
 } from "../../../../commons/types/generated/types";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 export default function GameResult() {
+  // 소켓, 소켓 끊는 함수 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socketDisconnect } = socketContext;
+
   const [gameResult] = useRecoilState(gameResultState);
 
   const [userId, setUserId] = useRecoilState(userIdState);
@@ -33,6 +39,9 @@ export default function GameResult() {
       }
     });
   }, [data]);
+
+  // 소켓 연결 끊기
+  socketDisconnect();
 
   return (
     <GameResultUI
