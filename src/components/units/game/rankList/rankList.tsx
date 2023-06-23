@@ -28,7 +28,7 @@ export default function RankList(props: IRankListProps) {
             isTerminated={props.isTerminated}
           >
             <span>{i + 1}</span>
-            <Profile
+            <ProfileCard
               isCurrentUser={el.userId === userInfo.userId}
               src={`/game/player/profile/${el.character}.png`}
             />
@@ -96,7 +96,7 @@ const Rank = styled.div`
   }
 `;
 
-const Profile = styled.img`
+const ProfileCard = styled.img`
   width: 68px;
   height: 68px;
   border: 6px solid #1a1128;
