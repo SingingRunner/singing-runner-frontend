@@ -1,10 +1,10 @@
-import Main from "../src/components/units/main/Main.container";
+import Initial from '../src/components/units/initial/initial.container';
 
-// 메인
-export default function MainPage() {
+// 초기 화면
+export default function InitialPage() {
   return (
     <>
-      <Main />
+      <Initial />
     </>
   );
 }

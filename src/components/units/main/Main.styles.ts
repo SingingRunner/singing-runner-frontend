@@ -92,7 +92,23 @@ export const ModalBackground = styled.div`
 `;
 export const ImageWrapper = styled.div`
   position: relative;
-  top: 35%;
+  top: 30%;
+`;
+export const ImageLogo = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  top: 0px;
+  width: 300px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+`;
+export const ImageVectorLeft = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-1000%, -0%);
+  top: 0px;
+  width: 16px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
 `;
 export const ImageEllipse = styled.img`
   position: absolute;
@@ -110,6 +126,8 @@ export const ImageCat = styled.img`
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 200px;
+  height: auto;
 `;
 export const ImageMic = styled.img`
   position: absolute;
@@ -142,7 +160,7 @@ export const StartButton = styled.button`
   }
 `;
 export const MatchButton = styled.button`
-  width: 100%;
+  width: calc(100% - 32px);
   justify-content: center;
   align-items: center;
   height: 48px;
@@ -153,6 +171,7 @@ export const MatchButton = styled.button`
   box-shadow: 0px 0px 15px 5px rgba(189, 0, 254, 0.5);
   color: #ffffff;
   transition: 0.25s;
+  margin-bottom: 16px;
 `;
 export const MatchCancelButton = styled.button`
   width: 100%;
@@ -184,4 +203,9 @@ export const BasicButton = styled.button`
     border: 2px solid #bd00fe;
     color: white;
   }
+`;
+export const MainBody = styled.div`
+  background-color: #1a1128;
+  height: calc(100% - 108px);
+  padding: 28px 16px 0px 16px;
 `;

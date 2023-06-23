@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import * as S from "./Layout.styles";
-import Header from "./header/Header";
 import { useRouter } from "next/router";
 
 interface ILayoutProps {
@@ -10,7 +9,6 @@ interface ILayoutProps {
 const NO_LAYOUT = ["/game"];
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
-  console.log(router.asPath);
 
   return (
     <>
@@ -18,7 +16,6 @@ export default function Layout(props: ILayoutProps) {
         <>{props.children}</>
       ) : (
         <S.Background>
-          <Header />
           <S.Body>
             <S.Wrapper>{props.children}</S.Wrapper>
           </S.Body>

@@ -1,6 +1,7 @@
 import * as S from "../Main.styles";
 import ButtonWrapper from "../../../commons/buttons/wrapper";
 import { IMainUIProps } from "../Main.types";
+import Button, { buttonType } from "../../../commons/button/Button";
 
 export default function BeforeClickModes(props: IMainUIProps) {
   return (
@@ -13,28 +14,32 @@ export default function BeforeClickModes(props: IMainUIProps) {
       }}
     >
       <S.ImageWrapper>
-        <S.ImageCat src="../images/cat.png" alt="Cat" />
-        <S.ImageMic src="../images/microphone.png" alt="Microphone" />
+        <S.ImageCat src="/images/cat.png" alt="Cat" />
+        <S.ImageMic src="/images/microphone.png" alt="Microphone" />
       </S.ImageWrapper>
       {props.isClicked && ( // 1-2. START 클릭 후 모드 선택 화면
         <>
           <ButtonWrapper>
-            <S.BasicButton
+            <Button
+              buttonType={buttonType.EMPTY}
+              text ="배틀 모드"
               onClick={props.handleBattleModeClick}
-              style={{ marginBottom: "20px" }}
-            >
-              배틀 모드
-            </S.BasicButton>
-            <S.BasicButton onClick={props.handleClick}>
-              커스텀 모드
-            </S.BasicButton>
+            />
+            <Button
+              buttonType={buttonType.EMPTY}
+              text ="커스텀 모드"
+              onClick={props.handleClick}
+            />
           </ButtonWrapper>
         </>
       )}
 
       {!props.isClicked && ( // 1-1. 처음 화면
         <ButtonWrapper>
-          <S.StartButton onClick={props.handleClick}>START</S.StartButton>
+          <Button 
+          buttonType={buttonType.GRADATION}
+          text="START" 
+          onClick={props.handleClick}/>
         </ButtonWrapper>
       )}
     </div>

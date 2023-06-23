@@ -1,6 +1,7 @@
 import * as S from "../Main.styles";
 import ButtonWrapper from "../../../commons/buttons/wrapper";
-import { IMainUIProps } from '../Main.types';
+import { IMainUIProps } from "../Main.types";
+import Button, { buttonType } from "../../../commons/button/Button";
 
 export default function AfterClickBattle(props: IMainUIProps) {
   return (
@@ -13,19 +14,19 @@ export default function AfterClickBattle(props: IMainUIProps) {
       }}
     >
       <S.ImageWrapper>
-        <S.ImageCat src="../images/cat.png" alt="Cat" />
-        <S.ImageMic src="../images/microphone.png" alt="Microphone" />
+        <S.ImageCat src="/images/cat.png" alt="Cat" />
+        <S.ImageMic src="/images/microphone.png" alt="Microphone" />
       </S.ImageWrapper>
       <ButtonWrapper>
-        <S.MatchButton
-          style={{ marginBottom: "20px" }}
-        >
+        <S.MatchButton>
           <S.Timer>{props.formatTime(props.timer)}</S.Timer>
           게임 찾는 중...
         </S.MatchButton>
-        <S.MatchCancelButton onClick={props.handleMatchCancel}>
-          매칭 취소
-        </S.MatchCancelButton>
+        <Button
+          buttonType={buttonType.EMPTY}
+          text="매칭 취소"
+          onClick={props.handleMatchCancel}
+        />
       </ButtonWrapper>
     </div>
   );

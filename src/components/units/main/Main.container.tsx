@@ -20,6 +20,16 @@ const Main = () => {
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
+  const onClickSocial = () => {
+    // 친구 화면으로 전환
+    router.push("/social");
+  };
+
+  const onClickMyRoom = () => {
+    // 내 방 화면으로 전환
+    router.push("/myroom");
+  };
+
   const router = useRouter();
 
   const handleChangeAddress = () => {
@@ -31,7 +41,6 @@ const Main = () => {
       socket.on("accept", (isMatched: boolean) => {
         if (isMatched) {
           console.log("accept true received");
-          socket.emit("loading");
           handleChangeAddress(); // 인게임 화면으로 전환
         } else {
           // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
@@ -43,7 +52,6 @@ const Main = () => {
       socket.on("match_making", (data) => {
         // 매칭 완료되면, 매칭된 유저 정보 받아오기
         const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
-        console.log(data);
         setSongTitle(songTitle);
         setSinger(singer);
 
@@ -73,18 +81,18 @@ const Main = () => {
 
   const handleClick = () => {
     setIsClicked(true);
-
-    // handleChangeAddress(); 테스트용
   };
 
   // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  const [dummyUserId, setDummyUserId] = useState("");
+  const [dummyUserId, setDummyUserId] = useState("test99");
+  const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
     userId: dummyUserId,
     userMmr: 1000,
     nickName: "Tom",
     userActive: "connect",
     uerKeynote: "maleKey",
+    character: dummyCharacter,
   };
 
   const handleBattleModeClick = () => {
@@ -93,7 +101,6 @@ const Main = () => {
     const newSocket = socketConnect();
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
-    newSocket.on("disconnect", () => {});
   };
 
   const handleMatchCancel = () => {
@@ -170,6 +177,10 @@ const Main = () => {
     setShowWaiting,
     showWaiting,
     setDummyUserId,
+    setDummyCharacter,
+    onClickMyRoom,
+    dummyCharacter,
+    onClickSocial,
   };
 
   return <MainUI {...props} />;

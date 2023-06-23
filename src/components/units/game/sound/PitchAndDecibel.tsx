@@ -1,9 +1,8 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
-import { useRecoilValue } from "recoil";
-import { usersIdInfoState } from "../../../../commons/store";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { IRival } from "../Game.types";
-import { tempRivals } from "../../game/tempDummyData";
+import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
+import { useRecoilValue } from "recoil";
+import { userInfoState } from "../../../../commons/store";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -43,36 +42,17 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   else return 30;
 };
 
-interface IPitchAndDecibelProps {
-  isLoadComplete: boolean;
-  originAnswer: number[];
-  keyUpAnswer: number[];
-  keyDownAnswer: number[];
-  isKeyUp: boolean;
-  setKeyUp: Dispatch<SetStateAction<boolean>>;
-  isKeyDown: boolean;
-  setKeyDown: Dispatch<SetStateAction<boolean>>;
-  isFrozen: boolean;
-  setFrozen: Dispatch<SetStateAction<boolean>>;
-  isMute: boolean;
-  setMute: Dispatch<SetStateAction<boolean>>;
-  setDecibel: Dispatch<SetStateAction<number>>;
-  setPlayersScore: Dispatch<SetStateAction<number[]>>;
-  sources: React.MutableRefObject<AudioBufferSourceNode[]>;
-  setRivals: Dispatch<SetStateAction<IRival[] | undefined>>;
-  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
-}
-
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const usersIdInfo = useRecoilValue(usersIdInfoState);
+  const userInfo = useRecoilValue(userInfoState);
+
   const pitchAveragesRef = useRef<number[]>([]);
 
-  const avgPitchWindowSize = 3;
+  const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
   let pitchSamples: number = 0;
   let startTime: number = 0;
@@ -89,47 +69,38 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     propsRef.current = props;
   }, [props]);
 
-  const gameReady = (userData) => {
+  useEffect(() => {
+    socket?.on("game_ready", gameReady);
+    socket?.on("score", scoreListener);
+  }, [socket]);
+
+  const gameReady = () => {
     const sources = propsRef.current.sources;
     sources.current.forEach((source) => {
       source.start();
     });
-
-    // const myId = socket?.id;
-    // const otherUsers = userData.filter((user: any) => user !== myId);
-    // setUserIdInfoState([myId, ...otherUsers]);
-
-    // 🚨 현재 유저 제외한 라이벌들의 정보 저장 (캐릭터 정보 포함)
+    props.setStartTime(new Date().getTime());
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(handleAudioStream)
       .catch((error) => {
         console.error("Error accessing microphone:", error);
       });
-
     props.setIsLoadComplete(true);
-    props.setRivals(tempRivals);
   };
 
-  useEffect(() => {
-    socket?.on("game_ready", gameReady);
-  }, [socket]);
+  const scoreListener = (data: ISocketScore) => {
+    props.setPlayersInfo((prev) => {
+      const temp = [...prev];
+      const idx = temp.findIndex(
+        (newScoreEl) => newScoreEl.userId === data.userId
+      );
+      if (idx !== -1) temp[idx].score = data.score;
+      return temp;
+    });
+  };
 
-  useEffect(() => {
-    const scoreListener = (data) => {
-      usersIdInfo.forEach((userId, i) => {
-        if (userId === data.user) {
-          props.setPlayersScore((prev) => {
-            const newScore = [...prev];
-            newScore[i] = data.score;
-            return newScore;
-          });
-        }
-      });
-    };
-    socket?.on("score", scoreListener);
-  }, [socket, usersIdInfo]);
-
+  const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
     let score: number = 0;
     let answer: number[] = [];
@@ -155,25 +126,51 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
     if (answer[idx] === 0) {
       ignoreCount++;
+    } else {
+      totalScore += score;
     }
-    totalScore += score;
     if (++currentIdx !== ignoreCount) {
       currentScore = Math.round(totalScore / (currentIdx - ignoreCount));
     }
-    propsRef.current.setPlayersScore((prev) => {
-      const newScore = [...prev];
-      newScore[0] = currentScore;
-      return newScore;
-    });
 
     // 서버에 현재 유저의 점수 전송
-    console.log(currentScore);
-    socket?.emit("score", currentScore);
+    setPrevScore((prev) => {
+      if (prev !== currentScore) {
+        socket?.emit("score", { userId: userInfo.userId, score: currentScore });
+      }
+      return currentScore;
+    });
 
     return currentScore;
   };
 
   const handleAudioStream = (stream: MediaStream) => {
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks: Blob[] = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+    mediaRecorder.onstop = (e) => {
+      const blob = new Blob(chunks, { type: "audio/ogg" });
+      const audioURL = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = audioURL;
+      // 추후 수정 필요
+      a.download = "audio.ogg";
+      a.click();
+      socket?.emit("game_terminated", {
+        userId: userInfo.userId,
+        score: currentScore,
+      });
+      props.setIsTerminated(true);
+    };
+    mediaRecorder.start();
+
+    propsRef.current.sources.current[0].onended = () => {
+      mediaRecorder.stop();
+    };
+
     audioContext = new window.AudioContext();
     mediaStreamSource = audioContext.createMediaStreamSource(stream);
     analyzer = audioContext.createAnalyser();
@@ -182,7 +179,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     pitchWorker.addEventListener("message", (event) => {
       const pitch: number = event.data.pitch;
-      console.log(pitch, new Date().getTime() - event.data.time);
       if (pitch != null && pitch > 0) {
         avgPitch += pitchToMIDINoteValue(pitch);
         pitchSamples++;
@@ -196,8 +192,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         if (elapsedTime > avgPitchWindowSize) {
           if (pitchSamples <= 0) {
             pitchAveragesRef.current.push(0);
-            currentIdx++;
-            ignoreCount++;
+            calculateScore(0, currentIdx);
           } else {
             const averagePitch = avgPitch / pitchSamples;
             const avgMIDINoteValue = Math.round(averagePitch);
@@ -223,13 +218,13 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         sum += frequencyArray[i];
       }
       const avg = sum / frequencyArray.length;
-      const decibel = calculateDecibel(avg);
-      propsRef.current.setDecibel(decibel);
+      if (propsRef.current.isMute) {
+        const decibel = calculateDecibel(avg);
+        propsRef.current.setDecibel(decibel);
+      }
       pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
-
       requestAnimationFrame(processAudio);
     };
-
     processAudio();
   };
 

@@ -20,6 +20,7 @@ module.exports = {
     "@typescript-eslint/promise-function-async": "off",
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
+    "react/display-name": "off"
   },
   settings: {
     react: {
