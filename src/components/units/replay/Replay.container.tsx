@@ -10,7 +10,7 @@ export default function Replay() {
   const userInfo = useRecoilValue(userInfoState);
   const userId = userInfo.userId;
   const router = useRouter();
-  const isMyReplay = true; //router.query.userId === userId;
+  const isMyReplay = router.query.userId === userId;
   const [data, setData] = useState([]);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
