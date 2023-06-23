@@ -3,9 +3,9 @@ import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { userInfoState } from "../../../commons/store";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { gql, useQuery } from "@apollo/client";
+import { userIdState } from "../../../commons/store";
+import { useRecoilState } from "recoil";
 
 const FETCH_USER = gql`
   query FetchUser($userId: String!) {
@@ -22,16 +22,6 @@ const FETCH_USER = gql`
   }
 `;
 
-const UPDATE_CHARACTER = gql`
-  mutation UpdateCharacter($userId: String!, $character: String!) {
-    updateCharacter(userId: $userId, character: $character) {
-      userId
-      character
-    }
-  }
-`;
-
-
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
@@ -47,66 +37,34 @@ const Main = () => {
   const [isBattleClicked, setIsBattleClicked] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const userInfo = useRecoilValue(userInfoState);
-  const [_character, setCharacter] = useState("");
-  const userId = userInfo.userId;
-  const { data: userData } = useQuery(FETCH_USER, {
-    variables: { userId },
-  });
-  const setUserInfo = useSetRecoilState(userInfoState);
-  const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
-  
-  
-  
+  const [character, setCharacter] = useState("");
+  const [userMmr, setUserMmr] = useState(0);
+  const [nickName, setNickname] = useState("");
+  const [userKeynote, setUserKeynote] = useState("");
+  const [userActive, setUserActive] = useState(false);
+
+
+  const [userId, setUserId] = useRecoilState(userIdState);
+
   useEffect(() => {
-    if (userData?.fetchUser) {
-      const loggedInUserId = userData.fetchUser.userId; // Get the logged-in user's ID from the response
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        userId: loggedInUserId,
-        character: userData.fetchUser.character,
-      }));
-    }
-  }, [userData, setUserInfo]);
-  
-  // 새로고침 시 닉네임이 안보이는 현상 없애기 위해 로컬스토리지에 저장
-  useEffect(() => {
-    const storedCharacter = localStorage.getItem("character");
-    if (storedCharacter) {
-      setCharacter(storedCharacter);
-    }
+    setUserId(localStorage.getItem("userId") || "");
   }, []);
 
-  useEffect(() => {
-    if (userData?.fetchUser) {
-      // setCharacter(userData.fetchUser.character);
-      console.log(_character)
-      setCharacter(userData?.fetchUser.character);
-      localStorage.setItem("character", userData.fetchUser.character);
-    }
-  }, [userData]);
+  const { data } = useQuery(FETCH_USER, {
+    variables: { userId },
+    fetchPolicy: 'cache-and-network',
+  });
 
   useEffect(() => {
-    updateCharacterMutation({
-      variables: {
-        userId: userData?.fetchUser.userId,
-        character: userData?.fetchUser.character,
-      },
-    })
-      .then((result) => {
-        // Handle the result if needed
-        console.log("여기????")
-        console.log(result.data);
-        setCharacter(result.data.updateCharacter.character)
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.log("아님 여기????")
-        console.log(userId)
-        console.log(_character)
-        console.error(error);
-      });
-    }, [_character, updateCharacterMutation, userInfo.userId]);
+    setCharacter(data?.fetchUser.character);
+    setUserMmr(data?.fetchUser.userMmr);
+    setNickname(data?.fetchUser.nickname);
+    setUserKeynote(data?.fetchUser.userKeynote);
+    setUserActive(data?.fetchUser.userActive);
+    console.log("dtc", data?.fetchUser.character)
+    console.log("data", data)
+    
+  }, [data?.fetchUser.character]);
 
   const onClickSocial = () => {
     // 친구 화면으로 전환
@@ -175,12 +133,12 @@ const Main = () => {
   // const [dummyUserId, setDummyUserId] = useState("test99");
   // const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
-    userId: dummyUserId,
-    userMmr: 1000,
-    nickName: "Tom",
-    userActive: "connect",
-    uerKeynote: "maleKey",
-    character: dummyCharacter,
+    userId,
+    userMmr,
+    nickName,
+    userActive,
+    userKeynote,
+    character,
   };
 
   const handleBattleModeClick = () => {
@@ -269,13 +227,10 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
-    // setDummyUserId,
-    // setDummyCharacter,
     onClickMyRoom,
-    // dummyCharacter,
     onClickSocial,
-    userData,
-    _character,
+    data,
+    character,
     onClickCustomMode,
   };
 

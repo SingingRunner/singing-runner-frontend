@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { accessTokenState, userInfoState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
+import { accessTokenState, userIdState } from "../../../../commons/store";
 import MyRoomSettingUI from './MyRoomSetting.presenter';
 import { IMyRoomSettingUIProps } from './MyRoomSetting.types';
 
@@ -29,8 +29,12 @@ const LOGOUT_USER = gql`
 `;
 
 export default function MyRoomSetting() {
-  const userInfo = useRecoilValue(userInfoState);
-  const userId = userInfo.userId;
+  // const userInfo = useRecoilValue(userInfoState);
+  // const userId = userInfo.userId;
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });

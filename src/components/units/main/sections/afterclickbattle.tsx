@@ -13,7 +13,7 @@ export default function AfterClickBattle(props: IMainUIProps) {
         position: "relative",
       }}
     >
-      <Center src="/game/player/profile/husky.png" alt="husky" />
+      <Center src={`/game/player/profile/${props.character}.png`} alt="character" />
 
       <Button 
       buttonType={buttonType.ONECOLOR} 

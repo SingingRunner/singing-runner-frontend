@@ -4,10 +4,11 @@ interface IButtonProps {
   isFixedAtBottomSecond: boolean | undefined;
   isFixedAtBottom: boolean | undefined;
   buttonType: buttonType;
+  height?: string;
 }
 export const Button = styled.button`
   width: 100%;
-  height: 40px;
+  height: ${(props: IButtonProps) => props.height || "40px"};
   margin-bottom: 16px;
   border-radius: 4px;
   border: none;
@@ -54,13 +55,19 @@ export const Button = styled.button`
       case buttonType.ONECOLOR:
         return `
         border: 2px solid #BD00FE;
-        box-shadow: inset 0px 0px 10px 1.5px #BD00FE, 0px 0px 10px 1.5px #BD00FE;
+        box-shadow: 0px 0px 10px 1.5px #BD00FE;
         background: #BD00FE;
+        `;
+      case buttonType.ONECOLOR_PINK:
+        return `
+        border: 2px solid #FE259B;
+        box-shadow: 0px 0px 10px 1.5px #FE259B;
+        background: #FE259B;
         `;
       case buttonType.SELECT:
         return `
         border: 2px solid #BD00FE;
-        box-shadow: inset 0px 0px 10px 1.5px #BD00FE, 0px 0px 10px 1.5px #BD00FE;
+        box-shadow: 0px 0px 10px 1.5px #BD00FE;
         background: #BD00FE;
         padding: 0 16px;
         display: flex;
@@ -69,7 +76,7 @@ export const Button = styled.button`
       case buttonType.SEARCH:
         return `
         border: 2px solid #BD00FE;
-        box-shadow: inset 0px 0px 10px 1.5px #BD00FE, 0px 0px 10px 1.5px #BD00FE;
+        box-shadow: 0px 0px 10px 1.5px #BD00FE;
         background: #BD00FE;
         padding: 0 16px;
         display: flex;
@@ -83,13 +90,36 @@ export const Button = styled.button`
       case buttonType.SHORT:
         return `
         border: 2px solid #BD00FE;
-        box-shadow: inset 0px 0px 10px 1.5px #BD00FE, 0px 0px 10px 1.5px #BD00FE;
+        box-shadow: 0px 0px 10px 1.5px #BD00FE;
         background: #BD00FE;
         min-width: 92px;
         max-width: 92px;
-        height: 30px;
         font-size: 14px;
         margin: 0 0 0 12px;
+        `;
+      case buttonType.SHORT_SELECT:
+        return `
+        border: 2px solid #FE259B;
+        box-shadow: 0px 0px 10px 1.5px #FE259B;
+        background: #FE259B;
+        min-width: 92px;
+        max-width: 92px;
+        font-size: 14px;
+        margin: 0 0 0 12px;
+        display: flex;
+        justify-content: space-between;
+        `;
+      case buttonType.SHORT_SELECT_EMPTY:
+        return `
+        border: 2px solid #FE259B;
+        box-shadow: 0px 0px 10px 1.5px #FE259B;
+        background: transparent;
+        min-width: 92px;
+        max-width: 92px;
+        font-size: 14px;
+        margin: 0 0 0 12px;
+        display: flex;
+        justify-content: space-between;
         `;
       case buttonType.SHORT_PINK:
         return `
@@ -98,7 +128,6 @@ export const Button = styled.button`
         box-shadow: 0px 0px 10px #FE259B;
         min-width: 92px;
         max-width: 92px;
-        height: 30px;
         font-size: 14px;
         margin: 0 0 0 12px;
         `;
@@ -108,7 +137,6 @@ export const Button = styled.button`
         background: transparent;
         min-width: 92px;
         max-width: 92px;
-        height: 30px;
         font-size: 14px;
         color: #C7C7C7;
         margin: 0 0 0 12px;

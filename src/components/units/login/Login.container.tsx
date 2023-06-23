@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { accessTokenState, userInfoState } from "../../../commons/store";
+import { useRecoilState} from "recoil";
+import { accessTokenState} from "../../../commons/store";
 import LoginUI from "./Login.presenter";
 import { ILoginUIProps } from "./Login.types";
 import { gql, useMutation } from "@apollo/client";
@@ -41,7 +41,7 @@ export default function Login() {
   const [isLoginButtonEnabled, setLoginButtonEnabled] = useState(false);
 
   const [, setAccessToken] = useRecoilState(accessTokenState);
-  const setUserInfo = useSetRecoilState(userInfoState);
+  // const setUserInfo = useSetRecoilState(userInfoState);
 
   useEffect(() => {
     // 유효성 검사 결과 => 가입 완료 버튼 활성화 여부 업데이트.
@@ -75,11 +75,11 @@ export default function Login() {
       console.log("accessToken: ", accessToken);
 
       // 2-1. 로그인 유저 정보를 global state에 저장
-      setUserInfo({
-        userId: loginUserInfo?.userId || "",
-        character: loginUserInfo?.character || "",
-        userKeynote: "origin", // TODO: 추후 수정
-      });
+      // setUserInfo({
+      //   userId: loginUserInfo?.userId || "",
+      //   character: loginUserInfo?.character || "",
+      //   userKeynote: "origin", // TODO: 추후 수정
+      // });
 
       if (accessToken === undefined) {
         alert("로그인에 실패했습니다! 다시 시도해주세요!");
@@ -89,6 +89,7 @@ export default function Login() {
       // 2-2. accessToken을 global state에 저장
       setAccessToken(accessToken);
       alert("로그인에 성공했습니다!");
+      localStorage.setItem("userId", loginUserInfo?.userId || "");
       
       // 3. 로그인 성공 후 메인 페이지로 이동
       router.push("/main");

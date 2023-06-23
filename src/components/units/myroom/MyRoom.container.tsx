@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { userInfoState } from "../../../commons/store";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
 import { IMyRoomUIProps } from './MyRoom.types';
 
@@ -43,18 +43,24 @@ const UPDATE_CHARACTER = gql`
 
 
 export default function MyRoom() {
-  const userInfo = useRecoilValue(userInfoState);
-  const userId = userInfo.userId;
+  // const userInfo = useRecoilValue(userInfoState);
+  // const userId = userInfo.userId;
+  
+  const router = useRouter();
+  const [nickname, setNickname] = useState("");
+  const [character, setCharacter] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
+  // const setUserInfo = useSetRecoilState(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });
-
-  const router = useRouter();
-  const [nickname, setNickname] = useState("");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
-  const setUserInfo = useSetRecoilState(userInfoState);
-
+  
   const onClickSetting = () => {
     router.push("/myroom/setting");
   };
@@ -66,39 +72,42 @@ export default function MyRoom() {
     if (storedNickname) {
       setNickname(storedNickname);
     }
+    const storedCharacter = localStorage.getItem("character");
+    if (storedCharacter) {
+      setCharacter(storedCharacter);
+    }
   }, []);
 
   useEffect(() => {
     if (data?.fetchUser) {
       setNickname(data.fetchUser.nickname);
       localStorage.setItem("nickname", data.fetchUser.nickname);
-      
       // 로그인 된 사용자의 아이디로 userInfo 업데이트
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        userId: data.fetchUser.userId,
-        character: data.fetchUser.character,
-      }));
+      // setUserInfo((prevUserInfo) => ({
+      //   ...prevUserInfo,
+      //   userId: data.fetchUser.userId,
+      //   character: data.fetchUser.character,
+      // }));
     }
-  }, [data, setUserInfo]);
+  }, [data]);
 
   const onClickComplete = () => {
     // Call the mutation
   updateCharacterMutation({
     variables: {
-      userId: userInfo.userId,
+      userId,
       character: characters[currentImageIndex]
     },
   })
     .then((result) => {
       // Handle the result if needed
-      console.log("success userId: ", userInfo.userId)
+      console.log("success userId: ", userId)
       console.log("success character: ", characters[currentImageIndex])
       console.log(result.data);
     })
     .catch((error) => {
       // Handle any errors
-      console.log("failure userId: ", userInfo.userId)
+      console.log("failure userId: ", userId)
       console.log("failure character: ", characters[currentImageIndex])
       console.error(error);
     });
@@ -108,6 +117,7 @@ export default function MyRoom() {
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
+    console.log(characters[currentImageIndex])
   };
   
   const handlePreviousImage = () => {
@@ -123,6 +133,7 @@ export default function MyRoom() {
     currentImageIndex,
     handlePreviousImage,
     handleNextImage,
+    character,
   };
 
   return <MyRoomUI {...props} />;

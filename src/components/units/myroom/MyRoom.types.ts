@@ -6,4 +6,5 @@ export interface IMyRoomUIProps {
   currentImageIndex: number;
   handlePreviousImage: () => void;
   handleNextImage: () => void;
+  character: string;
 }

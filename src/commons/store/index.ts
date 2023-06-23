@@ -9,7 +9,7 @@ interface IUserInfoState {
   userKeynote: string;
 }
 
-// 현재 유저의 정보를 담는 state
+// 현재 유저의 정보를 담는 state -> 🚨 deprecated (userIdState 사용하기)
 export const userInfoState = atom<IUserInfoState>({
   key: `userInfoState${uuidv4()}`,
   default: { userId: "test01", character: "beluga", userKeynote: "origin" },
@@ -32,4 +32,9 @@ export const refreshAccessTokenLoadable = selector({
 export const roomInfoState = atom<IRoomInfoState>({
   key: `roomInfoState${uuidv4()}`,
   default: { mode: "아이템", singer: "", songTitle: "" },
+});
+
+export const userIdState = atom<string>({
+  key: `userIdState${uuidv4()}`,
+  default: "",
 });

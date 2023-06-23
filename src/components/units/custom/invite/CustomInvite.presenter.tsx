@@ -19,7 +19,7 @@ export default function CustomInviteUI() {
       <Label text="친구 목록" marginTop="16px" />
 
       <ListItem
-        butonText="초대하기"
+        buttonText="초대하기"
         buttonType={buttonType.SHORT_PINK}
         onClick={() => {}}
       >
@@ -33,7 +33,7 @@ export default function CustomInviteUI() {
       </ListItem>
 
       <ListItem
-        butonText="초대하기"
+        buttonText="초대하기"
         buttonType={buttonType.SHORT_PINK}
         onClick={() => {}}
       >
@@ -47,7 +47,7 @@ export default function CustomInviteUI() {
       </ListItem>
 
       <ListItem
-        butonText="게임중"
+        buttonText="게임중"
         buttonType={buttonType.SHORT_DISABLED}
         onClick={() => {}}
       >

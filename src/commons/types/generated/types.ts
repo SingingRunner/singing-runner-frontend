@@ -105,6 +105,16 @@ export type IMutationAddFriendArgs = {
 };
 
 
+export type IMutationDeleteNotificationArgs = {
+  notificationDto: INotificationDto;
+};
+
+
+export type IMutationFriendRequestArgs = {
+  notificationDto: INotificationDto;
+};
+
+
 export type IMutationInviteFriendArgs = {
   friendId: Scalars['String']['input'];
   hostUserDto: IHostUserInput;
@@ -153,6 +163,11 @@ export type IMutationUpdateUserKeynoteArgs = {
   userId: Scalars['String']['input'];
 };
 
+export type INotificationDto = {
+  senderId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type IPollingDto = {
   __typename?: 'PollingDto';
   hostUserDtoList: Array<IHostUserOutput>;
@@ -164,7 +179,8 @@ export type IQuery = {
   fetchUser: IAuthUserDto;
   fetchUserGuard: IAuthUserDto;
   getFriendList: Array<IFriendDto>;
-  getNotification: Array<IUserNotification>;
+  getNotification: Array<IRequestDto>;
+  getUserReplays: Array<IReplayWithSongInfo>;
   searchFriend: Array<IUser>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
@@ -188,6 +204,13 @@ export type IQueryGetNotificationArgs = {
 };
 
 
+export type IQueryGetUserReplaysArgs = {
+  isMyReplay: Scalars['Boolean']['input'];
+  pageNumber: Scalars['Int']['input'];
+  userId: Scalars['String']['input'];
+};
+
+
 export type IQuerySearchFriendArgs = {
   addFriendDto: IAddFriendDto;
 };
@@ -204,10 +227,25 @@ export type IQuerySearchUserArgs = {
   page: Scalars['Float']['input'];
 };
 
+export type IReplayWithSongInfo = {
+  __typename?: 'ReplayWithSongInfo';
+  createdAt: Scalars['DateTime']['output'];
+  isPublic: Scalars['Int']['output'];
+  replayId: Scalars['Int']['output'];
+  singer: Scalars['String']['output'];
+  songTitle: Scalars['String']['output'];
+};
+
 export type IReply = {
   __typename?: 'Reply';
   code: Scalars['Int']['output'];
   message: Scalars['String']['output'];
+};
+
+export type IRequestDto = {
+  __typename?: 'RequestDto';
+  senderId: Scalars['String']['output'];
+  senderNickname: Scalars['String']['output'];
 };
 
 export type IUser = {

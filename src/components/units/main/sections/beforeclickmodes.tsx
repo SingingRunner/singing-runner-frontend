@@ -14,8 +14,8 @@ export default function BeforeClickModes(props: IMainUIProps) {
       }}
     >
       <Center
-        src={`/game/player/profile/${props._character}.png`}
-        alt="husky"
+        src={`/game/player/profile/${props.character}.png`}
+        alt="character"
       />
       {props.isClicked && ( // 1-2. START 클릭 후 모드 선택 화면
         <>
