@@ -2,6 +2,7 @@ import { atom, selector } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 import { getAccessToken } from "../libraries/getAccessToken";
 import { IRoomInfoState } from "../../components/units/custom/Custom.types";
+import { IGameResult } from "../../components/units/game/result/GameResult.types";
 
 interface IUserInfoState {
   userId: string;
@@ -37,4 +38,18 @@ export const roomInfoState = atom<IRoomInfoState>({
 export const userIdState = atom<string>({
   key: `userIdState${uuidv4()}`,
   default: "",
+});
+
+export const gameResultState = atom<IGameResult[]>({
+  key: `gameResultState${uuidv4()}`,
+  default: [
+    {
+      nickname: "",
+      score: 0,
+      mmrDiff: 0,
+      isFreind: false,
+      tier: "bronze",
+      userId: "",
+    },
+  ],
 });
