@@ -1,7 +1,8 @@
-import * as S from "../Main.styles";
+// import * as S from "../Main.styles";
 import ButtonWrapper from "../../../commons/buttons/wrapper";
 import { IMainUIProps } from "../Main.types";
 import Button, { buttonType } from "../../../commons/button/Button";
+import Center from '../../../commons/center/Center';
 
 export default function BeforeClickModes(props: IMainUIProps) {
   return (
@@ -13,10 +14,7 @@ export default function BeforeClickModes(props: IMainUIProps) {
         position: "relative",
       }}
     >
-      <S.ImageWrapper>
-        <S.ImageCat src="/images/cat.png" alt="Cat" />
-        <S.ImageMic src="/images/microphone.png" alt="Microphone" />
-      </S.ImageWrapper>
+      <Center src={`/game/player/profile/${props._character}.png`} alt="husky" />
       {props.isClicked && ( // 1-2. START 클릭 후 모드 선택 화면
         <>
           <ButtonWrapper>

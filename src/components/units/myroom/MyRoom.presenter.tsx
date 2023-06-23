@@ -14,14 +14,14 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
       <div style={{position: "absolute", width: "80px", height: "auto", top: "-14px", right: "24px"}}>
         <div style={{position: "absolute", height: "14px", fontSize: "12px",top: "2px", right: "-18px", textShadow: "-1px 0 #1A1128, 0 1px #1A1128, 1px 0 #1A1128, 0 -1px #1A1128", color: "#DFF45B"}}>23984</div>
         <div style={{position: "absolute", top: "18px", fontSize: "24px", color: "#DCDCDC", fontFamily: "Pretendard-bold"}}>SILVER</div>
-        <img src="/images/silvermic.png" style={{width: "16px", marginLeft:"84px", marginTop: "24px"}}/>
+        <img src="/tier/silver.png" style={{width: "16px", marginLeft:"84px", marginTop: "24px"}}/>
       </div>
     </div>
       <S.Container>
         <S.ImageWrapper>
-          <S.ImageVectorLeft src="/images/Vector_left.png" alt="vector" />
-          <S.ImageCharacter src="/images/cat.png" alt="logo" />
-          <S.ImageVectorRight src="/images/Vector_right.png" alt="vector" />
+          <S.ImageVectorLeft src="/images/Vector_left.png" alt="previous" onClick={props.handlePreviousImage}/>
+          <S.ImageCharacter src={`/game/player/profile/${props.characters[props.currentImageIndex]}.png`} alt="character" />
+          <S.ImageVectorRight src="/images/Vector_right.png" alt="next" onClick={props.handleNextImage}/>
         </S.ImageWrapper>
       </S.Container>
       <ButtonWrapper>

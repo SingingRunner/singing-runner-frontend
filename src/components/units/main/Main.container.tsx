@@ -3,13 +3,41 @@ import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { userInfoState } from "../../../commons/store";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+
+const FETCH_USER = gql`
+  query FetchUser($userId: String!) {
+    fetchUser(userId: $userId) {
+      userId
+      userEmail
+      nickname
+      userActive
+      userKeynote
+      userMmr
+      userPoint
+      character
+    }
+  }
+`;
+
+const UPDATE_CHARACTER = gql`
+  mutation UpdateCharacter($userId: String!, $character: String!) {
+    updateCharacter(userId: $userId, character: $character) {
+      userId
+      character
+    }
+  }
+`;
+
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect } = socketContext;
-
+  
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
@@ -19,6 +47,66 @@ const Main = () => {
   const [isBattleClicked, setIsBattleClicked] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const userInfo = useRecoilValue(userInfoState);
+  const [_character, setCharacter] = useState("");
+  const userId = userInfo.userId;
+  const { data: userData } = useQuery(FETCH_USER, {
+    variables: { userId },
+  });
+  const setUserInfo = useSetRecoilState(userInfoState);
+  const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
+  
+  
+  
+  useEffect(() => {
+    if (userData?.fetchUser) {
+      const loggedInUserId = userData.fetchUser.userId; // Get the logged-in user's ID from the response
+      setUserInfo((prevUserInfo) => ({
+        ...prevUserInfo,
+        userId: loggedInUserId,
+        character: userData.fetchUser.character,
+      }));
+    }
+  }, [userData, setUserInfo]);
+  
+  // 새로고침 시 닉네임이 안보이는 현상 없애기 위해 로컬스토리지에 저장
+  useEffect(() => {
+    const storedCharacter = localStorage.getItem("character");
+    if (storedCharacter) {
+      setCharacter(storedCharacter);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (userData?.fetchUser) {
+      // setCharacter(userData.fetchUser.character);
+      console.log(_character)
+      setCharacter(userData?.fetchUser.character);
+      localStorage.setItem("character", userData.fetchUser.character);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    updateCharacterMutation({
+      variables: {
+        userId: userData?.fetchUser.userId,
+        character: userData?.fetchUser.character,
+      },
+    })
+      .then((result) => {
+        // Handle the result if needed
+        console.log("여기????")
+        console.log(result.data);
+        setCharacter(result.data.updateCharacter.character)
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.log("아님 여기????")
+        console.log(userId)
+        console.log(_character)
+        console.error(error);
+      });
+    }, [_character, updateCharacterMutation, userInfo.userId]);
 
   const onClickSocial = () => {
     // 친구 화면으로 전환
@@ -84,8 +172,8 @@ const Main = () => {
   };
 
   // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  const [dummyUserId, setDummyUserId] = useState("test99");
-  const [dummyCharacter, setDummyCharacter] = useState("husky");
+  // const [dummyUserId, setDummyUserId] = useState("test99");
+  // const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
     userId: dummyUserId,
     userMmr: 1000,
@@ -176,11 +264,13 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
-    setDummyUserId,
-    setDummyCharacter,
+    // setDummyUserId,
+    // setDummyCharacter,
     onClickMyRoom,
-    dummyCharacter,
+    // dummyCharacter,
     onClickSocial,
+    userData,
+    _character,
   };
 
   return <MainUI {...props} />;

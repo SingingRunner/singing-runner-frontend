@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { accessTokenState, userInfoState } from "../../../../commons/store";
 import MyRoomSettingUI from './MyRoomSetting.presenter';
 import { IMyRoomSettingUIProps } from './MyRoomSetting.types';
 
@@ -38,6 +38,7 @@ export default function MyRoomSetting() {
   const [nickname, setNickname] = useState("");
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
+  const [, setAccessToken] = useRecoilState(accessTokenState);
   // onClickSetting = () => {
   //   router.push("/myroom/setting");
   // };
@@ -68,6 +69,10 @@ export default function MyRoomSetting() {
 
   const onClickFinalLogout = async () => {
     try {
+      // 액세스 토큰 제거
+      setAccessToken("");
+
+      // 서버에 로그아웃 요청
       await logoutUser({ 
         variables: { 
           userId 
