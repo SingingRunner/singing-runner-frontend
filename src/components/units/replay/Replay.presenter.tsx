@@ -91,7 +91,7 @@ export default function ReplayUI(props: IReplayUIProps) {
               <ListItem
                 key={index}
                 butonText="보기"
-                buttonType={props.btnType}
+                buttonType={buttonType.SHORT_PINK}
                 onClick={
                   props.playReplay ? () => props.playReplay(index) : () => {}
                 }
