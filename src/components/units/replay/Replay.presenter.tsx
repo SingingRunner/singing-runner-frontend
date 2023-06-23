@@ -1,10 +1,10 @@
-import { IReplayUIProps } from "./Replay.types";
+// import { IReplayUIProps } from "./Replay.types";
 import Button, { buttonType } from "../../commons/button/Button";
 import ButtonWrapper from "../../commons/buttons/wrapper";
 import InfiniteScroll from "react-infinite-scroller";
 import * as S from "./Replay.styles";
 
-export default function ReplayUI(props: IReplayUIProps) {
+export default function ReplayUI() {
   const onLoadMore = () => {
     console.log("onLoadMore");
   };
