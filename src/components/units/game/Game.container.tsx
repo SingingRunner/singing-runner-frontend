@@ -3,10 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../commons/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { gameResultState, userInfoState } from "../../../commons/store";
 import { IPlayersInfo, ISocketItem } from "./Game.types";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo.styles";
+import { IGameResult } from "./result/GameResult.types";
 
 const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
 
@@ -46,7 +47,7 @@ export default function Game() {
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [appliedItems, setAppliedItems] = useState<string[]>([]);
 
-  // 현재 유저에게 활성화된 아이템을 전부 담은 목록
+  const [, setGameResult] = useRecoilState(gameResultState);
 
   useEffect(() => {
     // 로그인한 유저의 정보 저장
@@ -125,6 +126,12 @@ export default function Game() {
         });
         return temp;
       });
+    });
+
+    // 게임 종료 후 모든 유저의 점수 전달 받기 & 게임 종료 버튼 노출
+    socket?.on("game_terminated", (data: IGameResult[]) => {
+      setGameResult(data);
+      setIsTerminated(true);
     });
   }, [socket]);
 

@@ -163,7 +163,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         userId: userInfo.userId,
         score: currentScore,
       });
-      props.setIsTerminated(true);
     };
     mediaRecorder.start();
 
