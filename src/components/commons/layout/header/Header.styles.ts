@@ -4,7 +4,8 @@ export const Wrapper = styled.div`
   width: calc(100% - 32px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${(props: { alignCenter?: boolean }) =>
+    props.alignCenter ? "space-between" : "center"};
   position: fixed;
   top: 0;
   padding: 16px 0 0;

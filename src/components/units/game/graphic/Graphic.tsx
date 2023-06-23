@@ -479,9 +479,7 @@ export default function Graphic(props: IGrapicProps) {
 
   const router = useRouter();
   const onClickButton = () => {
-    terminateAudio.pause();
-    // 🚨 게임 종료 화면으로 이동하도록 변경 예정
-    router.push("/main");
+    router.replace("/game/result");
   };
 
   return (
