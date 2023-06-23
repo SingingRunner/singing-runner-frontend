@@ -54,42 +54,44 @@ export default function ReplayUI(props: IReplayUIProps) {
           loadMore={props.onLoadMore}
           useWindow={false}
         >
-          {props.data?.map((da, index) =>
+          {props.data?.fetchReplays.map((elem, index) =>
             props.isMyReplay ? (
               isSettingMode ? (
                 <ListItem
-                  key={index}
+                  key={elem.replayId}
                   butonText="공개 유무 받아와서 보여주기 또 값으로도 저장해야함"
                   buttonType={buttonType.SHORT_PINK}
                   onClick={
                     props.setPublic
-                      ? () => props.setPublic(index, true)
+                      ? () => props.setPublic(elem.replayId, elem.isPublic)
                       : () => {}
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{index}</S.Singer>
-                    <S.SongTitle>{index}</S.SongTitle>
+                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               ) : (
                 <ListItem
-                  key={index}
+                  key={elem.replayId}
                   butonText="보기"
                   buttonType={buttonType.SHORT_PINK}
                   onClick={
-                    props.playReplay ? () => props.playReplay(index) : () => {}
+                    props.playReplay
+                      ? () => props.playReplay(elem.replayId)
+                      : () => {}
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{index}</S.Singer>
-                    <S.SongTitle>{index}</S.SongTitle>
+                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               )
             ) : (
               <ListItem
-                key={index}
+                key={elem.replayId}
                 butonText="보기"
                 buttonType={buttonType.SHORT_PINK}
                 onClick={
@@ -97,8 +99,8 @@ export default function ReplayUI(props: IReplayUIProps) {
                 }
               >
                 <S.SongWrapper>
-                  <S.Singer>{index}</S.Singer>
-                  <S.SongTitle>{index}</S.SongTitle>
+                  <S.Singer>{elem.singer}</S.Singer>
+                  <S.SongTitle>{elem.songTitle}</S.SongTitle>
                 </S.SongWrapper>
               </ListItem>
             )
@@ -106,7 +108,11 @@ export default function ReplayUI(props: IReplayUIProps) {
         </InfiniteScroll>
       </div>
       <ButtonWrapper>
-        <Button buttonType={buttonType.EMPTY} text="선택 완료" />
+        <Button
+          buttonType={buttonType.EMPTY}
+          text="나가기"
+          onClick={props.goPrevPage}
+        />
       </ButtonWrapper>
     </>
   );
