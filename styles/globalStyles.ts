@@ -18,4 +18,11 @@ export const globalStyles = css`
     font-weight: 400;
     font-style: normal;
   }
+  @font-face {
+    font-family: "Pretendard-bold";
+    src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff")
+      format("woff");
+    font-weight: 400;
+    font-style: normal;
+  }
 `;
