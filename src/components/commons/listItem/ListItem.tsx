@@ -11,7 +11,11 @@ export default function ListItem(props: IListItemProps) {
   return (
     <S.Wrapper>
       <div>{props.children && props.children}</div>
-      <Button text={props.butonText} buttonType={props.buttonType} />
+      <Button
+        text={props.butonText}
+        buttonType={props.buttonType}
+        onClick={props.onClick}
+      />
     </S.Wrapper>
   );
 }

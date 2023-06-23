@@ -8,5 +8,6 @@ export interface IReplayUIProps {
   playReplay: (replayId: number) => void;
   setPublic: (replayId: number, isPublic: boolean) => void;
   onLoadMore: () => void;
-  data: number[];
+  goPrevPage: () => void;
+  data: any;
 }
