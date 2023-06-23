@@ -5,7 +5,7 @@ interface IModalProps {
   isCheck?: boolean; // 체크 표시 아이콘인 경우 true
   /* 텍스트 */
   hilightText?: string; // 강조 표시해야하는 닉네임
-  firstText?: string;
+  firstText?: string; // 모달 알림 내용
   secondText?: string; // 알림이 두 줄인 경우 두번째 텍스트
   /* 버튼 */
   buttonText: string; // 버튼이 두개인 경우, 오른쪽 버튼의 텍스트
