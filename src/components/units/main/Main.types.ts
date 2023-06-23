@@ -23,4 +23,5 @@ export interface IMainUIProps {
   // dummyCharacter: string;
   userData: any;
   _character: string;
+  onClickCustomMode: () => void;
 }

@@ -40,8 +40,8 @@ export default function MainUI(props: IMainUIProps) {
   // // 🚨 임시 가데이터 - 여기까지
   return (
     <>
-      <img style={{width: "24px", height: "auto", position: "absolute", marginTop:"-60px", marginLeft: "312px"}} src='/icon/myroom.png' onClick={props.onClickMyRoom}  />
-      <img style={{width: "44px", height: "auto", position: "absolute", marginTop:"-68px", marginLeft: "268px"}} src='/icon/social.png' onClick={props.onClickSocial}  />
+      <img style={{position: "absolute", height: "24px", width: "auto", top:"16px", right: "16px"}} src='/icon/myroom.png' onClick={props.onClickMyRoom}  />
+      <img style={{position: "absolute", height: "40px", width: "auto", top:"10px", right: "42px"}} src='/icon/social.png' onClick={props.onClickSocial}  />
       {/* 🚨 임시 가데이터 - 여기부터
       아이디
       <input onChange={changeUserId} />

@@ -1,9 +1,8 @@
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
 import LoginHeader from "../../commons/layout/header/LoginHeader";
 import { ISignUpUIProps } from "./SignUp.types";
 import * as S from "./SignUp.styles";
-import Button, { buttonType } from '../../commons/button/Button';
+import Button, { buttonType } from "../../commons/button/Button";
 
 export default function SignUpUI(props: ISignUpUIProps) {
   return (
@@ -84,19 +83,18 @@ export default function SignUpUI(props: ISignUpUIProps) {
           />
         </S.InputButtonWrapper>
       </S.SignUpContainer>
-      <ButtonWrapper>
-        <Button
-          buttonType={
-            props.isSignUpButtonEnabled
-              ? buttonType.GRADATION
-              : buttonType.DISABLED
-          }
-          text="가입 완료"
-          onClick={
-            props.isSignUpButtonEnabled ? props.onClickSignUp : props.dummyClick
-          }
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={
+          props.isSignUpButtonEnabled
+            ? buttonType.GRADATION
+            : buttonType.DISABLED
+        }
+        text="가입 완료"
+        isFixedAtBottom
+        onClick={
+          props.isSignUpButtonEnabled ? props.onClickSignUp : props.dummyClick
+        }
+      />
     </>
   );
 }

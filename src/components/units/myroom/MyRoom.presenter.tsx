@@ -1,5 +1,4 @@
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import { IMyRoomUIProps } from './MyRoom.types';
 import * as S from "./MyRoom.styles";
 
@@ -24,13 +23,12 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
           <S.ImageVectorRight src="/images/Vector_right.png" alt="next" onClick={props.handleNextImage}/>
         </S.ImageWrapper>
       </S.Container>
-      <ButtonWrapper>
         <Button
           buttonType={buttonType.EMPTY}
           text="선택 완료"
+          isFixedAtBottom
           onClick={props.onClickComplete}
         />
-      </ButtonWrapper>
     </>
   );
 }

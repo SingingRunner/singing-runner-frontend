@@ -1,5 +1,4 @@
 import Button, { buttonType } from "../../../commons/button/Button";
-import ButtonWrapper from "../../../commons/buttons/wrapper";
 import * as S from "./Starting.styles";
 import { IStartingUIProps } from "./Starting.types";
 
@@ -13,13 +12,12 @@ export default function StartingUI(props: IStartingUIProps) {
           <S.ImageVectorRight src="/images/Vector_right.png" alt="vector" />
         </S.ImageWrapper>
       </S.Container>
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.GRADATION}
-          text="선택 완료"
-          onClick={props.onClickComplete}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.GRADATION}
+        text="선택 완료"
+        isFixedAtBottom
+        onClick={props.onClickComplete}
+      />
     </>
   );
 }
