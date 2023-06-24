@@ -9,7 +9,10 @@ export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
       <S.Option>키 설정</S.Option>
       <Button buttonType={buttonType.SELECT} text="원키" />
       <S.Option>리플레이</S.Option>
-      <Button buttonType={buttonType.ONECOLOR_PINK} text="리플레이 목록" />
+      <Button 
+      buttonType={buttonType.ONECOLOR_PINK} 
+      onClick={props.onClickReplay}
+      text="리플레이 목록" />
       <S.Logout onClick={props.onClickLogout}>로그아웃</S.Logout>
       <Button
         buttonType={buttonType.EMPTY}
