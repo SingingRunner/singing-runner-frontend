@@ -1,6 +1,7 @@
 import Draggable from "react-draggable";
 import styled from "@emotion/styled";
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState, useRef, useContext } from "react";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 const data = [
   { timeStamp: 4500, lyrics: "하나, 둘, 셋, 야!" },
@@ -28,6 +29,11 @@ interface ILyricProps {
 }
 
 function Lyric(props: ILyricProps) {
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
   const [lyricIdx, setLyricIdx] = useState(0);
   const endLyric = useRef(data[0].timeStamp);
   const lyricRef = useRef(0);
@@ -87,10 +93,15 @@ function Lyric(props: ILyricProps) {
     setDragging(false);
   };
 
+  const [exit, setExit] = useState("");
+  useEffect(() => {
+    socket?.on("exit", (data: { userId: string; nickname: string }) => {
+      setExit(data.nickname);
+    });
+  }, [socket]);
   return (
     <LyricWrapper>
-      {/* ⭐️ 탈주 메시지 */}
-      {/* <DisconnectMsg>겁쟁이 “머기조”님이 탈주했습니다!</DisconnectMsg> */}
+      {exit && <DisconnectMsg>겁쟁이 “{exit}”님이 탈주했습니다!</DisconnectMsg>}
       <Text key={lyricIdx}>{data[lyricIdx].lyrics}</Text>
       {lyricIdx < data.length - 1 ? (
         <Text key={lyricIdx + 1}>{data[lyricIdx + 1].lyrics}</Text>
@@ -127,16 +138,15 @@ const LyricWrapper = styled.div`
   border-radius: 7px;
 `;
 
-// ⭐️ 탈주 메시지
-// const DisconnectMsg = styled.p`
-//   position: absolute;
-//   top: 12px;
-//   font-size: 12px;
-//   line-height: 14px;
-//   text-align: center;
-//   color: #c70707;
-//   text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-// `;
+const DisconnectMsg = styled.p`
+  position: absolute;
+  top: 12px;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  color: #c70707;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+`;
 
 const Text = styled.p`
   font-size: 16px;

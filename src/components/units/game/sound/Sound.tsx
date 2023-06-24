@@ -210,6 +210,7 @@ export default function Sound(props: ISoundProps) {
   return (
     <>
       <PitchAndDecibel
+        preventEvent={props.preventEvent}
         setPlayersInfo={props.setPlayersInfo}
         isLoadComplete={props.isLoadComplete}
         originAnswer={originAnswer}

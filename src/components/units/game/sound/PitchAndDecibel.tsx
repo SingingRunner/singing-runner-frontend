@@ -102,6 +102,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
+    if (props.preventEvent) return 0;
     let score: number = 0;
     let answer: number[] = [];
     const originAnswer = propsRef.current.originAnswer;
