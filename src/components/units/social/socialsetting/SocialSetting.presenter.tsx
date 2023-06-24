@@ -1,7 +1,10 @@
+// import InfiniteScroll from "react-infinite-scroller";
+import InfiniteScroll from "react-infinite-scroller";
 import Button, { buttonType } from "../../../commons/button/Button";
-import ButtonWrapper from "../../../commons/buttons/wrapper";
 import Input, { inputType } from "../../../commons/input/Input";
-import { ISocialSettingUIProps } from './SocialSetting.types';
+import ListItem from "../../../commons/listItem/ListItem";
+import ProfileCard from "../../../commons/profileCard/ProfileCard";
+import { ISocialSettingUIProps } from "./SocialSetting.types";
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
@@ -17,23 +20,61 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
           justifyContent: "center",
         }}
       >
-        <div style={{ width: "100%", marginTop: "-620px" }}>
+        <div
+          style={{
+            position: "fixed",
+            width: "calc(100% - 32px)",
+            top: "60px",
+          }}
+        >
+          <img
+            style={{
+              position: "absolute",
+              width: "20px",
+              top: "10px",
+              left: "12px",
+            }}
+            src="/icon/search-purple.png"
+          />
           <Input
-            inputType={inputType.LONG}
+            inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
           />
-          <div style={{color: "white", marginTop: "16px"}}>친구 목록</div>
+          <div style={{ color: "white", marginTop: "16px" }}>친구 목록</div>
+        </div>
+        <div
+          style={{
+            height: "140px",
+            width: "100%",
+            overflow: "auto",
+          }}
+        >
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={props.onLoadMore}
+            hasMore={true}
+            useWindow={false}
+          >
+            {props.data?.getFriendList.map((el) => (
+              <div key={el._id}>
+                <ListItem rightChildren={<div>내용</div>}>
+                  <ProfileCard
+                    character={el.character}
+                    nickname={el.nickname}
+                  ></ProfileCard>
+                </ListItem>
+              </div>
+            ))}
+          </InfiniteScroll>
         </div>
       </div>
-
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.exitClick}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        isFixedAtBottom
+        onClick={props.onClickExit}
+      />
     </>
   );
 }

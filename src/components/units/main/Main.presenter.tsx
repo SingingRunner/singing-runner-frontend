@@ -8,37 +8,38 @@ import { useRecoilState } from "recoil";
 import { userInfoState } from "../../../commons/store";
 import Character from "./character/Character";
 
+
 export default function MainUI(props: IMainUIProps) {
-  // 🚨 임시 가데이터 - 여기부터
-  const [, setUserInfo] = useRecoilState(userInfoState);
-  const changeUserId = (e: ChangeEvent<HTMLInputElement>) => {
-    props.setDummyUserId(e.target.value);
-    setUserInfo((prev) => ({ ...prev, userId: e.target.value }));
-  };
-  const changeCharacter = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    props.setDummyCharacter(selectedValue);
-    setUserInfo((prev) => ({ ...prev, character: event.target.value }));
-  };
-  const getRandomOption = () => {
-    const options = [
-      "beluga",
-      "puma",
-      "husky",
-      "hare",
-      "lynx",
-      "snowLeopard",
-      "narwhal",
-      "puffin",
-    ];
-    const randomCharacter = options[Math.floor(Math.random() * options.length)];
-    setUserInfo((prev) => ({ ...prev, character: randomCharacter }));
-    return randomCharacter;
-  };
-  useEffect(() => {
-    props.setDummyCharacter(getRandomOption());
-  }, [props.setDummyCharacter]);
-  // 🚨 임시 가데이터 - 여기까지
+  // // 🚨 임시 가데이터 - 여기부터
+  // const [, setUserInfo] = useRecoilState(userInfoState);
+  // const changeUserId = (e: ChangeEvent<HTMLInputElement>) => {
+  //   props.setDummyUserId(e.target.value);
+  //   setUserInfo((prev) => ({ ...prev, userId: e.target.value }));
+  // };
+  // const changeCharacter = (event: ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedValue = event.target.value;
+  //   props.setDummyCharacter(selectedValue);
+  //   setUserInfo((prev) => ({ ...prev, character: event.target.value }));
+  // };
+  // const getRandomOption = () => {
+  //   const options = [
+  //     "beluga",
+  //     "puma",
+  //     "husky",
+  //     "hare",
+  //     "lynx",
+  //     "snowLeopard",
+  //     "narwhal",
+  //     "puffin",
+  //   ];
+  //   const randomCharacter = options[Math.floor(Math.random() * options.length)];
+  //   setUserInfo((prev) => ({ ...prev, character: randomCharacter }));
+  //   return randomCharacter;
+  // };
+  // useEffect(() => {
+  //   props.setDummyCharacter(getRandomOption());
+  // }, [props.setDummyCharacter]);
+  // // 🚨 임시 가데이터 - 여기까지
   return (
     <>
       <img

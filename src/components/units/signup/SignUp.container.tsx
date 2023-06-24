@@ -54,7 +54,7 @@ export default function SignUp() {
 
       // 회원가입 성공
       alert("회원가입을 축하합니다.");
-
+      localStorage.setItem("userId", registeredUser?.userId || "");
       // 유저 정보 저장
       setUserInfo({
         userId: registeredUser?.userId || "",

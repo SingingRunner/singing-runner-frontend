@@ -1,5 +1,4 @@
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
 import LoginHeader from "../../commons/layout/header/LoginHeader";
 import { ILoginUIProps } from "./Login.types";
@@ -38,8 +37,6 @@ export default function LoginUI(props: ILoginUIProps) {
           )}
         </S.InputWrapper>
       </S.LoginContainer>
-
-      <ButtonWrapper>
         <Button
           buttonType={
             props.isLoginButtonEnabled
@@ -47,11 +44,11 @@ export default function LoginUI(props: ILoginUIProps) {
               : buttonType.DISABLED
           }
           text="로그인"
+          isFixedAtBottom
           onClick={
             props.isLoginButtonEnabled ? props.onClickLogin : props.dummyClick
           }
         />
-      </ButtonWrapper>
     </>
   );
 }

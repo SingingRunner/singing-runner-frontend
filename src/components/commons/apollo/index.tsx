@@ -57,8 +57,8 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
   });
 
   const uploadLink = createUploadLink({
-    // uri: "http://localhost:3000/graphql", // 로컬 테스트용
-    uri: "https://injungle.shop/api/graphql", // 배포용
+    uri: "http://localhost:3000/graphql", // 로컬 테스트용
+    // uri: "https://injungle.shop/api/graphql", // 배포용
     headers: { Authorization: `Bearer ${accessToken}` },
     credentials: "include",
   });

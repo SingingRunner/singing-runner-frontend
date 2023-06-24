@@ -1,4 +1,4 @@
-schema: https://injungle.shop/api/graphql
+schema: http://localhost:3000/graphql
 generates:
   ./src/commons/types/generated/types.ts:
     plugins:

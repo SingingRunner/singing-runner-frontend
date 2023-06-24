@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
+import { accessTokenState, userIdState } from "../../../../commons/store";
 import MyRoomSettingUI from './MyRoomSetting.presenter';
 import { IMyRoomSettingUIProps } from './MyRoomSetting.types';
 
@@ -29,8 +29,12 @@ const LOGOUT_USER = gql`
 `;
 
 export default function MyRoomSetting() {
-  const userInfo = useRecoilValue(userInfoState);
-  const userId = userInfo.userId;
+  // const userInfo = useRecoilValue(userInfoState);
+  // const userId = userInfo.userId;
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });
@@ -38,6 +42,7 @@ export default function MyRoomSetting() {
   const [nickname, setNickname] = useState("");
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
+  const [, setAccessToken] = useRecoilState(accessTokenState);
   // onClickSetting = () => {
   //   router.push("/myroom/setting");
   // };
@@ -68,6 +73,10 @@ export default function MyRoomSetting() {
 
   const onClickFinalLogout = async () => {
     try {
+      // 액세스 토큰 제거
+      setAccessToken("");
+
+      // 서버에 로그아웃 요청
       await logoutUser({ 
         variables: { 
           userId 

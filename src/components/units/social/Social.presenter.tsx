@@ -1,24 +1,25 @@
+import InfiniteScroll from "react-infinite-scroller";
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
+import ListItem from "../../commons/listItem/ListItem";
+import ProfileCard from "../../commons/profileCard/ProfileCard";
 import { ISocialUIProps } from "./Social.types";
+import { v4 as uuidv4 } from "uuid";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <div style={{height: "20px"}}>
-        <img
-          src="/icon/setting.png"
-          style={{
-            width: "40px",
-            height: "auto",
-            marginTop: "-68px",
-            marginLeft: "292px",
-            marginBottom: "48px",
-          }}
-          onClick={props.onClickSetting}
-        />
-      </div>
+      <img
+        src="/icon/setting.png"
+        onClick={props.onClickSetting}
+        style={{
+          position: "absolute",
+          height: "40px",
+          width: "auto",
+          top: "8px",
+          right: "8px",
+        }}
+      />
       <div
         style={{
           height: "100vh",
@@ -30,28 +31,63 @@ export default function SocialUI(props: ISocialUIProps) {
           justifyContent: "center",
         }}
       >
-        <div style={{ width: "100%", marginTop: "-620px" }}>
+        <div
+          style={{
+            position: "fixed",
+            width: "calc(100% - 32px)",
+            top: "60px",
+          }}
+        >
+          <img
+            style={{
+              position: "absolute",
+              width: "20px",
+              top: "10px",
+              left: "12px",
+            }}
+            src="/icon/search-purple.png"
+          />
           <Input
-            inputType={inputType.LONG}
+            inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
           />
           <div style={{ color: "white", marginTop: "16px" }}>친구 목록</div>
         </div>
-        <img
-          src="/icon/group.png"
-          style={{ height: "24px", marginLeft: "280px", marginTop: "16px" }}
-          onClick={props.onClickReplay}
-        />
+        <div
+          style={{
+            position: "absolute",
+            top: "54px",
+            height: "540px",
+            width: "100%",
+            overflow: "auto",
+          }}
+        >
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={props.onLoadMore}
+            hasMore={true}
+            useWindow={false}
+          >
+            {props.data?.getFriendList.map((el) => (
+              <div key={uuidv4()}>
+                <ListItem rightChildren={<div>내용</div>}>
+                  <ProfileCard
+                    character={el.character}
+                    nickname={el.nickname}
+                  ></ProfileCard>
+                </ListItem>
+              </div>
+            )) ?? <div></div>}
+          </InfiniteScroll>
+        </div>
       </div>
-
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.onClickExit}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        isFixedAtBottom
+        onClick={props.onClickExit}
+      />
     </>
   );
 }

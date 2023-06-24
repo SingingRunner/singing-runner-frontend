@@ -1,14 +1,12 @@
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import * as S from "../main/Main.styles";
-import { IInitialUIProps } from "./initial.types";
+import { IInitialUIProps } from './Initial.types';
 
 export default function InitialUI(props: IInitialUIProps) {
   return (
     <>
       <div
         style={{
-          // width: "100vw",
           height: "88vh",
           backgroundColor: "#1A1128",
           position: "relative",
@@ -24,18 +22,18 @@ export default function InitialUI(props: IInitialUIProps) {
           </S.ImageWrapper>
         </div>
       </div>
-        <ButtonWrapper>
-          <Button
-            buttonType={buttonType.GRADATION}
-            text="로그인"
-            onClick={props.handleLoginClick}
-          />
-          <Button
-            buttonType={buttonType.EMPTY}
-            text="회원가입"
-            onClick={props.handleSignupClick}
-          />
-        </ButtonWrapper>
+      <Button
+        buttonType={buttonType.GRADATION}
+        text="로그인"
+        isFixedAtBottomSecond
+        onClick={props.handleLoginClick}
+      />
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="회원가입"
+        isFixedAtBottom
+        onClick={props.handleSignupClick}
+      />
     </>
   );
 }
