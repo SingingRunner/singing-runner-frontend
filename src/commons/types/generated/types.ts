@@ -178,7 +178,6 @@ export type IQuery = {
   __typename?: 'Query';
   fetchUser: IAuthUserDto;
   fetchUserGuard: IAuthUserDto;
-  getFriendList: Array<IFriendDto>;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
   searchFriend: Array<IUser>;
@@ -188,12 +187,6 @@ export type IQuery = {
 
 
 export type IQueryFetchUserArgs = {
-  userId: Scalars['String']['input'];
-};
-
-
-export type IQueryGetFriendListArgs = {
-  page: Scalars['Float']['input'];
   userId: Scalars['String']['input'];
 };
 
@@ -212,11 +205,14 @@ export type IQueryGetUserReplaysArgs = {
 
 
 export type IQuerySearchFriendArgs = {
-  addFriendDto: IAddFriendDto;
+  nickname: Scalars['String']['input'];
+  page: Scalars['Float']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
 export type IQuerySearchSongArgs = {
+  filter: Scalars['String']['input'];
   keyword: Scalars['String']['input'];
   page: Scalars['Int']['input'];
 };
