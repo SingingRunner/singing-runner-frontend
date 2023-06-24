@@ -6,4 +6,6 @@ export interface IMyRoomSettingUIProps {
   onClickFinalLogout: () => void;
   onClickCancelLogout: () => void;
   onClickReplay: () => void;
+  onClickKeySetting: () => void;
+  displayKeynote: string;
 }
