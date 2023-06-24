@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useRouter } from "next/router";
+import { userIdState, userInfoState } from "../../../../commons/store";
 import {
   ISocketGameSongData,
   ISocketLoadingData,
@@ -15,6 +16,8 @@ export default function Sound(props: ISoundProps) {
   const { socket } = socketContext;
 
   const userInfo = useRecoilValue(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const router = useRouter();
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -26,6 +29,10 @@ export default function Sound(props: ISoundProps) {
   const [originAnswer, setOriginAnswer] = useState<number[]>([]);
   const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
   const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
 
   useEffect(() => {
     // 현재 실행되고 있는 아이템
@@ -127,8 +134,8 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 로딩 완료 신호 보내기
-          if (props.preventEvent) {
-            socket.emit("start_replay");
+          if (props.isReplay) {
+            socket.emit("start_replay", router.query.replayId, userId);
           } else {
             socket?.emit("game_ready");
           }
