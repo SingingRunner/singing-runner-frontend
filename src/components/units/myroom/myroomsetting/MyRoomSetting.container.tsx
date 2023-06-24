@@ -3,8 +3,8 @@ import { useQuery, gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { accessTokenState, userIdState } from "../../../../commons/store";
-import MyRoomSettingUI from './MyRoomSetting.presenter';
-import { IMyRoomSettingUIProps } from './MyRoomSetting.types';
+import MyRoomSettingUI from "./MyRoomSetting.presenter";
+import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
 
 const FETCH_USER = gql`
   query FetchUser($userId: String!) {
@@ -31,10 +31,10 @@ const LOGOUT_USER = gql`
 export default function MyRoomSetting() {
   // const userInfo = useRecoilValue(userInfoState);
   // const userId = userInfo.userId;
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });
@@ -46,7 +46,6 @@ export default function MyRoomSetting() {
   // onClickSetting = () => {
   //   router.push("/myroom/setting");
   // };
-
 
   // 새로고침 시 닉네임이 안보이는 현상 없애기 위해 로컬스토리지에 저장
   useEffect(() => {
@@ -65,11 +64,11 @@ export default function MyRoomSetting() {
 
   const onClickLogout = () => {
     setIsLogoutClicked(true);
-  }
+  };
 
   const onClickCancelLogout = () => {
     setIsLogoutClicked(false);
-  }
+  };
 
   const onClickFinalLogout = async () => {
     try {
@@ -77,13 +76,13 @@ export default function MyRoomSetting() {
       setAccessToken("");
 
       // 서버에 로그아웃 요청
-      await logoutUser({ 
-        variables: { 
-          userId 
+      await logoutUser({
+        variables: {
+          userId,
         },
       });
       // 로그아웃 후 초기화면으로 이동
-      router.push("/")
+      router.push("/");
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력
       console.log(error.message);

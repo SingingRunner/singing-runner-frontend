@@ -34,7 +34,7 @@ export default function GameUI(props: IGameUIProps) {
           </S.LoadingBackground>
         </>
       )}
-      {props.isLoadComplete && (
+      {props.isLoadComplete && props.playersInfo[0] && (
         // 로딩화면 끝, 게임 시작
         <>
           <Graphic

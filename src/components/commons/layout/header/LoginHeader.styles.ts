@@ -2,21 +2,24 @@ import styled from '@emotion/styled';
 
 export const ImageWrapper = styled.div`
   position: relative;
-  top: 35%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: -60px;
+  margin-bottom: 36px;
 `;
 export const ImageLogo = styled.img`
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  top: 0px;
-  width: 300px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  width: 300px;
+  height: auto;
+  margin-bottom: 20px;
 `
-export const ImageVectorLeft = styled.img`
-  position: absolute;
-  left: 50%;
-  transform: translate(-440%, -0%);
-  top: 0px;
-  width: 36px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+export const BackButton = styled.img`
+  width: 36px;
+  height: auto;
+`;
+
+export const Invisible = styled.div`
+  width: 36px;
+  visibility: hidden;
 `;

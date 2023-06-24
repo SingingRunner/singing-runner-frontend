@@ -5,13 +5,13 @@ export default function LoginHeader() {
   const router = useRouter();
 
   const goBack = () => {
-    router.back();
+    router.push("/");
   };
   return (
     <S.ImageWrapper>
-      <S.ImageVectorLeft
+      <S.BackButton
         onClick={goBack}
-        src="/images/Vector_left.png"
+        src="/icon/arrow.png"
         alt="vector"
       />
       <S.ImageLogo
@@ -19,6 +19,7 @@ export default function LoginHeader() {
         src="/images/game_logo.png"
         alt="logo"
       />
+      <S.Invisible/>
     </S.ImageWrapper>
   );
 }

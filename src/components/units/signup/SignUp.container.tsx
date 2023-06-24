@@ -7,8 +7,8 @@ import {
   IMutation,
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
-import { useSetRecoilState } from "recoil";
-import { userInfoState } from "../../../commons/store";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { userIdState, userInfoState } from "../../../commons/store";
 
 const REGISTER_USER = gql`
   mutation RegisterUser($newUser: UserRegisterDto!) {
@@ -39,6 +39,7 @@ export default function SignUp() {
   >(REGISTER_USER);
 
   const setUserInfo = useSetRecoilState(userInfoState);
+  const [, setUserId] = useRecoilState(userIdState);
 
   const onClickSignUp = async (): Promise<void> => {
     // 메인 화면으로 전환
@@ -55,6 +56,7 @@ export default function SignUp() {
       // 회원가입 성공
       alert("회원가입을 축하합니다.");
       localStorage.setItem("userId", registeredUser?.userId || "");
+      setUserId(registeredUser?.userId || "");
       // 유저 정보 저장
       setUserInfo({
         userId: registeredUser?.userId || "",
