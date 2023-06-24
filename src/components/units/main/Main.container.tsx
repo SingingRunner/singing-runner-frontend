@@ -147,7 +147,17 @@ const Main = () => {
 
   const onClickCustomMode = () => {
     // 소켓 연결
-    socketConnect();
+    const newSocket = socketConnect();
+    newSocket.emit("create_custom", {
+      UserMatchDTO: {
+        userId,
+        userMmr,
+        nickname: nickName,
+        userActive,
+        userKeynote,
+      },
+    });
+
     // 커스텀 모드 화면으로 전환
     router.push("/custom");
   };

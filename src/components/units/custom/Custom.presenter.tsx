@@ -10,15 +10,15 @@ import { v4 as uuidv4 } from "uuid";
 // 🚨 가데이터
 const tempPlayersData = [
   {
-    userId: "아이디",
+    userId: "d56254be-d6f2-4c16-95f4-fe763d8753f7",
     userTier: "bronze",
     nickname: "닉네임1",
     isHost: true,
     isFriend: false,
-    character: "beluga",
+    character: "hare",
   },
   {
-    userId: "아이디2",
+    userId: "9e04f6e7-9c69-45d7-9c85-e6a4f4ed66dc",
     userTier: "silver",
     nickname: "닉네임2",
     isHost: false,

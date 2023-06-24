@@ -17,9 +17,9 @@ export default function Custom() {
   // useEffect(() => {
   //   setUserId(localStorage.getItem("userId") || "");
   // }, []);
-
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
-  const [isHost, setIsHost] = useState(false);
+  // 🚨 방장 정보 받고 수정하기
+  const [isHost, setIsHost] = useState(true);
 
   const [isSongModalOpen, setIsSongModalOpen] = useState(false);
   const [isPrevModalOpen, setIsPrevModalOpen] = useState(false);
@@ -88,7 +88,27 @@ export default function Custom() {
               setIsHost(true);
           }
         });
+        // 인원 수 수정
+        setRoomInfo((prev) => ({
+          ...prev,
+          playerCount: [...prevPlayers, ...newPlayersInfo].length,
+        }));
         return [...prevPlayers, ...newPlayersInfo];
+      });
+    });
+
+    // 다른 유저가 방을 나감
+    socket?.on("leave_room", (leavedUserNickname: string) => {
+      setPlayersData((prevPlayers) => {
+        const newPlayers = prevPlayers.filter(
+          (player) => player.nickname !== leavedUserNickname
+        );
+        // 인원 수 수정
+        setRoomInfo((prev) => ({
+          ...prev,
+          playerCount: newPlayers.length,
+        }));
+        return newPlayers;
       });
     });
 

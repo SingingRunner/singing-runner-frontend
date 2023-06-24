@@ -21,6 +21,7 @@ export interface IRoomInfoState {
   singer: string;
   songTitle: string;
   songId: string;
+  playerCount: number;
 }
 
 export interface IPlayersData {
