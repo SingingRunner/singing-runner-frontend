@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { buttonType } from "../../commons/button/Button";
 import Modal from "../../commons/modal/Modal";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const FETCH_REPLAYS = gql`
   query FetchReplays($userId: String!, $page: Int, $isMyReplay: Boolean) {
@@ -19,12 +19,22 @@ const FETCH_REPLAYS = gql`
   }
 `;
 
+const UPDATE_PUBLIC = gql`
+  mutation UpdateReplayPublic($replayId: Int!, $isPublic: Int!) {
+    updateReplayPublic(replayId: $replayId, isPublic: $isPublic) {
+      replayId
+      isPublic
+    }
+  }
+`;
+
 export default function Replay() {
   const userInfo = useRecoilValue(userInfoState);
   const userId = userInfo.userId;
   const router = useRouter();
   const isMyReplay = router.query.userId === userId;
   const { data, fetchMore, refetch } = useQuery(FETCH_REPLAYS);
+  const [updatePublic] = useMutation(UPDATE_PUBLIC);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);
@@ -55,6 +65,13 @@ export default function Replay() {
       setIsModalOpen(true);
     } else {
       console.log("?");
+      updatePublic({
+        variables: {
+          replayId: currentReplay,
+          isPublic: 1,
+        },
+      });
+      refetch();
     }
   };
 
@@ -64,8 +81,13 @@ export default function Replay() {
 
   const changeToPublic = () => {
     console.log(currentReplay);
+    updatePublic({
+      variables: {
+        replayId: currentReplay,
+        isPublic: 1,
+      },
+    });
     refetch();
-    // data.fetchReplays.forEach((elem) => {});
     setIsModalOpen(false);
   };
 
