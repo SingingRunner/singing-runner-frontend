@@ -3,6 +3,7 @@ import { IPlayersInfo } from "../Game.types";
 
 export interface ISoundProps {
   preventEvent?: boolean;
+  isReplay?: boolean;
   appliedItems: string[];
   setSongInfo: Dispatch<
     SetStateAction<{
