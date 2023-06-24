@@ -38,6 +38,7 @@ export default function GameUI(props: IGameUIProps) {
         // 로딩화면 끝, 게임 시작
         <>
           <Graphic
+            preventEvent={props.preventEvent}
             appliedItems={props.appliedItems}
             playersInfo={props.playersInfo}
             offItem={props.offItem}
@@ -69,7 +70,9 @@ export default function GameUI(props: IGameUIProps) {
               playersInfo={props.playersInfo}
               isTerminated={props.isTerminated}
             />
-            {!props.isTerminated && <ItemList />}
+            {!props.isTerminated && (
+              <ItemList preventEvent={props.preventEvent} />
+            )}
           </S.Wrapper>
         </>
       )}

@@ -3,15 +3,30 @@ import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { gameResultState, userInfoState } from "../../../commons/store";
-import { IPlayersInfo, ISocketItem } from "./Game.types";
+import { useRecoilState } from "recoil";
+import { gameResultState, userIdState } from "../../../commons/store";
+import { IGameProps, IPlayersInfo, ISocketItem } from "./Game.types";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo.styles";
 import { IGameResult } from "./result/GameResult.types";
+import { useQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../commons/types/generated/types";
+import { FETCH_USER } from "./Game.queries";
 
 const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
 
-export default function Game() {
+export default function Game(props: IGameProps) {
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+  const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
+    FETCH_USER,
+    { variables: { userId } }
+  );
+
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
@@ -27,14 +42,20 @@ export default function Game() {
 
   const [songInfo, setSongInfo] = useState({ title: "", singer: "" });
 
-  // 현재 플레이어의 정보
-  const userInfo = useRecoilValue(userInfoState);
-
   // 전체 유저의 정보
   const [playersInfo, setPlayersInfo] = useState<IPlayersInfo[]>([]);
 
   // ⭐️ 현재의 mrKey를 저장하는 상태 -> 현재 유저의 기본 설정값으로 초기화
-  const [mrKey, setMrKey] = useState(userInfo.userKeynote);
+  const [mrKey, setMrKey] = useState("origin");
+  useEffect(() => {
+    setMrKey(
+      data?.fetchUser.userKeynote === 0
+        ? "origin"
+        : data?.fetchUser.userKeynote === 1
+        ? "male"
+        : "female"
+    );
+  }, [data]);
 
   // mute 아이템 발동 시 측정한 데시벨의 상태
   const [decibel, setDecibel] = useState(0);
@@ -54,15 +75,15 @@ export default function Game() {
     if (playersInfo.length === 0) {
       setPlayersInfo([
         {
-          userId: userInfo.userId,
-          character: userInfo.character,
+          userId,
+          character: data?.fetchUser.character || "",
           activeItem: "",
           score: 0,
           position: "mid",
         },
       ]);
     }
-  }, [userInfo]);
+  }, [userId, data]);
 
   const [muteAttack, setMuteAttack] = useState({
     mid: false,
@@ -73,9 +94,9 @@ export default function Game() {
   useEffect(() => {
     // 다른 유저로부터 공격이 들어옴
     socket?.on("use_item", (data: ISocketItem) => {
-      if (data.userId !== userInfo.userId) onItem(data.item);
+      if (data.userId !== userId) onItem(data.item);
       else if (
-        data.userId === userInfo.userId &&
+        data.userId === userId &&
         ["keyUp", "keyDown"].includes(data.item)
       )
         onItem(data.item);
@@ -108,7 +129,7 @@ export default function Game() {
     // 아이템에서 탈출
     socket?.on("escape_item", (data: ISocketItem) => {
       // 탈출한 유저가 현재 유저인 경우
-      if (data.userId === userInfo.userId) {
+      if (data.userId === userId) {
         offItem(data.item);
       }
       setPlayersInfo((prev) => {
@@ -151,7 +172,7 @@ export default function Game() {
     if (item === "frozen") return;
     // 나머지 아이템은 ITEM_DURATION 뒤에 자동 종료
     setTimeout(() => {
-      socket?.emit("escape_item", { item, userId: userInfo.userId });
+      socket?.emit("escape_item", { item, userId });
     }, ITEM_DURATION);
   };
 
@@ -175,7 +196,7 @@ export default function Game() {
     // console.log("decibel", decibel);
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       setIsMuteActive(false);
-      socket?.emit("escape_item", { item: "mute", userId: userInfo.userId });
+      socket?.emit("escape_item", { item: "mute", userId });
     }
   };
 
@@ -186,6 +207,7 @@ export default function Game() {
   return (
     <>
       <GameUI
+        preventEvent={props.preventEvent}
         songInfo={songInfo}
         playersInfo={playersInfo}
         decibel={decibel}
