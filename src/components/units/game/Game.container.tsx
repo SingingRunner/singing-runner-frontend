@@ -172,6 +172,7 @@ export default function Game(props: IGameProps) {
     if (item === "frozen") return;
     // 나머지 아이템은 ITEM_DURATION 뒤에 자동 종료
     setTimeout(() => {
+      if (props.preventEvent) return;
       socket?.emit("escape_item", { item, userId });
     }, ITEM_DURATION);
   };
@@ -194,6 +195,7 @@ export default function Game(props: IGameProps) {
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
     // console.log("decibel", decibel);
+    if (props.preventEvent) return;
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       setIsMuteActive(false);
       socket?.emit("escape_item", { item: "mute", userId });
@@ -223,6 +225,7 @@ export default function Game(props: IGameProps) {
         isTerminated={isTerminated}
       />
       <Sound
+        preventEvent={props.preventEvent}
         setSongInfo={setSongInfo}
         mrKey={mrKey}
         setDecibel={setDecibel}

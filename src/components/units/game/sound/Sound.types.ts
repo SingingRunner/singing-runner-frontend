@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IPlayersInfo } from "../Game.types";
 
 export interface ISoundProps {
+  preventEvent?: boolean;
   appliedItems: string[];
   setSongInfo: Dispatch<
     SetStateAction<{
