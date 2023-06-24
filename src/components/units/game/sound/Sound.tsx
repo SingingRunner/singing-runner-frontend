@@ -1,10 +1,7 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-
 import { useRecoilState } from "recoil";
-import { userIdState } from "../../../../commons/store";
-import { useRecoilValue } from "recoil";
 import { useRouter } from "next/router";
 import { userIdState } from "../../../../commons/store";
 
@@ -25,10 +22,7 @@ export default function Sound(props: ISoundProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
 
   const { data: userData } = useQuery<
     Pick<IQuery, "fetchUser">,
@@ -36,7 +30,6 @@ export default function Sound(props: ISoundProps) {
   >(FETCH_USER, { variables: { userId } });
 
   const router = useRouter();
-
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -48,10 +41,6 @@ export default function Sound(props: ISoundProps) {
   const [originAnswer, setOriginAnswer] = useState<number[]>([]);
   const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
   const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
-
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
 
   useEffect(() => {
     // 현재 실행되고 있는 아이템
@@ -129,8 +118,16 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 유저 정보
-          props.setPlayersInfo((prev) => {
-            const newPlayersInfo = [...prev];
+          props.setPlayersInfo(() => {
+            const newPlayersInfo = [
+              {
+                userId,
+                character: userData?.fetchUser.character || "",
+                activeItem: "",
+                score: 0,
+                position: "mid",
+              },
+            ];
             data.characterList.forEach((el, i) => {
               // 현재 유저 제외하고 추가
               if (el.userId !== userId) {
@@ -141,6 +138,8 @@ export default function Sound(props: ISoundProps) {
                   score: 0,
                   position: newPlayersInfo.length < 2 ? "right" : "left",
                 });
+              } else {
+                newPlayersInfo[0].character = data.characterList[i].character;
               }
             });
             return newPlayersInfo;

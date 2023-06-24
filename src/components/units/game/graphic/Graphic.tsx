@@ -24,10 +24,10 @@ export default function Graphic(props: IGrapicProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const [players, setPlayers] = useState<{
     mid: THREE.Object3D | undefined;
@@ -187,7 +187,7 @@ export default function Graphic(props: IGrapicProps) {
       window.removeEventListener("touchstart", reduceSnowmanHealth);
       window.removeEventListener("mousedown", reduceSnowmanHealth);
     };
-  }, [props.playersInfo[0].character]);
+  }, []);
 
   useEffect(() => {
     if (props.isTerminated) moveCameraToPlayer();

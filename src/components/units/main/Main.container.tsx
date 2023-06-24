@@ -43,11 +43,11 @@ const Main = () => {
   const [userKeynote, setUserKeynote] = useState("");
   const [userActive, setUserActive] = useState(false);
 
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId] = useRecoilState(userIdState);
 
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },

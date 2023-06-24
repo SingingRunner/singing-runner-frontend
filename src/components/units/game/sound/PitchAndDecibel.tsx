@@ -7,8 +7,6 @@ import { userIdState } from "../../../../commons/store";
 
 import { gql, useMutation } from "@apollo/client";
 
-
-
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
   const pitchReference = 440.0; // Reference pitch for A4 (440 Hz)
@@ -62,10 +60,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const pitchAveragesRef = useRef<number[]>([]);
 
@@ -186,7 +184,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         score: currentScore,
       });
 
-      console.log("게임 종료, emit(game_terminated)");
+      console.log("게임 종료, emit(game_terminated)", userId);
 
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -200,7 +198,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         });
         result.then(() => {});
       };
-
     };
     mediaRecorder.start();
 

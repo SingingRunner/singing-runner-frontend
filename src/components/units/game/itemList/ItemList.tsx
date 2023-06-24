@@ -12,10 +12,10 @@ export default function ItemList(props: { preventEvent?: boolean }) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const [itemList, setItemList] = useState<string[]>([]);
 
