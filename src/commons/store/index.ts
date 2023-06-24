@@ -32,7 +32,7 @@ export const refreshAccessTokenLoadable = selector({
 // custom 방 정보
 export const roomInfoState = atom<IRoomInfoState>({
   key: `roomInfoState${uuidv4()}`,
-  default: { mode: "아이템", singer: "", songTitle: "" },
+  default: { mode: "아이템", singer: "", songTitle: "", songId: "" },
 });
 
 export const userIdState = atom<string>({
