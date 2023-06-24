@@ -7,6 +7,7 @@ import * as S from "./Custom.styles";
 import { ICustomUIProps } from "./Custom.types";
 import Label from "../../commons/label/Label";
 import { v4 as uuidv4 } from "uuid";
+import VoiceChat from "./chat/Chat";
 // 🚨 가데이터
 const tempPlayersData = [
   {
@@ -66,6 +67,7 @@ export default function CustomUI(props: ICustomUIProps) {
         text="커스텀 모드"
         onClickPrev={() => props.setIsPrevModalOpen(true)}
       />
+      <VoiceChat roomId={"dummy"} />
       <S.PlayersWrapper>
         {tempPlayersData.map((el) => (
           // {props.playersData.map((el) => (
