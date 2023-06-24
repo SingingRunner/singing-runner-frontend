@@ -1,22 +1,34 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
-import { userIdState, userInfoState } from "../../../../commons/store";
+import { userIdState } from "../../../../commons/store";
+
 import {
   ISocketGameSongData,
   ISocketLoadingData,
   ISoundProps,
 } from "./Sound.types";
+import { FETCH_USER } from "../Game.queries";
+import { useQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../../commons/types/generated/types";
 
 export default function Sound(props: ISoundProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId] = useRecoilState(userIdState);
+
+  const { data: userData } = useQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, { variables: { userId } });
+
   const router = useRouter();
 
   const [isKeyUp, setKeyUp] = useState(false);
@@ -29,10 +41,6 @@ export default function Sound(props: ISoundProps) {
   const [originAnswer, setOriginAnswer] = useState<number[]>([]);
   const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
   const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
-
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
 
   useEffect(() => {
     // 현재 실행되고 있는 아이템
@@ -110,11 +118,19 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 유저 정보
-          props.setPlayersInfo((prev) => {
-            const newPlayersInfo = [...prev];
+          props.setPlayersInfo(() => {
+            const newPlayersInfo = [
+              {
+                userId,
+                character: userData?.fetchUser.character || "",
+                activeItem: "",
+                score: 0,
+                position: "mid",
+              },
+            ];
             data.characterList.forEach((el, i) => {
               // 현재 유저 제외하고 추가
-              if (el.userId !== userInfo.userId) {
+              if (el.userId !== userId) {
                 newPlayersInfo.push({
                   userId: data.characterList[i].userId,
                   character: data.characterList[i].character,
@@ -122,6 +138,8 @@ export default function Sound(props: ISoundProps) {
                   score: 0,
                   position: newPlayersInfo.length < 2 ? "right" : "left",
                 });
+              } else {
+                newPlayersInfo[0].character = data.characterList[i].character;
               }
             });
             return newPlayersInfo;
@@ -156,16 +174,16 @@ export default function Sound(props: ISoundProps) {
     let keyOrigin: string;
     let keyUp: string;
     let keyDown: string;
-    switch (userInfo.userKeynote) {
-      case "male":
-        keyOrigin = gameSong.songMale;
-        keyUp = gameSong.songMaleUp;
-        keyDown = gameSong.songMaleDown;
-        break;
-      case "female":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         keyOrigin = gameSong.songFemale;
         keyUp = gameSong.songFemaleUp;
         keyDown = gameSong.songFemaleDown;
+        break;
+      case 2:
+        keyOrigin = gameSong.songMale;
+        keyUp = gameSong.songMaleUp;
+        keyDown = gameSong.songMaleDown;
         break;
       default:
         keyOrigin =
@@ -187,16 +205,16 @@ export default function Sound(props: ISoundProps) {
     let answerOrigin: number[];
     let answerUp: number[];
     let answerDown: number[];
-    switch (userInfo.userKeynote) {
-      case "male":
-        answerOrigin = gameSong.vocalMale;
-        answerUp = gameSong.vocalMaleUp;
-        answerDown = gameSong.vocalMaleDown;
-        break;
-      case "female":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         answerOrigin = gameSong.vocalFemale;
         answerUp = gameSong.vocalFemaleUp;
         answerDown = gameSong.vocalFemaleDown;
+        break;
+      case 2:
+        answerOrigin = gameSong.vocalMale;
+        answerUp = gameSong.vocalMaleUp;
+        answerDown = gameSong.vocalMaleDown;
         break;
       default:
         answerOrigin =

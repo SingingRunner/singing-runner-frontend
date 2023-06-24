@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { IPlayersInfo } from "../Game.types";
-import { userInfoState } from "../../../../commons/store";
-import { useRecoilValue } from "recoil";
+import { userIdState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
 
 interface IRankListProps {
   playersInfo: IPlayersInfo[];
@@ -11,7 +11,11 @@ interface IRankListProps {
 
 export default function RankList(props: IRankListProps) {
   // 현재 플레이어의 정보
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
+
   const [sortedData, setSortedData] = useState<IPlayersInfo[]>();
   useEffect(() => {
     const temp = props.playersInfo?.sort((a, b) => b.score - a.score);
@@ -24,12 +28,12 @@ export default function RankList(props: IRankListProps) {
         return (
           <Rank
             key={i}
-            isCurrentUser={el.userId === userInfo.userId}
+            isCurrentUser={el.userId === userId}
             isTerminated={props.isTerminated}
           >
             <span>{i + 1}</span>
             <ProfileCard
-              isCurrentUser={el.userId === userInfo.userId}
+              isCurrentUser={el.userId === userId}
               src={`/game/player/profile/${el.character}.png`}
             />
             {el.activeItem && !props.isTerminated && (

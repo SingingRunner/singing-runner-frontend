@@ -27,7 +27,7 @@ const Main = () => {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect } = socketContext;
-  
+
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
@@ -39,20 +39,19 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [character, setCharacter] = useState("");
   const [userMmr, setUserMmr] = useState(0);
-  const [nickName, setNickname] = useState("");
+  const [nickname, setNickname] = useState("");
   const [userKeynote, setUserKeynote] = useState("");
   const [userActive, setUserActive] = useState(false);
 
+  const [userId] = useRecoilState(userIdState);
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
@@ -61,9 +60,6 @@ const Main = () => {
     setNickname(data?.fetchUser.nickname);
     setUserKeynote(data?.fetchUser.userKeynote);
     setUserActive(data?.fetchUser.userActive);
-    console.log("dtc", data?.fetchUser.character)
-    console.log("data", data)
-    
   }, [data?.fetchUser.character]);
 
   const onClickSocial = () => {
@@ -135,7 +131,7 @@ const Main = () => {
   const UserMatchDto = {
     userId,
     userMmr,
-    nickName,
+    nickname,
     userActive,
     userKeynote,
     character,
@@ -150,6 +146,18 @@ const Main = () => {
   };
 
   const onClickCustomMode = () => {
+    // 소켓 연결
+    const newSocket = socketConnect();
+    newSocket.emit("create_custom", {
+      UserMatchDTO: {
+        userId,
+        userMmr,
+        nickname,
+        userActive,
+        userKeynote,
+      },
+    });
+
     // 커스텀 모드 화면으로 전환
     router.push("/custom");
   };

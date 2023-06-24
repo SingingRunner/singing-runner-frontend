@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import {
@@ -9,7 +10,7 @@ import {
 } from "../../../commons/types/generated/types";
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
-// import _ from 'lodash'
+import _ from 'lodash'
 
 const SEARCH_FRIEND = gql`
   query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
@@ -26,12 +27,15 @@ const SEARCH_FRIEND = gql`
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
+
   const [userId, setUserId] = useRecoilState(userIdState);
+  const [nickname, setNickname] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
   
-  const { data, fetchMore } = useQuery<
+  const { data, fetchMore, refetch } = useQuery<
+
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -42,10 +46,15 @@ export default function Social() {
     },
   });
 
-  const onClickReplay = () => {
-    router.push({
-      pathname: `/social/replay/${userId}` // 현재 유저 => 다른 유저로 수정 필요
-    });
+  const onClickReplay = (friendId: string) => () => {
+    try {
+      console.log("replay friendId: ", friendId);
+      router.push({
+        pathname: `/replay/${friendId}`
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const onLoadMore = (): void => {
@@ -58,18 +67,24 @@ export default function Social() {
       updateQuery: (prev, { fetchMoreResult }) => {
         if (fetchMoreResult.searchFriend === undefined) {
           return prev;
-          // {
-          // getFriendList: [...prev.getFriendList],
-          // };
         }
         return {
-          searchFriend: [
-            ...prev.searchFriend,
-            ...fetchMoreResult.searchFriend,
-          ],
+          searchFriend: [...prev.searchFriend, ...fetchMoreResult.searchFriend],
         };
       },
     });
+  };
+
+  const getDebounce = useCallback(
+    _.debounce((data) => {
+      refetch({ nickname: data.trim() });
+    }, 200),
+    [refetch]
+  );
+
+  const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+    getDebounce(e.target.value);
   };
 
   const router = useRouter();
@@ -90,6 +105,8 @@ export default function Social() {
     onClickExit,
     onLoadMore,
     data,
+    onChangeNickname,
+    nickname,
   };
 
   return <SocialUI {...props} />;

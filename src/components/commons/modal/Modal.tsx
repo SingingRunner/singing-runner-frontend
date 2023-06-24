@@ -8,7 +8,7 @@ interface IModalProps {
   firstText?: string; // 모달 알림 내용
   secondText?: string; // 알림이 두 줄인 경우 두번째 텍스트
   /* 버튼 */
-  buttonText: string; // 버튼이 두개인 경우, 오른쪽 버튼의 텍스트
+  buttonText?: string; // 버튼이 두개인 경우, 오른쪽 버튼의 텍스트
   leftButtonText?: string; // 버튼이 두개인 경우, 왼쪽 버튼의 텍스트
   /* 노래 정보 */
   songTitle?: string;
@@ -26,7 +26,7 @@ export default function Modal(props: IModalProps) {
           {props.singer ? (
             // 배틀 모드 매칭 완료 모달인 경우
             <S.Text>
-              <p>매칭이 완료되었습니다.</p>
+              <p>{props.firstText ?? `매칭이 완료되었습니다.`}</p>
               <S.SongWrapper>
                 <p>{props.singer}</p>
                 {props.songTitle && props.songTitle?.length >= 10 ? (
@@ -57,24 +57,25 @@ export default function Modal(props: IModalProps) {
               <p>{props.secondText}</p>
             </S.Text>
           )}
-          {!props.leftButtonText ? (
-            // 버튼이 한 개인 경우
-            <S.ButtonWrapper>
-              <S.SingleButton onClick={props.onClickRight}>
-                {props.buttonText}
-              </S.SingleButton>
-            </S.ButtonWrapper>
-          ) : (
-            // 버튼이 두 개인 경우
-            <S.ButtonWrapper>
-              <S.DoubleButton onClick={props.onClickLeft} isLeft>
-                {props.leftButtonText}
-              </S.DoubleButton>
-              <S.DoubleButton onClick={props.onClickRight}>
-                {props.buttonText}
-              </S.DoubleButton>
-            </S.ButtonWrapper>
-          )}
+          {props.buttonText &&
+            (!props.leftButtonText ? (
+              // 버튼이 한 개인 경우
+              <S.ButtonWrapper>
+                <S.SingleButton onClick={props.onClickRight}>
+                  {props.buttonText}
+                </S.SingleButton>
+              </S.ButtonWrapper>
+            ) : (
+              // 버튼이 두 개인 경우
+              <S.ButtonWrapper>
+                <S.DoubleButton onClick={props.onClickLeft} isLeft>
+                  {props.leftButtonText}
+                </S.DoubleButton>
+                <S.DoubleButton onClick={props.onClickRight}>
+                  {props.buttonText}
+                </S.DoubleButton>
+              </S.ButtonWrapper>
+            ))}
         </S.Wrapper>
       </S.Background>
     </>

@@ -1,5 +1,10 @@
 import styled from "@emotion/styled";
 
+export const ListWrapper = styled.div`
+  height: calc(100vh - 256px);
+  overflow: scroll;
+`;
+
 export const SongWrapper = styled.div`
   display: flex;
   flex-direction: column;

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
-import { IMyRoomUIProps } from './MyRoom.types';
+import { IMyRoomUIProps } from "./MyRoom.types";
 
 const characters = [
   "beluga",
@@ -15,6 +15,7 @@ const characters = [
   "puffin",
   "puma",
   "snowleopard",
+  "moose",
 ];
 
 const FETCH_USER = gql`
@@ -42,24 +43,24 @@ const UPDATE_CHARACTER = gql`
   }
 `;
 
-
 export default function MyRoom() {
   const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [character, setCharacter] = useState("");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(-1);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
   const [tier, setTier] = useState("");
   const [mmr, setMmr] = useState(0);
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
+    fetchPolicy: "network-only",
   });
-  
+
   const onClickSetting = () => {
     router.push("/myroom/setting");
   };
@@ -75,44 +76,44 @@ export default function MyRoom() {
       const characterIndex = characters.findIndex(
         (char) => char === data.fetchUser.character
       );
-
       setCurrentImageIndex(characterIndex);
     }
   }, [data]);
 
   const onClickComplete = () => {
     // Call the mutation
-  updateCharacterMutation({
-    variables: {
-      userId,
-      character: characters[currentImageIndex]
-    },
-  })
-    .then((result) => {
-      // Handle the result if needed
-      console.log("success userId: ", userId)
-      console.log("success character: ", characters[currentImageIndex])
-      console.log(result.data);
+    updateCharacterMutation({
+      variables: {
+        userId,
+        character: characters[currentImageIndex],
+      },
     })
-    .catch((error) => {
-      // Handle any errors
-      console.log("failure userId: ", userId)
-      console.log("failure character: ", characters[currentImageIndex])
-      console.error(error);
-    });
+      .then((result) => {
+        // Handle the result if needed
+        console.log("success userId: ", userId);
+        console.log("success character: ", characters[currentImageIndex]);
+        console.log(result.data);
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.log("failure userId: ", userId);
+        console.log("failure character: ", characters[currentImageIndex]);
+        console.error(error);
+      });
 
     router.push("/main");
   };
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
-    console.log(characters[currentImageIndex])
+    console.log(characters[currentImageIndex]);
   };
-  
+
   const handlePreviousImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + characters.length) % characters.length);
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex - 1 + characters.length) % characters.length
+    );
   };
-  
 
   const props: IMyRoomUIProps = {
     onClickComplete,

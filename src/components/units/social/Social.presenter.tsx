@@ -20,6 +20,8 @@ export default function SocialUI(props: ISocialUIProps) {
             inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
+            value={props.nickname}
+            onChange={props.onChangeNickname}
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
@@ -40,7 +42,7 @@ export default function SocialUI(props: ISocialUIProps) {
                       {el.userActive === 1 && <div style={{color: "#C7C7C7"}}>오프라인</div>}
                       {el.userActive === 2 && <div style={{color: "#00B8FF"}}>게임중</div>}
                       {!el.userActive && <div style={{color: "#03FF49"}}>온라인</div>}
-                      <img onClick={props.onClickReplay} style={{width: "28px"}} src="/icon/replay.png" />
+                      <img onClick={props.onClickReplay(el.userId)} style={{width: "28px"}} src="/icon/replay.png" />
                     </div>
                   }
                 >

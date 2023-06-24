@@ -18,6 +18,8 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
             inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
+            value={props.nickname}
+            onChange={props.onChangeNickname}
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
@@ -42,6 +44,10 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
                       }}
                     >
                       <div style={{ width: "1px" }}></div>
+                      <Button 
+                      buttonType={buttonType.SHORT_GRAY} 
+                      text="삭제"
+                      onClick={props.onClickDelete(el.userId)} />
                     </div>
                   }
                 >

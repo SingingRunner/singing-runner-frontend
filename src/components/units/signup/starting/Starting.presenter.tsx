@@ -7,9 +7,9 @@ export default function StartingUI(props: IStartingUIProps) {
     <>
       <S.Container>
         <S.ImageWrapper>
-          <S.ImageVectorLeft src="/images/Vector_left.png" alt="previous" onClick={props.handlePreviousImage}/>
+          <S.ImageVectorLeft src="/icon/arrow.png" alt="previous" onClick={props.handlePreviousImage}/>
           <S.ImageCharacter src={`/game/player/profile/${props.characters[props.currentImageIndex]}.png`} alt="character" />
-          <S.ImageVectorRight src="/images/Vector_right.png" alt="next" onClick={props.handleNextImage}/>
+          <S.ImageVectorRight src="/icon/arrow.png" alt="next" onClick={props.handleNextImage}/>
         </S.ImageWrapper>
       </S.Container>
       <Button

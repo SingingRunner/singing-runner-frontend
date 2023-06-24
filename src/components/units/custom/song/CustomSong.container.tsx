@@ -1,21 +1,35 @@
 import { useQuery } from "@apollo/client";
 import CustomSongUI from "./CustomSong.presenter";
-// import { useRecoilState } from "recoil";
-// import { roomInfoState } from "../../../../commons/store";
-import { ChangeEvent, useCallback, useState } from "react";
+import { useRecoilState } from "recoil";
+import { roomInfoState } from "../../../../commons/store";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { SEARCH_SONG_QUERY } from "./CustomSong.queries";
 import {
   IQuery,
   IQuerySearchSongArgs,
 } from "../../../../commons/types/generated/types";
 import _ from "lodash";
+import { SocketContext } from "../../../../commons/contexts/SocketContext";
+import { useRouter } from "next/router";
 
 export default function CustomSong() {
-  // const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
+  const router = useRouter();
+  // 소켓 가져오기
+  const socketContext = useContext(SocketContext);
+  if (!socketContext) return <div>Loading...</div>;
+  const { socket } = socketContext;
+
+  const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
   const [filter, setFilter] = useState("createdAt");
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch } = useQuery<
+  const { data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchSong">,
     IQuerySearchSongArgs
   >(SEARCH_SONG_QUERY, {
@@ -24,6 +38,7 @@ export default function CustomSong() {
       page: 1,
       filter,
     },
+    fetchPolicy: "network-only",
   });
 
   const onClickFilter = () => {
@@ -45,7 +60,23 @@ export default function CustomSong() {
     refetch({ filter: newFilter });
   };
 
-  const onClickSong = (song: string) => {};
+  const onChangeSong = (songId: string) => {
+    // 노래가 변경되었으면 emit (roomInfo 변경은 on에서 처리)
+    if (roomInfo.songId !== songId) socket?.emit("set_song", songId);
+    router.push("/custom");
+  };
+
+  useEffect(() => {
+    // 노래가 변경된 경우
+    socket?.on("set_song", (data) => {
+      setRoomInfo((prev) => ({
+        ...prev,
+        songTitle: data.songTitle,
+        singer: data.singer,
+        songId: data.songId,
+      }));
+    });
+  }, [socket]);
 
   const getDebounce = useCallback(
     _.debounce((data) => {
@@ -59,14 +90,31 @@ export default function CustomSong() {
     getDebounce(e.target.value);
   };
 
+  const onLoadMore = () => {
+    if (data === undefined) return;
+    void fetchMore({
+      variables: {
+        page: Math.ceil((data?.searchSong.length ?? 10) / 10) + 1,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (fetchMoreResult.searchSong === undefined)
+          return { searchSong: [...prev.searchSong] };
+        return {
+          searchSong: [...prev.searchSong, ...fetchMoreResult?.searchSong],
+        };
+      },
+    });
+  };
+
   return (
     <CustomSongUI
       filter={filter}
       onClickFilter={onClickFilter}
-      onClickSong={onClickSong}
+      onChangeSong={onChangeSong}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}
+      onLoadMore={onLoadMore}
     />
   );
 }
