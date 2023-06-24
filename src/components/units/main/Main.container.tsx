@@ -39,7 +39,7 @@ const Main = () => {
   const [showModal, setShowModal] = useState(false);
   const [character, setCharacter] = useState("");
   const [userMmr, setUserMmr] = useState(0);
-  const [nickName, setNickname] = useState("");
+  const [nickname, setNickname] = useState("");
   const [userKeynote, setUserKeynote] = useState("");
   const [userActive, setUserActive] = useState(false);
 
@@ -131,7 +131,7 @@ const Main = () => {
   const UserMatchDto = {
     userId,
     userMmr,
-    nickName,
+    nickname,
     userActive,
     userKeynote,
     character,
@@ -152,7 +152,7 @@ const Main = () => {
       UserMatchDTO: {
         userId,
         userMmr,
-        nickname: nickName,
+        nickname,
         userActive,
         userKeynote,
       },
