@@ -46,6 +46,7 @@ export default function Replay() {
 
   const playReplay = (replayId: number) => {
     console.log("hello");
+    router.push(`/replay/ingame/${replayId}`);
   };
 
   const setPublic = (replayId: number, isPublic: boolean) => {
