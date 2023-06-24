@@ -54,11 +54,11 @@ export default function ReplayUI(props: IReplayUIProps) {
           loadMore={props.onLoadMore}
           useWindow={false}
         >
-          {props.data?.fetchReplays.map((elem, index) =>
+          {props.data?.getUserReplays.map((elem, idx) =>
             props.isMyReplay ? (
               isSettingMode ? (
                 <ListItem
-                  key={elem.replayId}
+                  key={idx}
                   buttonText={elem.isPublic ? "공개" : "비공개"}
                   buttonType={
                     elem.isPublic
@@ -72,13 +72,20 @@ export default function ReplayUI(props: IReplayUIProps) {
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.ReplayInfo>
+                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.Date>
+                        {elem.createdAt.slice(2, 4)}년{" "}
+                        {elem.createdAt.slice(5, 7)}월{" "}
+                        {elem.createdAt.slice(8, 10)}일
+                      </S.Date>
+                    </S.ReplayInfo>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               ) : (
                 <ListItem
-                  key={elem.replayId}
+                  key={idx}
                   buttonText="보기"
                   buttonType={buttonType.SHORT_PINK}
                   onClick={
@@ -88,27 +95,44 @@ export default function ReplayUI(props: IReplayUIProps) {
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.ReplayInfo>
+                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.Date>
+                        {elem.createdAt.slice(2, 4)}년{" "}
+                        {elem.createdAt.slice(5, 7)}월{" "}
+                        {elem.createdAt.slice(8, 10)}일
+                      </S.Date>
+                    </S.ReplayInfo>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               )
             ) : (
               <ListItem
-                key={elem.replayId}
+                key={idx}
                 buttonText="보기"
                 buttonType={buttonType.SHORT_PINK}
                 onClick={
-                  props.playReplay ? () => props.playReplay(index) : () => {}
+                  props.playReplay
+                    ? () => props.playReplay(elem.replayId)
+                    : () => {}
                 }
               >
                 <S.SongWrapper>
-                  <S.Singer>{elem.singer}</S.Singer>
+                  <S.ReplayInfo>
+                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.Date>
+                      {elem.createdAt.slice(2, 4)}년{" "}
+                      {elem.createdAt.slice(5, 7)}월{" "}
+                      {elem.createdAt.slice(8, 10)}일
+                    </S.Date>
+                  </S.ReplayInfo>
                   <S.SongTitle>{elem.songTitle}</S.SongTitle>
                 </S.SongWrapper>
               </ListItem>
             )
           )}
+          <></>
         </InfiniteScroll>
       </div>
       <ButtonWrapper>
