@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { IAgoraRTCClient, IMicrophoneAudioTrack } from "agora-rtc-sdk-ng";
 import styled from "@emotion/styled";
-import { APPKEY } from "./appkey";
 
 const VoiceChat = (props: { roomId: string }) => {
   const [client, setClient] = useState<IAgoraRTCClient | null>(null);
@@ -13,7 +12,7 @@ const VoiceChat = (props: { roomId: string }) => {
     const loadAgora = async () => {
       const { initAgora } = await import("./initAgora"); // dynamic import
 
-      const APP_ID = APPKEY;
+      const APP_ID = process.env.APPKEY || "";
       const { client, microphoneTrack } = await initAgora(
         APP_ID,
         props.roomId,
