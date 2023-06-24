@@ -1,8 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
+
+import { gql, useMutation } from "@apollo/client";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -42,15 +45,29 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   else return 30;
 };
 
+const UPLOAD_FILE = gql`
+  mutation SaveReplay($userVocal: String!, $userId: String!) {
+    saveReplay(userVocal: $userVocal, userId: $userId) {
+      message
+      code
+    }
+  }
+`;
+
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const pitchAveragesRef = useRef<number[]>([]);
+
+  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
@@ -70,7 +87,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [props]);
 
   useEffect(() => {
-    socket?.on("game_ready", gameReady);
+    if (props.isReplay) {
+      socket?.on("start_replay", gameReady);
+    } else {
+      socket?.on("game_ready", gameReady);
+    }
     socket?.on("score", scoreListener);
   }, [socket]);
 
@@ -80,13 +101,17 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       source.start();
     });
     props.setStartTime(new Date().getTime());
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(handleAudioStream)
-      .catch((error) => {
-        console.error("Error accessing microphone:", error);
-      });
-    props.setIsLoadComplete(true);
+    if (!props.isReplay) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleAudioStream)
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
+      props.setIsLoadComplete(true);
+    } else {
+      props.setIsLoadComplete(true);
+    }
   };
 
   const scoreListener = (data: ISocketScore) => {
@@ -102,6 +127,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
+    if (props.isReplay) return 0;
     let score: number = 0;
     let answer: number[] = [];
     const originAnswer = propsRef.current.originAnswer;
@@ -136,7 +162,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     // 서버에 현재 유저의 점수 전송
     setPrevScore((prev) => {
       if (prev !== currentScore) {
-        socket?.emit("score", { userId: userInfo.userId, score: currentScore });
+        socket?.emit("score", { userId, score: currentScore });
       }
       return currentScore;
     });
@@ -153,16 +179,25 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     };
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
-      const audioURL = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = audioURL;
-      // 추후 수정 필요
-      a.download = "audio.ogg";
-      a.click();
       socket?.emit("game_terminated", {
-        userId: userInfo.userId,
+        userId,
         score: currentScore,
       });
+
+      console.log("게임 종료, emit(game_terminated)", userId);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        const result = uploadFile({
+          variables: {
+            userVocal: base64data,
+            userId,
+          },
+        });
+        result.then(() => {});
+      };
     };
     mediaRecorder.start();
 

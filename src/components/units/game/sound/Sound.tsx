@@ -1,20 +1,35 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
+import { useRouter } from "next/router";
+import { userIdState } from "../../../../commons/store";
+
 import {
   ISocketGameSongData,
   ISocketLoadingData,
   ISoundProps,
 } from "./Sound.types";
+import { FETCH_USER } from "../Game.queries";
+import { useQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../../commons/types/generated/types";
 
 export default function Sound(props: ISoundProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId] = useRecoilState(userIdState);
+
+  const { data: userData } = useQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, { variables: { userId } });
+
+  const router = useRouter();
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -41,7 +56,11 @@ export default function Sound(props: ISoundProps) {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("loading");
+      if (props.preventEvent) {
+        socket.emit("load_replay");
+      } else {
+        socket.emit("loading");
+      }
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
       /** 입장한 게임의 MR, 정답 데이터, 유저 정보(id & 캐릭터) 조회 */
@@ -99,11 +118,19 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 유저 정보
-          props.setPlayersInfo((prev) => {
-            const newPlayersInfo = [...prev];
+          props.setPlayersInfo(() => {
+            const newPlayersInfo = [
+              {
+                userId,
+                character: userData?.fetchUser.character || "",
+                activeItem: "",
+                score: 0,
+                position: "mid",
+              },
+            ];
             data.characterList.forEach((el, i) => {
               // 현재 유저 제외하고 추가
-              if (el.userId !== userInfo.userId) {
+              if (el.userId !== userId) {
                 newPlayersInfo.push({
                   userId: data.characterList[i].userId,
                   character: data.characterList[i].character,
@@ -111,6 +138,8 @@ export default function Sound(props: ISoundProps) {
                   score: 0,
                   position: newPlayersInfo.length < 2 ? "right" : "left",
                 });
+              } else {
+                newPlayersInfo[0].character = data.characterList[i].character;
               }
             });
             return newPlayersInfo;
@@ -123,13 +152,21 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 로딩 완료 신호 보내기
-          socket?.emit("game_ready");
+          if (props.isReplay) {
+            socket.emit("start_replay", router.query.replayId, userId);
+          } else {
+            socket?.emit("game_ready");
+          }
         } catch (err) {
           console.log(err);
         }
       };
 
-      socket.on("loading", fetchRoomInfo);
+      if (props.preventEvent) {
+        socket.on("load_replay", fetchRoomInfo);
+      } else {
+        socket.on("loading", fetchRoomInfo);
+      }
     }
   }, [socket]);
 
@@ -137,13 +174,13 @@ export default function Sound(props: ISoundProps) {
     let keyOrigin: string;
     let keyUp: string;
     let keyDown: string;
-    switch (userInfo.userKeynote) {
-      case "male":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         keyOrigin = gameSong.songMale;
         keyUp = gameSong.songMaleUp;
         keyDown = gameSong.songMaleDown;
         break;
-      case "female":
+      case 2:
         keyOrigin = gameSong.songFemale;
         keyUp = gameSong.songFemaleUp;
         keyDown = gameSong.songFemaleDown;
@@ -168,13 +205,13 @@ export default function Sound(props: ISoundProps) {
     let answerOrigin: number[];
     let answerUp: number[];
     let answerDown: number[];
-    switch (userInfo.userKeynote) {
-      case "male":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         answerOrigin = gameSong.vocalMale;
         answerUp = gameSong.vocalMaleUp;
         answerDown = gameSong.vocalMaleDown;
         break;
-      case "female":
+      case 2:
         answerOrigin = gameSong.vocalFemale;
         answerUp = gameSong.vocalFemaleUp;
         answerDown = gameSong.vocalFemaleDown;
@@ -210,6 +247,8 @@ export default function Sound(props: ISoundProps) {
   return (
     <>
       <PitchAndDecibel
+        preventEvent={props.preventEvent}
+        isReplay={props.isReplay}
         setPlayersInfo={props.setPlayersInfo}
         isLoadComplete={props.isLoadComplete}
         originAnswer={originAnswer}

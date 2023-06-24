@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import {
@@ -26,6 +27,7 @@ const SEARCH_FRIEND = gql`
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
+
   const [userId, setUserId] = useRecoilState(userIdState);
   const [nickname, setNickname] = useState("");
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function Social() {
   }, []);
   
   const { data, fetchMore, refetch } = useQuery<
+
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -66,10 +69,7 @@ export default function Social() {
           return prev;
         }
         return {
-          searchFriend: [
-            ...prev.searchFriend,
-            ...fetchMoreResult.searchFriend,
-          ],
+          searchFriend: [...prev.searchFriend, ...fetchMoreResult.searchFriend],
         };
       },
     });

@@ -24,3 +24,15 @@ export const SongTitle = styled.div`
   font-size: 16px;
   font-weight: 500;
 `;
+
+export const ReplayInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+`;
+
+export const Date = styled.div`
+  color: #fff;
+  font-size: 10px;
+  font-weight: 200;
+`;

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import InitialUI from './Initial.presenter';
-import { IInitialUIProps } from "./Initial.types";
+import InitialUI from "./initial.presenter";
+import { IInitialUIProps } from "./initial.types";
 
 export default function Initial() {
   const handleSignupClick = () => {

@@ -44,6 +44,8 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
             key={uuidv4()}
             buttonText="선택"
             buttonType={buttonType.SHORT}
+            // 🚨 songId로 변경 예정
+            // onClick={() => props.onClickSong(el.songId)}
             onClick={() => props.onClickSong(el.songTitle)}
           >
             <S.SongWrapper>
@@ -97,8 +99,8 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
         <NoData />
       )}
       <Button
-        buttonType={buttonType.EMPTY}
-        text="나가기"
+        buttonType={buttonType.GRADATION}
+        text="완료"
         onClick={() => router.back()}
         isFixedAtBottom
       />

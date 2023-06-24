@@ -23,15 +23,14 @@ export default function Character() {
   let renderer: THREE.WebGLRenderer;
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
-  let floorTexture: THREE.Texture;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
   const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
     FETCH_USER,
-    { variables: { userId } }
+    { variables: { userId }, fetchPolicy: "network-only" }
   );
 
   /* 그래픽 초기화 */
@@ -56,7 +55,7 @@ export default function Character() {
       0.1,
       1000
     );
-    const playerPositions: THREE.Vector3 = new THREE.Vector3(0, 0, -3.5); // 가운데
+    const playerPositions: THREE.Vector3 = new THREE.Vector3(0, 0.5, -3.5); // 가운데
     camera.position.z = 0;
     camera.position.y = 2;
     camera.position.x = 1.7;
@@ -83,23 +82,6 @@ export default function Character() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvasRef.current.appendChild(renderer.domElement);
-
-    /* floor */
-    const floorGeometry = new THREE.PlaneGeometry(100, 100);
-    const textureLoader = new THREE.TextureLoader();
-    floorTexture = textureLoader.load("/game/floor/neon.png");
-    floorTexture.wrapS = THREE.RepeatWrapping;
-    floorTexture.wrapT = THREE.RepeatWrapping;
-    floorTexture.repeat.set(10, 10); // Repeat the texture 10 times in both directions
-    const floorMaterial = new THREE.MeshStandardMaterial({
-      map: floorTexture,
-      side: THREE.DoubleSide,
-      color: "#d0d0d0",
-    });
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
 
     gltfLoader.load(`/game/player/${data?.fetchUser.character}.glb`, (gltf) => {
       const player = gltf.scene.children[0];

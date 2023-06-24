@@ -1,15 +1,27 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import ReplayUI from "./Replay.presenter";
-import { userInfoState } from "../../../commons/store";
+import { userIdState } from "../../../commons/store";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { buttonType } from "../../commons/button/Button";
 import Modal from "../../commons/modal/Modal";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryGetUserReplaysArgs,
+} from "../../../commons/types/generated/types";
 
-const FETCH_REPLAYS = gql`
-  query FetchReplays($userId: String!, $page: Int, $isMyReplay: Boolean) {
-    fetchReplays(userId: $userId, page: $page, isMyReplay: $isMyReplay) {
+const GET_USER_REPLAYS = gql`
+  query GetUserReplays(
+    $userId: String!
+    $pageNumber: Int!
+    $isMyReplay: Boolean!
+  ) {
+    getUserReplays(
+      userId: $userId
+      pageNumber: $pageNumber
+      isMyReplay: $isMyReplay
+    ) {
       replayId
       songTitle
       singer
@@ -19,42 +31,74 @@ const FETCH_REPLAYS = gql`
   }
 `;
 
+const UPDATE_PUBLIC = gql`
+  mutation UpdateReplayIsPublic($replayId: Int!, $isPublic: Int!) {
+    updateReplayIsPublic(replayId: $replayId, isPublic: $isPublic) {
+      replayId
+      isPublic
+    }
+  }
+`;
+
 export default function Replay() {
-  const userInfo = useRecoilValue(userInfoState);
-  const userId = userInfo.userId;
   const router = useRouter();
-  const isMyReplay = router.query.userId === userId;
-  const { data, fetchMore, refetch } = useQuery(FETCH_REPLAYS);
-  // const [data, setData] = useState([]);
+  const [isMyReplay, setIsMyReplay] = useState(true);
+  const [currentUserId, setCurrentUserId] = useRecoilState(userIdState);
+  const [updatePublic] = useMutation(UPDATE_PUBLIC);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);
+  const { data, fetchMore, refetch } = useQuery<
+    Pick<IQuery, "getUserReplays">,
+    IQueryGetUserReplaysArgs
+  >(GET_USER_REPLAYS, {
+    variables: {
+      isMyReplay,
+      pageNumber: 1,
+      userId: currentUserId,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    setCurrentUserId(localStorage.getItem("userId") || "");
+    setIsMyReplay(currentUserId !== router.query.userId);
+  }, []);
 
   const onLoadMore = (): void => {
-    console.log("onLoadMore");
+    if (data === undefined) return;
     void fetchMore({
-      variables: { page: Math.ceil(data?.fetchReplays.length ?? 10 / 10) + 1 },
+      variables: {
+        pageNumber: Math.ceil((data?.getUserReplays.length ?? 0) / 10) + 1,
+      },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (fetchMoreResult.fetchReplays === undefined)
-          return { fetchReplays: [...prev.fetchReplays] };
+        if (fetchMoreResult.getUserReplays === undefined) return prev;
         return {
-          fetchReplays: [...prev.fetchReplays, ...fetchMoreResult.fetchReplays],
+          getUserReplays: [
+            ...prev.getUserReplays,
+            ...fetchMoreResult.getUserReplays,
+          ],
         };
       },
     });
   };
 
   const playReplay = (replayId: number) => {
-    console.log("hello");
+    router.push(`/replay/ingame/${replayId}`);
   };
 
-  const setPublic = (replayId: number, isPublic: boolean) => {
-    console.log("hello");
+  const setPublic = async (replayId: number, isPublic: boolean) => {
     if (!isPublic) {
       setCurrentReplay(replayId);
       setIsModalOpen(true);
     } else {
-      console.log("?");
+      await updatePublic({
+        variables: {
+          replayId,
+          isPublic: 0,
+        },
+      });
+      refetch();
     }
   };
 
@@ -62,10 +106,15 @@ export default function Replay() {
     setIsModalOpen(false);
   };
 
-  const changeToPublic = () => {
+  const changeToPublic = async () => {
     console.log(currentReplay);
+    await updatePublic({
+      variables: {
+        replayId: currentReplay,
+        isPublic: 1,
+      },
+    });
     refetch();
-    // data.fetchReplays.forEach((elem) => {});
     setIsModalOpen(false);
   };
 
