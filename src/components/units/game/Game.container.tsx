@@ -237,6 +237,7 @@ export default function Game(props: IGameProps) {
         setProgress={setProgress}
         setStartTime={setStartTime}
         setIsTerminated={setIsTerminated}
+        isReplay={props.isReplay}
       />
     </>
   );

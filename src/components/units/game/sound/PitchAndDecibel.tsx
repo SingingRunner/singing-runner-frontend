@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
 import { useRecoilValue } from "recoil";
+import { gql, useMutation } from "@apollo/client";
 import { userInfoState } from "../../../../commons/store";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
@@ -42,6 +43,15 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   else return 30;
 };
 
+const UPLOAD_FILE = gql`
+  mutation SaveReplay($userVocal: String!, $userId: String!) {
+    saveReplay(userVocal: $userVocal, userId: $userId) {
+      message
+      code
+    }
+  }
+`;
+
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
@@ -51,6 +61,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const userInfo = useRecoilValue(userInfoState);
 
   const pitchAveragesRef = useRef<number[]>([]);
+
+  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
@@ -70,7 +82,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [props]);
 
   useEffect(() => {
-    socket?.on("game_ready", gameReady);
+    if (props.isReplay) {
+      socket?.on("start_replay", gameReady);
+    } else {
+      socket?.on("game_ready", gameReady);
+    }
     socket?.on("score", scoreListener);
   }, [socket]);
 
@@ -80,13 +96,17 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       source.start();
     });
     props.setStartTime(new Date().getTime());
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(handleAudioStream)
-      .catch((error) => {
-        console.error("Error accessing microphone:", error);
-      });
-    props.setIsLoadComplete(true);
+    if (!props.isReplay) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleAudioStream)
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
+      props.setIsLoadComplete(true);
+    } else {
+      props.setIsLoadComplete(true);
+    }
   };
 
   const scoreListener = (data: ISocketScore) => {
@@ -102,7 +122,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
-    if (props.preventEvent) return 0;
+    if (props.isReplay) return 0;
     let score: number = 0;
     let answer: number[] = [];
     const originAnswer = propsRef.current.originAnswer;
@@ -154,16 +174,22 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     };
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
-      const audioURL = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = audioURL;
-      // 추후 수정 필요
-      a.download = "audio.ogg";
-      a.click();
       socket?.emit("game_terminated", {
         userId: userInfo.userId,
         score: currentScore,
       });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        const result = uploadFile({
+          variables: {
+            userVocal: base64data,
+            userId: userInfo.userId,
+          },
+        });
+        result.then(() => {});
+      };
     };
     mediaRecorder.start();
 

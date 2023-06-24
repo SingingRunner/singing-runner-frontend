@@ -25,7 +25,6 @@ export default function Replay() {
   const router = useRouter();
   const isMyReplay = router.query.userId === userId;
   const { data, fetchMore, refetch } = useQuery(FETCH_REPLAYS);
-  // const [data, setData] = useState([]);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);
@@ -46,6 +45,7 @@ export default function Replay() {
 
   const playReplay = (replayId: number) => {
     console.log("hello");
+    router.push(`/replay/ingame/${replayId}`);
   };
 
   const setPublic = (replayId: number, isPublic: boolean) => {
