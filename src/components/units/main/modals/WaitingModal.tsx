@@ -1,39 +1,19 @@
-import * as S from "../Main.styles";
+import Modal from "../../../commons/modal/Modal";
 import { IMainUIProps } from "../Main.types";
 
 export default function WaitingModal(props: IMainUIProps) {
   return (
     <>
-      <S.ModalBackground>
-        <S.ModalWrapper>
-          <S.ImageWrapper>
-            <S.ImageEllipse src="/images/Ellipse.png" />
-            <S.ImageVector src="/images/Vector.png" />
-          </S.ImageWrapper>
-          <S.ModalMatchComplete>
-            다른 유저를 기다리는 중입니다.
-          </S.ModalMatchComplete>
-          <S.ModalMatchSongArtist>
-            {console.log(props.singer)}
-            {/* {props.singer ? props.singer : "TEST"} */}
-            Various Artists
-          </S.ModalMatchSongArtist>
-          <S.MarqueeContainer>
-            <S.MarqueeContent>
-              <S.ModalMatchSongTitle>
-                {console.log(props.songTitle)}
-                {/* {props.songTitle ? props.songTitle : "TEST"} */}
-                {"짱구는 못말려 오프닝(99년도 비디오판)"}
-              </S.ModalMatchSongTitle>
-              <S.ModalMatchSongTitle>
-                {/* {props.songTitle ? props.songTitle : "TEST"} */}
-                {"짱구는 못말려 오프닝(99년도 비디오판)"}
-              </S.ModalMatchSongTitle>
-            </S.MarqueeContent>
-          </S.MarqueeContainer>
-          {/* <button onClick={props.handleLoadingClick}>test</button> */}
-        </S.ModalWrapper>
-      </S.ModalBackground>
+    {/* 아래 화면은 props.showWaiting이 true가 될 때 보여집니다. */}
+      <Modal
+        isCheck={false}
+        firstText="다른 유저를 기다리는 중입니다." // TODO: 이 부분 수정이 필요합니다.
+        singer={props.singer || "노래 가수(이것은 대기 화면)"}
+        songTitle={props.songTitle || "노래 제목(여기는 대기 화면입니다.)"}
+        // TODO: 모달 아래 버튼이 없으면 좋겠습니다. (buttonText, onClickRight 불필요)
+        buttonText="버튼이 없으면 좋겠어요."
+        onClickRight={props.handleMatchDecline} // 임시 클릭
+      />
     </>
   );
 }
