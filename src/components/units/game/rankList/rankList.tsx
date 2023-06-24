@@ -11,10 +11,10 @@ interface IRankListProps {
 
 export default function RankList(props: IRankListProps) {
   // 현재 플레이어의 정보
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const [sortedData, setSortedData] = useState<IPlayersInfo[]>();
   useEffect(() => {

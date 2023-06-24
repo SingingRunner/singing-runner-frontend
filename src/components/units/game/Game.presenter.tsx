@@ -34,48 +34,53 @@ export default function GameUI(props: IGameUIProps) {
           </S.LoadingBackground>
         </>
       )}
-      {props.isLoadComplete && (
-        // 로딩화면 끝, 게임 시작
-        <>
-          <Graphic
-            preventEvent={props.preventEvent}
-            appliedItems={props.appliedItems}
-            playersInfo={props.playersInfo}
-            offItem={props.offItem}
-            decibel={props.decibel}
-            muteAttack={props.muteAttack}
-            isFrozenActive={props.isFrozenActive}
-            isFrozenActiveRight={props.isFrozenActiveRight}
-            isFrozenActiveLeft={props.isFrozenActiveLeft}
-            isTerminated={props.isTerminated}
-          />
-          <S.Wrapper>
-            {!props.isTerminated && isItemActivated && <S.ItemEffectWrapper />}
-            <S.Title>
-              {props.songInfo.title} - {props.songInfo.singer}
-            </S.Title>
-            {!props.isTerminated && (
-              <Lyric
-                startTime={props.startTime}
-                isCloud={props.appliedItems.includes("cloud")}
-              />
-            )}
-            {!props.isTerminated && (
-              <ItemInfo
-                appliedItems={props.appliedItems}
-                decibel={props.decibel}
-              />
-            )}
-            <RankList
+      {props.isLoadComplete &&
+        props.playersInfo[2] &&
+        props.playersInfo[1] &&
+        props.playersInfo[0] && (
+          // 로딩화면 끝, 게임 시작
+          <>
+            <Graphic
+              preventEvent={props.preventEvent}
+              appliedItems={props.appliedItems}
               playersInfo={props.playersInfo}
+              offItem={props.offItem}
+              decibel={props.decibel}
+              muteAttack={props.muteAttack}
+              isFrozenActive={props.isFrozenActive}
+              isFrozenActiveRight={props.isFrozenActiveRight}
+              isFrozenActiveLeft={props.isFrozenActiveLeft}
               isTerminated={props.isTerminated}
             />
-            {!props.isTerminated && (
-              <ItemList preventEvent={props.preventEvent} />
-            )}
-          </S.Wrapper>
-        </>
-      )}
+            <S.Wrapper>
+              {!props.isTerminated && isItemActivated && (
+                <S.ItemEffectWrapper />
+              )}
+              <S.Title>
+                {props.songInfo.title} - {props.songInfo.singer}
+              </S.Title>
+              {!props.isTerminated && (
+                <Lyric
+                  startTime={props.startTime}
+                  isCloud={props.appliedItems.includes("cloud")}
+                />
+              )}
+              {!props.isTerminated && (
+                <ItemInfo
+                  appliedItems={props.appliedItems}
+                  decibel={props.decibel}
+                />
+              )}
+              <RankList
+                playersInfo={props.playersInfo}
+                isTerminated={props.isTerminated}
+              />
+              {!props.isTerminated && (
+                <ItemList preventEvent={props.preventEvent} />
+              )}
+            </S.Wrapper>
+          </>
+        )}
     </>
   );
 }

@@ -18,10 +18,10 @@ import { FETCH_USER } from "./Game.queries";
 const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
 
 export default function Game(props: IGameProps) {
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
   const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
     FETCH_USER,
     { variables: { userId } }
@@ -69,21 +69,6 @@ export default function Game(props: IGameProps) {
   const [appliedItems, setAppliedItems] = useState<string[]>([]);
 
   const [, setGameResult] = useRecoilState(gameResultState);
-
-  useEffect(() => {
-    // 로그인한 유저의 정보 저장
-    if (playersInfo.length === 0) {
-      setPlayersInfo([
-        {
-          userId,
-          character: data?.fetchUser.character || "",
-          activeItem: "",
-          score: 0,
-          position: "mid",
-        },
-      ]);
-    }
-  }, [userId, data]);
 
   const [muteAttack, setMuteAttack] = useState({
     mid: false,
