@@ -4,6 +4,7 @@ export interface IProfileCardProps {
   offline?: boolean;
   add?: boolean;
   nickname?: string;
+  hilightNickname?: string;
   tier?: string;
   children?: React.ReactNode;
   onClick?: () => void;

@@ -39,11 +39,17 @@ export const OfflineIcon = styled.div`
   border-radius: 10px;
   background: #c7c7c7;
 `;
-export const Nickname = styled.span`
+export const NicknameWrapper = styled.span`
   color: #fff;
   font-size: 16px;
   font-weight: 500;
   margin-right: 4px;
+`;
+export const Nickname = styled.span`
+  color: ${(props: { isMatched?: boolean }) =>
+    props.isMatched ? "#fe259b" : "#fff"};
+  font-size: 16px;
+  font-weight: 500;
 `;
 export const Tier = styled.img`
   width: 16px;
