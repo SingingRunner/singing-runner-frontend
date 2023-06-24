@@ -99,11 +99,11 @@ export default function Replay() {
       console.log("?");
       updatePublic({
         variables: {
-          replayId: currentReplay,
-          isPublic: 1,
+          replayId: replayId,
+          isPublic: 0,
         },
       });
-      refetch();
+      setTimeout(() => refetch(), 50);
     }
   };
 
@@ -119,7 +119,7 @@ export default function Replay() {
         isPublic: 1,
       },
     });
-    refetch();
+    setTimeout(() => refetch(), 50);
     setIsModalOpen(false);
   };
 
