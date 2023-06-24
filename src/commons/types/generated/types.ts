@@ -16,7 +16,7 @@ export type Scalars = {
 };
 
 export type IAddFriendDto = {
-  firendId: Scalars['String']['input'];
+  friendId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
@@ -96,6 +96,7 @@ export type IMutation = {
   removeFriend: Scalars['String']['output'];
   saveReplay: IReply;
   updateCharacter: IUserCharacterResponseDto;
+  updateReplayIsPublic: IReplayIsPublicResponseDto;
   updateUserKeynote: IUserKeynoteResponseDto;
 };
 
@@ -155,6 +156,12 @@ export type IMutationSaveReplayArgs = {
 export type IMutationUpdateCharacterArgs = {
   character: Scalars['String']['input'];
   userId: Scalars['String']['input'];
+};
+
+
+export type IMutationUpdateReplayIsPublicArgs = {
+  isPublic: Scalars['Int']['input'];
+  replayId: Scalars['Int']['input'];
 };
 
 
@@ -221,6 +228,12 @@ export type IQuerySearchSongArgs = {
 export type IQuerySearchUserArgs = {
   nickname: Scalars['String']['input'];
   page: Scalars['Float']['input'];
+};
+
+export type IReplayIsPublicResponseDto = {
+  __typename?: 'ReplayIsPublicResponseDto';
+  isPublic: Scalars['Int']['output'];
+  replayId: Scalars['String']['output'];
 };
 
 export type IReplayWithSongInfo = {

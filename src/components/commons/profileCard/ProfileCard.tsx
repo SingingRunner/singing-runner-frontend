@@ -22,7 +22,7 @@ export default function ProfileCard(props: IProfileCardProps) {
       variables: {
         addFriendDto: {
           userId,
-          firendId: props.friendId,
+          friendId: props.friendId,
         },
       },
     });

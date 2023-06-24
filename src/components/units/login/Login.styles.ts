@@ -18,6 +18,7 @@ export const EmailError = styled.div`
 
 export const PasswordError = styled.div`
   color: red;
+  height: 18px;
 `;
 
 export const InputWrapper = styled.div`
