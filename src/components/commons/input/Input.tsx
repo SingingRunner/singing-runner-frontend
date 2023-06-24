@@ -11,8 +11,7 @@ interface IInputProps {
 }
 
 export enum inputType {
-  "MEDIUM",
-  "LONG",
+  "BASIC",
   "SEARCH",
 }
 
