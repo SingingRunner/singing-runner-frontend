@@ -37,7 +37,7 @@ export default function Character() {
   /* 그래픽 초기화 */
   useEffect(() => {
     if (!canvasRef.current) return;
-    if (data?.fetchUser.character) return;
+    if (!data?.fetchUser.character) return;
 
     /* scene */
     scene = new THREE.Scene();
@@ -101,27 +101,24 @@ export default function Character() {
     floor.receiveShadow = true;
     scene.add(floor);
 
-    gltfLoader.load(
-      `/game/player/${data?.fetchUser.character || "husky"}.glb`,
-      (gltf) => {
-        const player = gltf.scene.children[0];
-        player.scale.set(0.7, 0.7, 0.7);
-        player.position.copy(playerPositions);
-        if (gltf.animations && gltf.animations.length > 0) {
-          const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
-          const action = mixer.clipAction(gltf.animations[6]); // 애니메이션을 재생할 action 생성
-          mixer.timeScale = 0.5;
-          action.play(); // 애니메이션 재생
-          mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
-        }
-
-        player.traverse((child) => {
-          child.castShadow = true; // 그림자 생성
-        });
-        scene.add(player);
+    gltfLoader.load(`/game/player/${data?.fetchUser.character}.glb`, (gltf) => {
+      const player = gltf.scene.children[0];
+      player.scale.set(0.7, 0.7, 0.7);
+      player.position.copy(playerPositions);
+      if (gltf.animations && gltf.animations.length > 0) {
+        const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
+        const action = mixer.clipAction(gltf.animations[6]); // 애니메이션을 재생할 action 생성
+        mixer.timeScale = 0.5;
+        action.play(); // 애니메이션 재생
+        mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
       }
-    );
-  }, []);
+
+      player.traverse((child) => {
+        child.castShadow = true; // 그림자 생성
+      });
+      scene.add(player);
+    });
+  }, [data?.fetchUser.character]);
 
   /* animation */
   useEffect(() => {
@@ -136,7 +133,7 @@ export default function Character() {
       if (renderer) renderer.render(scene, camera);
     };
     animate();
-  }, []);
+  }, [data?.fetchUser.character]);
 
   return (
     <div
