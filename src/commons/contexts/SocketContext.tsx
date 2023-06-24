@@ -20,9 +20,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   const socketConnect = () => {
     /* 🚨 배포 시 사용 */
-    // const newSocket = io("https://injungle.shop", { path: "/api/socket.io" });
+    const newSocket = io("https://injungle.shop", { path: "/api/socket.io" });
     /* 로컬 테스트 시 사용 */
-    const newSocket = io("http://localhost:3000");
+    // const newSocket = io("http://localhost:3000");
     setSocket(newSocket);
     return newSocket;
   };

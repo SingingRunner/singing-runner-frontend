@@ -1,74 +1,61 @@
-// import InfiniteScroll from "react-infinite-scroller";
 import InfiniteScroll from "react-infinite-scroller";
+import { ISocialSettingUIProps } from "./SocialSetting.types";
 import Button, { buttonType } from "../../../commons/button/Button";
 import Input, { inputType } from "../../../commons/input/Input";
 import ListItem from "../../../commons/listItem/ListItem";
 import ProfileCard from "../../../commons/profileCard/ProfileCard";
-import { ISocialSettingUIProps } from "./SocialSetting.types";
+import { v4 as uuidv4 } from "uuid";
+import * as S from "../Social.styles";
+import Label from "../../../commons/label/Label";
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
     <>
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            position: "fixed",
-            width: "calc(100% - 32px)",
-            top: "60px",
-          }}
-        >
-          <img
-            style={{
-              position: "absolute",
-              width: "20px",
-              top: "10px",
-              left: "12px",
-            }}
-            src="/icon/search-purple.png"
-          />
+      <S.Container>
+        <S.InputWrapper>
+          <S.SearchIcon src="/icon/search-purple.png" />
           <Input
             inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
           />
-          <div style={{ color: "white", marginTop: "16px" }}>친구 목록</div>
-        </div>
-        <div
-          style={{
-            height: "140px",
-            width: "100%",
-            overflow: "auto",
-          }}
-        >
+          <Label text="친구 목록" marginTop="16px" />
+        </S.InputWrapper>
+
+        <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
             loadMore={props.onLoadMore}
             hasMore={true}
             useWindow={false}
           >
-            {props.data?.getFriendList.map((el) => (
-              <div key={el._id}>
-                <ListItem rightChildren={<div>내용</div>}>
+            {props.data?.searchFriend.map((el) => (
+              <div key={uuidv4()}>
+                <ListItem
+                  rightChildren={
+                    <div
+                      style={{
+                        width: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ width: "1px" }}></div>
+                    </div>
+                  }
+                >
                   <ProfileCard
                     character={el.character}
                     nickname={el.nickname}
                   ></ProfileCard>
                 </ListItem>
               </div>
-            ))}
+            )) ?? <div></div>}
           </InfiniteScroll>
-        </div>
-      </div>
+        </S.InfiniteScrollWrapper>
+      </S.Container>
+
       <Button
         buttonType={buttonType.EMPTY}
         text="나가기"

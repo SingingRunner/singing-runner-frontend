@@ -180,7 +180,7 @@ export type IQuery = {
   fetchUserGuard: IAuthUserDto;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
-  searchFriend: Array<IUser>;
+  searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
 };
@@ -242,6 +242,16 @@ export type IRequestDto = {
   __typename?: 'RequestDto';
   senderId: Scalars['String']['output'];
   senderNickname: Scalars['String']['output'];
+};
+
+export type ISearchFriendDto = {
+  __typename?: 'SearchFriendDto';
+  character: Scalars['String']['output'];
+  nickname: Scalars['String']['output'];
+  userActive: Scalars['Int']['output'];
+  userId: Scalars['String']['output'];
+  userMmr: Scalars['Int']['output'];
+  userTier: Scalars['String']['output'];
 };
 
 export type IUser = {

@@ -17,6 +17,7 @@ export interface IPitchAndDecibelProps {
   setStartTime: Dispatch<SetStateAction<number>>;
   setIsTerminated: Dispatch<SetStateAction<boolean>>;
   preventEvent?: boolean;
+  isReplay?: boolean;
 }
 
 export interface ISocketScore {
