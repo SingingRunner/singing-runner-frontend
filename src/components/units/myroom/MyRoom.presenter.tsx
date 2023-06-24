@@ -1,6 +1,7 @@
 import Button, { buttonType } from "../../commons/button/Button";
 import { IMyRoomUIProps } from "./MyRoom.types";
 import * as S from "./MyRoom.styles";
+import MyroomCharacters from "./characters/Characters";
 
 export default function MyRoomUI(props: IMyRoomUIProps) {
   return (
@@ -16,9 +17,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
         <S.TierWrapper>
           <S.Mmr>{props.mmr}</S.Mmr>
           <S.Tier>
-            <S.LetterTier 
-              tier={props.tier}
-            >{props.tier}</S.LetterTier>
+            <S.LetterTier tier={props.tier}>{props.tier}</S.LetterTier>
             <S.IconTier src={`/tier/${props.tier}.png`} />
           </S.Tier>
         </S.TierWrapper>
@@ -31,12 +30,18 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
             alt="previous"
             onClick={props.handlePreviousImage}
           />
-          <S.ImageCharacter
+          {props.currentImageIndex !== -1 && (
+            <MyroomCharacters
+              character={props.characters[props.currentImageIndex]}
+            />
+          )}
+
+          {/* <S.ImageCharacter
             src={`/game/player/profile/${
               props.characters[props.currentImageIndex]
             }.png`}
             alt="character"
-          />
+          /> */}
           <S.ImageVectorRight
             src="/icon/arrow.png"
             alt="next"
@@ -45,7 +50,6 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
         </S.ImageWrapper>
       </S.Container>
 
-      
       <Button
         buttonType={buttonType.EMPTY}
         text="선택 완료"

@@ -15,6 +15,7 @@ const characters = [
   "puffin",
   "puma",
   "snowleopard",
+  "moose",
 ];
 
 const FETCH_USER = gql`
@@ -46,7 +47,7 @@ export default function MyRoom() {
   const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [character, setCharacter] = useState("");
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(-1);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
   const [tier, setTier] = useState("");
   const [mmr, setMmr] = useState(0);
@@ -57,6 +58,7 @@ export default function MyRoom() {
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
+    fetchPolicy: "network-only",
   });
 
   const onClickSetting = () => {
@@ -74,7 +76,6 @@ export default function MyRoom() {
       const characterIndex = characters.findIndex(
         (char) => char === data.fetchUser.character
       );
-
       setCurrentImageIndex(characterIndex);
     }
   }, [data]);

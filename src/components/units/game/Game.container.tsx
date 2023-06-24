@@ -51,7 +51,7 @@ export default function Game(props: IGameProps) {
     setMrKey(
       data?.fetchUser.userKeynote === 0
         ? "origin"
-        : data?.fetchUser.userKeynote === 1
+        : data?.fetchUser.userKeynote === 2
         ? "male"
         : "female"
     );

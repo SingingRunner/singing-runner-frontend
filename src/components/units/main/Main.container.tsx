@@ -51,7 +51,7 @@ const Main = () => {
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
