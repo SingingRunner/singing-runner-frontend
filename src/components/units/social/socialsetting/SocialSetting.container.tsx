@@ -1,24 +1,25 @@
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { userIdState } from '../../../../commons/store';
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
 import {
   IQuery,
-  IQueryGetFriendListArgs,
+  IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
+// import _ from "lodash";
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
 
-const GET_FRIEND_LIST = gql`
-  query getFriendList($userId: String!, $page: Float!) {
-    getFriendList(userId: $userId, page: $page) {
+const SEARCH_FRIEND = gql`
+  query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
+    searchFriend(userId: $userId, nickname: $nickname, page: $page) {
       userId
+      userMmr
+      userTier
       nickname
       userActive
-      userMmr
       character
-      userTier
     }
   }
 `;
@@ -30,11 +31,14 @@ export default function SocialSetting() {
   }, []);
 
   const { data, fetchMore } = useQuery<
-    Pick<IQuery, "getFriendList">,
-    IQueryGetFriendListArgs
-  >(GET_FRIEND_LIST, {variables: {
-    userId,
-    page: 1}
+    Pick<IQuery, "searchFriend">,
+    IQuerySearchFriendArgs
+  >(SEARCH_FRIEND, {
+    variables: {
+      userId,
+      nickname: "",
+      page: 1,
+    },
   });
 
   const onLoadMore = (): void => {
@@ -42,31 +46,25 @@ export default function SocialSetting() {
 
     void fetchMore({
       variables: {
-        page: Math.ceil((data?.getFriendList.length ?? 10) / 10) + 1,
+        page: Math.ceil((data?.searchFriend.length ?? 0) / 10) + 1,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (fetchMoreResult.getFriendList === undefined) {
-          return {
-            getFriendList: [...prev.getFriendList],
-          };
+        if (fetchMoreResult.searchFriend === undefined) {
+          return prev;
         }
-
         return {
-          getFriendList: [
-            ...prev.getFriendList,
-            ...fetchMoreResult.getFriendList,
-          ],
+          searchFriend: [...prev.searchFriend, ...fetchMoreResult.searchFriend],
         };
       },
     });
   };
 
-  // 나가기 버튼 클릭 시 소셜 화면으로 이동
+  const router = useRouter();
+
+  // 나가기 버튼 클릭 시 소셜 페이지로 이동
   const onClickExit = () => {
     router.push("/social");
   };
-
-  const router = useRouter();
 
   const props: ISocialSettingUIProps = {
     onClickExit,

@@ -5,83 +5,61 @@ import ListItem from "../../commons/listItem/ListItem";
 import ProfileCard from "../../commons/profileCard/ProfileCard";
 import { ISocialUIProps } from "./Social.types";
 import { v4 as uuidv4 } from "uuid";
+import * as S from "./Social.styles";
+import Label from "../../commons/label/Label";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <img
-        src="/icon/setting.png"
-        onClick={props.onClickSetting}
-        style={{
-          position: "absolute",
-          height: "40px",
-          width: "auto",
-          top: "8px",
-          right: "8px",
-        }}
-      />
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            position: "fixed",
-            width: "calc(100% - 32px)",
-            top: "60px",
-          }}
-        >
-          <img
-            style={{
-              position: "absolute",
-              width: "20px",
-              top: "10px",
-              left: "12px",
-            }}
-            src="/icon/search-purple.png"
-          />
+      <S.SettingIcon src="/icon/setting.png" onClick={props.onClickSetting} />
+
+      <S.Container>
+        <S.InputWrapper>
+          <S.SearchIcon src="/icon/search-purple.png" />
           <Input
             inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
           />
-          <div style={{ color: "white", marginTop: "16px" }}>친구 목록</div>
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            top: "54px",
-            height: "540px",
-            width: "100%",
-            overflow: "auto",
-          }}
-        >
+          <Label text="친구 목록" marginTop="16px" />
+        </S.InputWrapper>
+
+        <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
             loadMore={props.onLoadMore}
             hasMore={true}
             useWindow={false}
           >
-            {props.data?.getFriendList.map((el) => (
+            {props.data?.searchFriend.map((el) => (
               <div key={uuidv4()}>
-                <ListItem rightChildren={<div>내용</div>}>
+                <ListItem
+                  rightChildren={
+                    <div style={{width: "120px", display:"flex", alignItems: "center", justifyContent: "space-between"}}>
+                      <div style={{width: "1px"}}></div>
+                      {el.userActive === 1 && <div style={{color: "#00B8FF"}}>온라인</div>}
+                      {el.userActive === 2 && <div style={{color: "#03FF49"}}>게임중</div>}
+                      {!el.userActive && <div style={{color: "#C7C7C7"}}>오프라인</div>}
+                      <img onClick={props.onClickReplay} style={{width: "28px"}} src="/icon/replay.png" />
+                    </div>
+                  }
+                >
                   <ProfileCard
                     character={el.character}
                     nickname={el.nickname}
-                  ></ProfileCard>
+                    online={el.userActive}
+                    offline={!el.userActive}
+                    tier={el.userTier}
+                  >
+                    <S.Mmr>{Number(el.userMmr)}</S.Mmr>
+                  </ProfileCard>
                 </ListItem>
               </div>
             )) ?? <div></div>}
           </InfiniteScroll>
-        </div>
-      </div>
+        </S.InfiniteScrollWrapper>
+      </S.Container>
+
       <Button
         buttonType={buttonType.EMPTY}
         text="나가기"

@@ -3,9 +3,9 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
-import { ChangeEvent, useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { userInfoState } from "../../../commons/store";
+// import { ChangeEvent, useEffect } from "react";
+// import { useRecoilState } from "recoil";
+// import { userInfoState } from "../../../commons/store";
 import Character from "./character/Character";
 
 
@@ -67,7 +67,7 @@ export default function MainUI(props: IMainUIProps) {
         onClick={props.onClickSocial}
       />
       {/* 🚨 임시 가데이터 - 여기부터 */}
-      <div style={{ zIndex: 1, position: "fixed" }}>
+      {/* <div style={{ zIndex: 1, position: "fixed" }}>
         아이디
         <input onChange={changeUserId} />
         캐릭터
@@ -82,7 +82,7 @@ export default function MainUI(props: IMainUIProps) {
           <option value="puffin">새</option>
           <option value="moose">무스</option>
         </select>
-      </div>
+      </div> */}
       <Character />
       {/* 🚨 임시 가데이터 - 여기까지 */}
       {!props.isBattleClicked && <BeforeClickModes {...props} />}

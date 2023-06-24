@@ -178,22 +178,15 @@ export type IQuery = {
   __typename?: 'Query';
   fetchUser: IAuthUserDto;
   fetchUserGuard: IAuthUserDto;
-  getFriendList: Array<IFriendDto>;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
-  searchFriend: Array<IUser>;
+  searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
 };
 
 
 export type IQueryFetchUserArgs = {
-  userId: Scalars['String']['input'];
-};
-
-
-export type IQueryGetFriendListArgs = {
-  page: Scalars['Float']['input'];
   userId: Scalars['String']['input'];
 };
 
@@ -212,11 +205,14 @@ export type IQueryGetUserReplaysArgs = {
 
 
 export type IQuerySearchFriendArgs = {
-  addFriendDto: IAddFriendDto;
+  nickname: Scalars['String']['input'];
+  page: Scalars['Float']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
 export type IQuerySearchSongArgs = {
+  filter: Scalars['String']['input'];
   keyword: Scalars['String']['input'];
   page: Scalars['Int']['input'];
 };
@@ -246,6 +242,16 @@ export type IRequestDto = {
   __typename?: 'RequestDto';
   senderId: Scalars['String']['output'];
   senderNickname: Scalars['String']['output'];
+};
+
+export type ISearchFriendDto = {
+  __typename?: 'SearchFriendDto';
+  character: Scalars['String']['output'];
+  nickname: Scalars['String']['output'];
+  userActive: Scalars['Int']['output'];
+  userId: Scalars['String']['output'];
+  userMmr: Scalars['Int']['output'];
+  userTier: Scalars['String']['output'];
 };
 
 export type IUser = {
