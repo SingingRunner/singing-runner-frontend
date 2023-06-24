@@ -3,13 +3,31 @@ import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
+import { gql, useQuery } from "@apollo/client";
+import { userIdState } from "../../../commons/store";
+import { useRecoilState } from "recoil";
+
+const FETCH_USER = gql`
+  query FetchUser($userId: String!) {
+    fetchUser(userId: $userId) {
+      userId
+      userEmail
+      nickname
+      userActive
+      userKeynote
+      userMmr
+      userPoint
+      character
+    }
+  }
+`;
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect } = socketContext;
-
+  
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
@@ -19,6 +37,34 @@ const Main = () => {
   const [isBattleClicked, setIsBattleClicked] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [character, setCharacter] = useState("");
+  const [userMmr, setUserMmr] = useState(0);
+  const [nickName, setNickname] = useState("");
+  const [userKeynote, setUserKeynote] = useState("");
+  const [userActive, setUserActive] = useState(false);
+
+
+  const [userId, setUserId] = useRecoilState(userIdState);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
+  const { data } = useQuery(FETCH_USER, {
+    variables: { userId },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  useEffect(() => {
+    setCharacter(data?.fetchUser.character);
+    setUserMmr(data?.fetchUser.userMmr);
+    setNickname(data?.fetchUser.nickname);
+    setUserKeynote(data?.fetchUser.userKeynote);
+    setUserActive(data?.fetchUser.userActive);
+    console.log("dtc", data?.fetchUser.character)
+    console.log("data", data)
+    
+  }, [data?.fetchUser.character]);
 
   const onClickSocial = () => {
     // 친구 화면으로 전환
@@ -84,15 +130,15 @@ const Main = () => {
   };
 
   // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  const [dummyUserId, setDummyUserId] = useState("test99");
-  const [dummyCharacter, setDummyCharacter] = useState("husky");
+  // const [dummyUserId, setDummyUserId] = useState("test99");
+  // const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
-    userId: dummyUserId,
-    userMmr: 1000,
-    nickName: "Tom",
-    userActive: "connect",
-    uerKeynote: "maleKey",
-    character: dummyCharacter,
+    userId,
+    userMmr,
+    nickName,
+    userActive,
+    userKeynote,
+    character,
   };
 
   const handleBattleModeClick = () => {
@@ -101,6 +147,11 @@ const Main = () => {
     const newSocket = socketConnect();
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
+  };
+
+  const onClickCustomMode = () => {
+    // 커스텀 모드 화면으로 전환
+    router.push("/custom");
   };
 
   const handleMatchCancel = () => {
@@ -176,11 +227,11 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
-    setDummyUserId,
-    setDummyCharacter,
     onClickMyRoom,
-    dummyCharacter,
     onClickSocial,
+    data,
+    character,
+    onClickCustomMode,
   };
 
   return <MainUI {...props} />;

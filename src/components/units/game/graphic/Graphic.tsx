@@ -55,6 +55,7 @@ export default function Graphic(props: IGrapicProps) {
   /* 그래픽 초기화 */
   useEffect(() => {
     if (!canvasRef.current) return;
+    if (!props.playersInfo[0].character) return;
 
     /* scene */
     scene = new THREE.Scene();
@@ -183,7 +184,7 @@ export default function Graphic(props: IGrapicProps) {
       window.removeEventListener("touchstart", reduceSnowmanHealth);
       window.removeEventListener("mousedown", reduceSnowmanHealth);
     };
-  }, []);
+  }, [props.playersInfo[0].character]);
 
   useEffect(() => {
     if (props.isTerminated) moveCameraToPlayer();
@@ -425,6 +426,7 @@ export default function Graphic(props: IGrapicProps) {
 
   /** 눈사람의 체력을 SNOWMAN_DAMAGE_INTERVAL씩 감소하는 함수 */
   const reduceSnowmanHealth = () => {
+    if (props.preventEvent) return;
     let isSnowman = false;
     setSnowmans((prev) => {
       if (prev.length !== 0) isSnowman = true;
@@ -479,9 +481,7 @@ export default function Graphic(props: IGrapicProps) {
 
   const router = useRouter();
   const onClickButton = () => {
-    terminateAudio.pause();
-    // 🚨 게임 종료 화면으로 이동하도록 변경 예정
-    router.push("/main");
+    router.replace("/game/result");
   };
 
   return (

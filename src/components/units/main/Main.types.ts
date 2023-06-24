@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+
 
 export interface IMainUIProps {
   isClicked: boolean;
@@ -16,9 +16,9 @@ export interface IMainUIProps {
   singer: string;
   setShowWaiting: (flag: boolean) => void;
   showWaiting: boolean;
-  setDummyUserId: Dispatch<SetStateAction<string>>;
-  setDummyCharacter: Dispatch<SetStateAction<string>>;
   onClickSocial: () => void;
   onClickMyRoom: () => void;
-  dummyCharacter: string;
+  data: any;
+  character: string;
+  onClickCustomMode: () => void;
 }

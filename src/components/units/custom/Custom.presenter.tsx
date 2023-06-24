@@ -48,6 +48,7 @@ export default function CustomUI(props: ICustomUIProps) {
             tier="gold"
             add
             margin="0 0 0 20px"
+            friendId="test"
           />
         </S.JoinedPlayer>
         <S.EmptyPlayer onClick={() => router.push("/custom/invite")}>

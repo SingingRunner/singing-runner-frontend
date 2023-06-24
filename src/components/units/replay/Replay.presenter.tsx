@@ -59,8 +59,12 @@ export default function ReplayUI(props: IReplayUIProps) {
               isSettingMode ? (
                 <ListItem
                   key={elem.replayId}
-                  butonText="공개 유무 받아와서 보여주기 또 값으로도 저장해야함"
-                  buttonType={buttonType.SHORT_PINK}
+                  buttonText={elem.isPublic ? "공개" : "비공개"}
+                  buttonType={
+                    elem.isPublic
+                      ? buttonType.SHORT_SELECT
+                      : buttonType.SHORT_SELECT_EMPTY
+                  }
                   onClick={
                     props.setPublic
                       ? () => props.setPublic(elem.replayId, elem.isPublic)
@@ -75,7 +79,7 @@ export default function ReplayUI(props: IReplayUIProps) {
               ) : (
                 <ListItem
                   key={elem.replayId}
-                  butonText="보기"
+                  buttonText="보기"
                   buttonType={buttonType.SHORT_PINK}
                   onClick={
                     props.playReplay
@@ -92,7 +96,7 @@ export default function ReplayUI(props: IReplayUIProps) {
             ) : (
               <ListItem
                 key={elem.replayId}
-                butonText="보기"
+                buttonText="보기"
                 buttonType={buttonType.SHORT_PINK}
                 onClick={
                   props.playReplay ? () => props.playReplay(index) : () => {}

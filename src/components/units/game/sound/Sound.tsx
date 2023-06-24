@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useRouter } from "next/router";
+import { userIdState, userInfoState } from "../../../../commons/store";
 import {
   ISocketGameSongData,
   ISocketLoadingData,
@@ -15,6 +16,8 @@ export default function Sound(props: ISoundProps) {
   const { socket } = socketContext;
 
   const userInfo = useRecoilValue(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const router = useRouter();
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -26,6 +29,10 @@ export default function Sound(props: ISoundProps) {
   const [originAnswer, setOriginAnswer] = useState<number[]>([]);
   const [keyUpAnswer, setKeyUpAnswer] = useState<number[]>([]);
   const [keyDownAnswer, setKeyDownAnswer] = useState<number[]>([]);
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
 
   useEffect(() => {
     // 현재 실행되고 있는 아이템
@@ -41,7 +48,11 @@ export default function Sound(props: ISoundProps) {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("loading");
+      if (props.preventEvent) {
+        socket.emit("load_replay");
+      } else {
+        socket.emit("loading");
+      }
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
       /** 입장한 게임의 MR, 정답 데이터, 유저 정보(id & 캐릭터) 조회 */
@@ -123,13 +134,21 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 로딩 완료 신호 보내기
-          socket?.emit("game_ready");
+          if (props.isReplay) {
+            socket.emit("start_replay", router.query.replayId, userId);
+          } else {
+            socket?.emit("game_ready");
+          }
         } catch (err) {
           console.log(err);
         }
       };
 
-      socket.on("loading", fetchRoomInfo);
+      if (props.preventEvent) {
+        socket.on("load_replay", fetchRoomInfo);
+      } else {
+        socket.on("loading", fetchRoomInfo);
+      }
     }
   }, [socket]);
 
@@ -210,6 +229,8 @@ export default function Sound(props: ISoundProps) {
   return (
     <>
       <PitchAndDecibel
+        preventEvent={props.preventEvent}
+        isReplay={props.isReplay}
         setPlayersInfo={props.setPlayersInfo}
         isLoadComplete={props.isLoadComplete}
         originAnswer={originAnswer}

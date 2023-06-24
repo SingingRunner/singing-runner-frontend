@@ -1,57 +1,71 @@
+import InfiniteScroll from "react-infinite-scroller";
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
+import ListItem from "../../commons/listItem/ListItem";
+import ProfileCard from "../../commons/profileCard/ProfileCard";
 import { ISocialUIProps } from "./Social.types";
+import { v4 as uuidv4 } from "uuid";
+import * as S from "./Social.styles";
+import Label from "../../commons/label/Label";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <div style={{height: "20px"}}>
-        <img
-          src="/icon/setting.png"
-          style={{
-            width: "40px",
-            height: "auto",
-            marginTop: "-68px",
-            marginLeft: "292px",
-            marginBottom: "48px",
-          }}
-          onClick={props.onClickSetting}
-        />
-      </div>
-      <div
-        style={{
-          height: "100vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div style={{ width: "100%", marginTop: "-620px" }}>
+      <S.SettingIcon src="/icon/setting.png" onClick={props.onClickSetting} />
+
+      <S.Container>
+        <S.InputWrapper>
+          <S.SearchIcon src="/icon/search-purple.png" />
           <Input
-            inputType={inputType.LONG}
+            inputType={inputType.SEARCH}
             type="text"
             placeholder="닉네임으로 검색하세요"
           />
-          <div style={{ color: "white", marginTop: "16px" }}>친구 목록</div>
-        </div>
-        <img
-          src="/icon/group.png"
-          style={{ height: "24px", marginLeft: "280px", marginTop: "16px" }}
-          onClick={props.onClickReplay}
-        />
-      </div>
+          <Label text="친구 목록" marginTop="16px" />
+        </S.InputWrapper>
 
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.onClickExit}
-        />
-      </ButtonWrapper>
+        <S.InfiniteScrollWrapper>
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={props.onLoadMore}
+            hasMore={true}
+            useWindow={false}
+          >
+            {props.data?.searchFriend.map((el) => (
+              <div key={uuidv4()}>
+                <ListItem
+                  rightChildren={
+                    <div style={{width: "120px", display:"flex", alignItems: "center", justifyContent: "space-between"}}>
+                      <div style={{width: "1px"}}></div>
+                      {el.userActive === 1 && <div style={{color: "#C7C7C7"}}>오프라인</div>}
+                      {el.userActive === 2 && <div style={{color: "#00B8FF"}}>게임중</div>}
+                      {!el.userActive && <div style={{color: "#03FF49"}}>온라인</div>}
+                      <img onClick={props.onClickReplay} style={{width: "28px"}} src="/icon/replay.png" />
+                    </div>
+                  }
+                >
+                  <ProfileCard
+                    character={el.character}
+                    nickname={el.nickname}
+                    online={el.userActive === 0 || el.userActive === 2}
+                    offline={el.userActive === 1}
+                    tier={el.userTier}
+                  >
+                    <S.Mmr>{Number(el.userMmr)}</S.Mmr>
+                  </ProfileCard>
+                </ListItem>
+              </div>
+            )) ?? <div></div>}
+          </InfiniteScroll>
+        </S.InfiniteScrollWrapper>
+      </S.Container>
+
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        isFixedAtBottom
+        onClick={props.onClickExit}
+      />
     </>
   );
 }

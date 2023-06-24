@@ -1,3 +1,5 @@
 export interface ISocialSettingUIProps {
-  exitClick: () => void;
+  onClickExit;
+  onLoadMore;
+  data;
 }
