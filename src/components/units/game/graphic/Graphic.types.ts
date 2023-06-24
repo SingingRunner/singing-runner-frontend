@@ -1,6 +1,7 @@
 import { IPlayersInfo } from "../Game.types";
 
 export interface IGrapicProps {
+  preventEvent?: boolean;
   appliedItems: string[];
   playersInfo: IPlayersInfo[];
   offItem: (item: string) => void;
