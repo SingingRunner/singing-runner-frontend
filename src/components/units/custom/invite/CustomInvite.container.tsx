@@ -7,7 +7,7 @@ import {
   FETCH_FRIEND,
 } from "./CustomInvite.queries";
 import { useRecoilState } from "recoil";
-import { userIdState } from "../../../../commons/store";
+import { roomInfoState, userIdState } from "../../../../commons/store";
 import { ChangeEvent, useCallback, useContext, useState } from "react";
 import {
   IQuery,
@@ -28,6 +28,8 @@ export default function CustomInvite() {
   //   setUserId(localStorage.getItem("userId") || "");
   // }, []);
 
+  const [roomInfo] = useRecoilState(roomInfoState);
+
   const { data: userData } = useQuery<
     Pick<IQuery, "fetchUser">,
     IQueryFetchUserArgs
@@ -35,7 +37,7 @@ export default function CustomInvite() {
 
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch } = useQuery<
+  const { data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -44,6 +46,7 @@ export default function CustomInvite() {
       page: 1,
       nickname: "",
     },
+    fetchPolicy: "network-only",
   });
 
   const getDebounce = useCallback(
@@ -84,8 +87,13 @@ export default function CustomInvite() {
     },
   });
 
+  const [isLimitCountModalOpen, setIsLimitCountModalOpen] = useState(false);
   const onClickInvite = (friendId: string) => {
     if (!userData?.fetchUser.nickname) return;
+    if (roomInfo.playerCount >= 3) {
+      setIsLimitCountModalOpen(true);
+      return;
+    }
     inviteFriend({
       variables: {
         friendId,
@@ -95,12 +103,34 @@ export default function CustomInvite() {
     fetchFriend({ variables: { userId: friendId } });
   };
 
+  const onLoadMore = () => {
+    if (data === undefined) return;
+    void fetchMore({
+      variables: {
+        page: Math.ceil((data?.searchFriend.length ?? 10) / 10) + 1,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (fetchMoreResult.searchFriend === undefined)
+          return { searchFriend: [...prev.searchFriend] };
+        return {
+          searchFriend: [
+            ...prev.searchFriend,
+            ...fetchMoreResult?.searchFriend,
+          ],
+        };
+      },
+    });
+  };
+
   return (
     <CustomInviteUI
       onClickInvite={onClickInvite}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}
+      isLimitCountModalOpen={isLimitCountModalOpen}
+      setIsLimitCountModalOpen={setIsLimitCountModalOpen}
+      onLoadMore={onLoadMore}
     />
   );
 }

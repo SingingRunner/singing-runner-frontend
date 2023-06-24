@@ -29,7 +29,7 @@ export default function CustomSong() {
   const [filter, setFilter] = useState("createdAt");
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch } = useQuery<
+  const { data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchSong">,
     IQuerySearchSongArgs
   >(SEARCH_SONG_QUERY, {
@@ -38,6 +38,7 @@ export default function CustomSong() {
       page: 1,
       filter,
     },
+    fetchPolicy: "network-only",
   });
 
   const onClickFilter = () => {
@@ -59,8 +60,8 @@ export default function CustomSong() {
     refetch({ filter: newFilter });
   };
 
-  const onClickSong = (songId: string) => {
-    // 노래가 변경되었으면
+  const onChangeSong = (songId: string) => {
+    // 노래가 변경되었으면 emit (roomInfo 변경은 on에서 처리)
     if (roomInfo.songId !== songId) socket?.emit("set_song", songId);
     router.push("/custom");
   };
@@ -72,6 +73,7 @@ export default function CustomSong() {
         ...prev,
         songTitle: data.songTitle,
         singer: data.singer,
+        songId: data.songId,
       }));
     });
   }, [socket]);
@@ -88,14 +90,31 @@ export default function CustomSong() {
     getDebounce(e.target.value);
   };
 
+  const onLoadMore = () => {
+    if (data === undefined) return;
+    void fetchMore({
+      variables: {
+        page: Math.ceil((data?.searchSong.length ?? 10) / 10) + 1,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (fetchMoreResult.searchSong === undefined)
+          return { searchSong: [...prev.searchSong] };
+        return {
+          searchSong: [...prev.searchSong, ...fetchMoreResult?.searchSong],
+        };
+      },
+    });
+  };
+
   return (
     <CustomSongUI
       filter={filter}
       onClickFilter={onClickFilter}
-      onClickSong={onClickSong}
+      onChangeSong={onChangeSong}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}
+      onLoadMore={onLoadMore}
     />
   );
 }
