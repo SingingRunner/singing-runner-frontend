@@ -3,11 +3,8 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
-// import { ChangeEvent, useEffect } from "react";
-// import { useRecoilState } from "recoil";
-// import { userInfoState } from "../../../commons/store";
-import Character from "./character/Character";
 
+import Character from "./character/Character";
 
 export default function MainUI(props: IMainUIProps) {
   // // 🚨 임시 가데이터 - 여기부터
@@ -83,8 +80,10 @@ export default function MainUI(props: IMainUIProps) {
           <option value="moose">무스</option>
         </select>
       </div> */}
-      <Character />
+
       {/* 🚨 임시 가데이터 - 여기까지 */}
+
+      <Character />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}
       {props.isBattleClicked && <AfterClickBattle {...props} />}
