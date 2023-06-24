@@ -114,7 +114,10 @@ export default function Custom() {
 
     // 게임 시작
     socket?.on("custom_start", () => {
-      router.push("/game");
+      // 아이템전
+      if (roomInfo.mode === "아이템") router.push("/game");
+      // 일반전
+      else router.push("/game/normal");
     });
   }, [socket]);
 
