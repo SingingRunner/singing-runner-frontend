@@ -4,6 +4,7 @@ import { IMainUIProps } from "../Main.types";
 export default function WaitingModal(props: IMainUIProps) {
   return (
     <>
+    {/* 아래 화면은 props.showWaiting이 true가 될 때 보여집니다. */}
       <Modal
         isCheck={false}
         firstText="다른 유저를 기다리는 중입니다." // TODO: 이 부분 수정이 필요합니다.
