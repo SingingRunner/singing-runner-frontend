@@ -1,10 +1,10 @@
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { userIdState } from '../../../../commons/store';
-import StartingUI from './Starting.presenter';
-import { IStartingUIProps } from './Starting.types';
+import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
+import StartingUI from "./Starting.presenter";
+import { IStartingUIProps } from "./Starting.types";
 
 const characters = [
   "beluga",
@@ -44,10 +44,10 @@ const UPDATE_CHARACTER = gql`
 export default function Starting() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });
@@ -58,20 +58,20 @@ export default function Starting() {
     updateCharacterMutation({
       variables: {
         userId,
-        character: characters[currentImageIndex]
+        character: characters[currentImageIndex],
       },
     })
       .then((result) => {
         // Handle the result if needed
-        console.log(data)
-        console.log("success userId: ", userId)
-        console.log("success character: ", characters[currentImageIndex])
+        console.log(data);
+        console.log("success userId: ", userId);
+        console.log("success character: ", characters[currentImageIndex]);
         console.log(result.data);
       })
       .catch((error) => {
         // Handle any errors
-        console.log("failure userId: ", userId)
-        console.log("failure character: ", characters[currentImageIndex])
+        console.log("failure userId: ", userId);
+        console.log("failure character: ", characters[currentImageIndex]);
         console.error(error);
       });
 
@@ -80,11 +80,13 @@ export default function Starting() {
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
-    console.log(characters[currentImageIndex])
+    console.log(characters[currentImageIndex]);
   };
-  
+
   const handlePreviousImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + characters.length) % characters.length);
+    setCurrentImageIndex(
+      (prevIndex) => (prevIndex - 1 + characters.length) % characters.length
+    );
   };
 
   const props: IStartingUIProps = {
