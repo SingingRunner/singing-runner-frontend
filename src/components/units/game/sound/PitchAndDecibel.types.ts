@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IPlayersInfo } from "../Game.types";
 
 export interface IPitchAndDecibelProps {
+  preventEvent?: boolean;
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
   isLoadComplete: boolean;
   originAnswer: number[];

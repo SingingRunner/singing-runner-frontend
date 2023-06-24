@@ -25,7 +25,6 @@ export default function Replay() {
   const router = useRouter();
   const isMyReplay = router.query.userId === userId;
   const { data, fetchMore, refetch } = useQuery(FETCH_REPLAYS);
-  // const [data, setData] = useState([]);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);

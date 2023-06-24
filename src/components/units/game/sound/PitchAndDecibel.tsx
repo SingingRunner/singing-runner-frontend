@@ -70,7 +70,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [props]);
 
   useEffect(() => {
-    socket?.on("game_ready", gameReady);
+    if (props.preventEvent) {
+      socket?.on("start_replay", gameReady);
+    } else {
+      socket?.on("game_ready", gameReady);
+    }
     socket?.on("score", scoreListener);
   }, [socket]);
 
@@ -80,13 +84,17 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       source.start();
     });
     props.setStartTime(new Date().getTime());
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then(handleAudioStream)
-      .catch((error) => {
-        console.error("Error accessing microphone:", error);
-      });
-    props.setIsLoadComplete(true);
+    if (!props.preventEvent) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then(handleAudioStream)
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
+      props.setIsLoadComplete(true);
+    } else {
+      props.setIsLoadComplete(true);
+    }
   };
 
   const scoreListener = (data: ISocketScore) => {

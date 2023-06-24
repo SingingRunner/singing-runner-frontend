@@ -41,7 +41,11 @@ export default function Sound(props: ISoundProps) {
 
   useEffect(() => {
     if (socket) {
-      socket.emit("loading");
+      if (props.preventEvent) {
+        socket.emit("load_replay");
+      } else {
+        socket.emit("loading");
+      }
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
       /** 입장한 게임의 MR, 정답 데이터, 유저 정보(id & 캐릭터) 조회 */
@@ -123,13 +127,21 @@ export default function Sound(props: ISoundProps) {
           });
 
           // 로딩 완료 신호 보내기
-          socket?.emit("game_ready");
+          if (props.preventEvent) {
+            socket.emit("start_replay");
+          } else {
+            socket?.emit("game_ready");
+          }
         } catch (err) {
           console.log(err);
         }
       };
 
-      socket.on("loading", fetchRoomInfo);
+      if (props.preventEvent) {
+        socket.on("load_replay", fetchRoomInfo);
+      } else {
+        socket.on("loading", fetchRoomInfo);
+      }
     }
   }, [socket]);
 
