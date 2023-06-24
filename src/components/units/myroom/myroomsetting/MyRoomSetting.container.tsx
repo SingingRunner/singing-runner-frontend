@@ -62,6 +62,17 @@ export default function MyRoomSetting() {
     }
   }, [data]);
 
+  const onClickReplay = () => {
+    try {
+      console.log("myId: ", userId);
+      router.push({
+        pathname: `/replay/${userId}`
+      });
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   const onClickLogout = () => {
     setIsLogoutClicked(true);
   };
@@ -100,6 +111,7 @@ export default function MyRoomSetting() {
     isLogoutClicked,
     onClickFinalLogout,
     onClickCancelLogout,
+    onClickReplay,
   };
 
   return <MyRoomSettingUI {...props} />;
