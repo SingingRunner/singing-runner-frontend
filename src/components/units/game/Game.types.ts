@@ -1,6 +1,9 @@
+export interface IGameProps {
+  preventEvent?: boolean;
+}
 export interface IGameUIProps {
+  preventEvent?: boolean;
   appliedItems: string[];
-
   songInfo: {
     title: string;
     singer: string;
