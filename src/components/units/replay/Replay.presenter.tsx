@@ -54,11 +54,11 @@ export default function ReplayUI(props: IReplayUIProps) {
           loadMore={props.onLoadMore}
           useWindow={false}
         >
-          {props.data?.fetchReplays.map((elem, index) =>
+          {props.data?.getUserReplays.map((elem, idx) =>
             props.isMyReplay ? (
               isSettingMode ? (
                 <ListItem
-                  key={elem.replayId}
+                  key={idx}
                   buttonText={elem.isPublic ? "공개" : "비공개"}
                   buttonType={
                     elem.isPublic
@@ -75,10 +75,11 @@ export default function ReplayUI(props: IReplayUIProps) {
                     <S.Singer>{elem.singer}</S.Singer>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
+                  <div>{elem.createdAt}</div>
                 </ListItem>
               ) : (
                 <ListItem
-                  key={elem.replayId}
+                  key={idx}
                   buttonText="보기"
                   buttonType={buttonType.SHORT_PINK}
                   onClick={
@@ -91,24 +92,29 @@ export default function ReplayUI(props: IReplayUIProps) {
                     <S.Singer>{elem.singer}</S.Singer>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
+                  <div>{elem.createdAt}</div>
                 </ListItem>
               )
             ) : (
               <ListItem
-                key={elem.replayId}
+                key={idx}
                 buttonText="보기"
                 buttonType={buttonType.SHORT_PINK}
                 onClick={
-                  props.playReplay ? () => props.playReplay(index) : () => {}
+                  props.playReplay
+                    ? () => props.playReplay(elem.replayId)
+                    : () => {}
                 }
               >
                 <S.SongWrapper>
-                  <S.Singer>{elem.singer}</S.Singer>
+                  <S.Singer>{elem.replayId}</S.Singer>
                   <S.SongTitle>{elem.songTitle}</S.SongTitle>
                 </S.SongWrapper>
+                <div>{elem.createdAt}</div>
               </ListItem>
             )
           )}
+          <></>
         </InfiniteScroll>
       </div>
       <ButtonWrapper>
