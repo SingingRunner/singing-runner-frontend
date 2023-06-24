@@ -53,10 +53,11 @@ export default function Replay() {
     IQueryGetUserReplaysArgs
   >(GET_USER_REPLAYS, {
     variables: {
-      isMyReplay: isMyReplay,
+      isMyReplay,
       pageNumber: 1,
       userId: currentUserId,
     },
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
@@ -66,7 +67,6 @@ export default function Replay() {
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
-    console.log("onLoadMore");
     void fetchMore({
       variables: {
         pageNumber: Math.ceil((data?.getUserReplays.length ?? 0) / 10) + 1,
@@ -84,26 +84,21 @@ export default function Replay() {
   };
 
   const playReplay = (replayId: number) => {
-    console.log("hello");
-    console.log("replayId", replayId);
     router.push(`/replay/ingame/${replayId}`);
   };
 
-  const setPublic = (replayId: number, isPublic: boolean) => {
-    console.log("hello");
-    console.log("replayId", replayId, "isPublic", isPublic);
+  const setPublic = async (replayId: number, isPublic: boolean) => {
     if (!isPublic) {
       setCurrentReplay(replayId);
       setIsModalOpen(true);
     } else {
-      console.log("?");
-      updatePublic({
+      await updatePublic({
         variables: {
-          replayId: replayId,
+          replayId,
           isPublic: 0,
         },
       });
-      setTimeout(() => refetch(), 50);
+      refetch();
     }
   };
 
@@ -111,15 +106,15 @@ export default function Replay() {
     setIsModalOpen(false);
   };
 
-  const changeToPublic = () => {
+  const changeToPublic = async () => {
     console.log(currentReplay);
-    updatePublic({
+    await updatePublic({
       variables: {
         replayId: currentReplay,
         isPublic: 1,
       },
     });
-    setTimeout(() => refetch(), 50);
+    refetch();
     setIsModalOpen(false);
   };
 

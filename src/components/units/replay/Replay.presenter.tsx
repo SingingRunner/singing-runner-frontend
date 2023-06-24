@@ -72,10 +72,16 @@ export default function ReplayUI(props: IReplayUIProps) {
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.ReplayInfo>
+                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.Date>
+                        {elem.createdAt.slice(2, 4)}년{" "}
+                        {elem.createdAt.slice(5, 7)}월{" "}
+                        {elem.createdAt.slice(8, 10)}일
+                      </S.Date>
+                    </S.ReplayInfo>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
-                  <div>{elem.createdAt}</div>
                 </ListItem>
               ) : (
                 <ListItem
@@ -89,10 +95,16 @@ export default function ReplayUI(props: IReplayUIProps) {
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.ReplayInfo>
+                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.Date>
+                        {elem.createdAt.slice(2, 4)}년{" "}
+                        {elem.createdAt.slice(5, 7)}월{" "}
+                        {elem.createdAt.slice(8, 10)}일
+                      </S.Date>
+                    </S.ReplayInfo>
                     <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
-                  <div>{elem.createdAt}</div>
                 </ListItem>
               )
             ) : (
@@ -107,10 +119,16 @@ export default function ReplayUI(props: IReplayUIProps) {
                 }
               >
                 <S.SongWrapper>
-                  <S.Singer>{elem.replayId}</S.Singer>
+                  <S.ReplayInfo>
+                    <S.Singer>{elem.singer}</S.Singer>
+                    <S.Date>
+                      {elem.createdAt.slice(2, 4)}년{" "}
+                      {elem.createdAt.slice(5, 7)}월{" "}
+                      {elem.createdAt.slice(8, 10)}일
+                    </S.Date>
+                  </S.ReplayInfo>
                   <S.SongTitle>{elem.songTitle}</S.SongTitle>
                 </S.SongWrapper>
-                <div>{elem.createdAt}</div>
               </ListItem>
             )
           )}
