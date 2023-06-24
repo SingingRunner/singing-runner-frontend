@@ -27,7 +27,7 @@ const Main = () => {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect } = socketContext;
-  
+
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
   const [singer, setSinger] = useState("");
@@ -43,7 +43,6 @@ const Main = () => {
   const [userKeynote, setUserKeynote] = useState("");
   const [userActive, setUserActive] = useState(false);
 
-
   const [userId, setUserId] = useRecoilState(userIdState);
 
   useEffect(() => {
@@ -52,7 +51,7 @@ const Main = () => {
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {
@@ -61,9 +60,6 @@ const Main = () => {
     setNickname(data?.fetchUser.nickname);
     setUserKeynote(data?.fetchUser.userKeynote);
     setUserActive(data?.fetchUser.userActive);
-    console.log("dtc", data?.fetchUser.character)
-    console.log("data", data)
-    
   }, [data?.fetchUser.character]);
 
   const onClickSocial = () => {
@@ -150,6 +146,8 @@ const Main = () => {
   };
 
   const onClickCustomMode = () => {
+    // 소켓 연결
+    socketConnect();
     // 커스텀 모드 화면으로 전환
     router.push("/custom");
   };

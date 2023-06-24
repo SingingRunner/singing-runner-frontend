@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useRecoilState} from "recoil";
-import { accessTokenState} from "../../../commons/store";
+import { useRecoilState } from "recoil";
+import { accessTokenState } from "../../../commons/store";
 import LoginUI from "./Login.presenter";
 import { ILoginUIProps } from "./Login.types";
 import { gql, useMutation } from "@apollo/client";
@@ -41,7 +41,6 @@ export default function Login() {
   const [isLoginButtonEnabled, setLoginButtonEnabled] = useState(false);
 
   const [, setAccessToken] = useRecoilState(accessTokenState);
-  // const setUserInfo = useSetRecoilState(userInfoState);
 
   useEffect(() => {
     // 유효성 검사 결과 => 가입 완료 버튼 활성화 여부 업데이트.
@@ -90,7 +89,7 @@ export default function Login() {
       setAccessToken(accessToken);
       alert("로그인에 성공했습니다!");
       localStorage.setItem("userId", loginUserInfo?.userId || "");
-      
+
       // 3. 로그인 성공 후 메인 페이지로 이동
       router.push("/main");
     } catch (error) {

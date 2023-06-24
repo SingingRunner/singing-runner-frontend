@@ -1,20 +1,34 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
 import {
   ISocketGameSongData,
   ISocketLoadingData,
   ISoundProps,
 } from "./Sound.types";
+import { FETCH_USER } from "../Game.queries";
+import { useQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../../commons/types/generated/types";
 
 export default function Sound(props: ISoundProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
+  const { data: userData } = useQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, { variables: { userId } });
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);
@@ -103,7 +117,7 @@ export default function Sound(props: ISoundProps) {
             const newPlayersInfo = [...prev];
             data.characterList.forEach((el, i) => {
               // 현재 유저 제외하고 추가
-              if (el.userId !== userInfo.userId) {
+              if (el.userId !== userId) {
                 newPlayersInfo.push({
                   userId: data.characterList[i].userId,
                   character: data.characterList[i].character,
@@ -137,13 +151,13 @@ export default function Sound(props: ISoundProps) {
     let keyOrigin: string;
     let keyUp: string;
     let keyDown: string;
-    switch (userInfo.userKeynote) {
-      case "male":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         keyOrigin = gameSong.songMale;
         keyUp = gameSong.songMaleUp;
         keyDown = gameSong.songMaleDown;
         break;
-      case "female":
+      case 2:
         keyOrigin = gameSong.songFemale;
         keyUp = gameSong.songFemaleUp;
         keyDown = gameSong.songFemaleDown;
@@ -168,13 +182,13 @@ export default function Sound(props: ISoundProps) {
     let answerOrigin: number[];
     let answerUp: number[];
     let answerDown: number[];
-    switch (userInfo.userKeynote) {
-      case "male":
+    switch (userData?.fetchUser.userKeynote) {
+      case 1:
         answerOrigin = gameSong.vocalMale;
         answerUp = gameSong.vocalMaleUp;
         answerDown = gameSong.vocalMaleDown;
         break;
-      case "female":
+      case 2:
         answerOrigin = gameSong.vocalFemale;
         answerUp = gameSong.vocalFemaleUp;
         answerDown = gameSong.vocalFemaleDown;

@@ -4,8 +4,8 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { IGrapicProps } from "./Graphic.types";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilValue } from "recoil";
-import { userInfoState } from "../../../../commons/store";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
 import { gsap } from "gsap";
 import { useRouter } from "next/router";
 import Button, { buttonType } from "../../../commons/button/Button";
@@ -24,7 +24,10 @@ export default function Graphic(props: IGrapicProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
 
   const [players, setPlayers] = useState<{
     mid: THREE.Object3D | undefined;
@@ -439,7 +442,7 @@ export default function Graphic(props: IGrapicProps) {
       if (health <= SNOWMAN_DAMAGE_INTERVAL) {
         socket?.emit("escape_item", {
           item: "frozen",
-          userId: userInfo.userId,
+          userId,
         });
       }
       const newHealth = Math.max(health - SNOWMAN_DAMAGE_INTERVAL, 0);
