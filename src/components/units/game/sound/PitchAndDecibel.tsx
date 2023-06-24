@@ -82,7 +82,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [props]);
 
   useEffect(() => {
-    if (props.preventEvent) {
+    if (props.isReplay) {
       socket?.on("start_replay", gameReady);
     } else {
       socket?.on("game_ready", gameReady);
@@ -96,7 +96,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       source.start();
     });
     props.setStartTime(new Date().getTime());
-    if (!props.preventEvent) {
+    if (!props.isReplay) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(handleAudioStream)
@@ -122,7 +122,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
   const [, setPrevScore] = useState(0);
   const calculateScore = (noteValue: number, idx: number): number => {
-    if (props.preventEvent) return 0;
+    if (props.isReplay) return 0;
     let score: number = 0;
     let answer: number[] = [];
     const originAnswer = propsRef.current.originAnswer;

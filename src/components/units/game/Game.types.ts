@@ -1,5 +1,6 @@
 export interface IGameProps {
   preventEvent?: boolean;
+  isReplay?: boolean;
 }
 export interface IGameUIProps {
   preventEvent?: boolean;

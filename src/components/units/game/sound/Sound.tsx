@@ -223,6 +223,7 @@ export default function Sound(props: ISoundProps) {
     <>
       <PitchAndDecibel
         preventEvent={props.preventEvent}
+        isReplay={props.isReplay}
         setPlayersInfo={props.setPlayersInfo}
         isLoadComplete={props.isLoadComplete}
         originAnswer={originAnswer}

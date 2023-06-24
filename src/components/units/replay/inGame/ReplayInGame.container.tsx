@@ -12,7 +12,7 @@ export default function ReplayInGame() {
   }, []);
   return (
     <>
-      <Game preventEvent={true} />
+      <Game preventEvent={true} isReplay={true} />
     </>
   );
 }
