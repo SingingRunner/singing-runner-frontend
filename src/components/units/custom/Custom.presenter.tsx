@@ -6,6 +6,26 @@ import ProfileCard from "../../commons/profileCard/ProfileCard";
 import * as S from "./Custom.styles";
 import { ICustomUIProps } from "./Custom.types";
 import Label from "../../commons/label/Label";
+import { v4 as uuidv4 } from "uuid";
+// 🚨 가데이터
+const tempPlayersData = [
+  {
+    userId: "아이디",
+    userTier: "bronze",
+    nickname: "닉네임1",
+    isHost: true,
+    isFriend: false,
+    character: "beluga",
+  },
+  {
+    userId: "아이디2",
+    userTier: "silver",
+    nickname: "닉네임2",
+    isHost: false,
+    isFriend: true,
+    character: "husky",
+  },
+];
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
   return (
@@ -17,9 +37,25 @@ export default function CustomUI(props: ICustomUIProps) {
           onClickRight={() => props.setIsSongModalOpen(false)}
         />
       )}
-      {props.isPrevModalOpen && (
+      {props.isNotHostModalOpen && (
+        <Modal
+          firstText="방 설정은 방장만 변경할 수 있어요"
+          buttonText="확인"
+          onClickRight={() => props.setIsNotHostModalOpen(false)}
+        />
+      )}
+      {props.isPrevModalOpen && props.isHost && (
         <Modal
           firstText="생성 중인 방을 삭제하시겠어요?"
+          buttonText="확인"
+          leftButtonText="취소"
+          onClickRight={props.onClickExit}
+          onClickLeft={() => props.setIsPrevModalOpen(false)}
+        />
+      )}
+      {props.isPrevModalOpen && !props.isHost && (
+        <Modal
+          firstText="정말로 나가시겠어요?"
           buttonText="확인"
           leftButtonText="취소"
           onClickRight={props.onClickExit}
@@ -31,29 +67,30 @@ export default function CustomUI(props: ICustomUIProps) {
         onClickPrev={() => props.setIsPrevModalOpen(true)}
       />
       <S.PlayersWrapper>
-        <S.JoinedPlayer>
-          <ProfileCard
-            character="beluga"
-            nickname="우주꼬맹단육"
-            tier="bronze"
-            margin="0 0 0 20px"
+        {tempPlayersData.map((el) => (
+          // {props.playersData.map((el) => (
+          <S.JoinedPlayer key={uuidv4()}>
+            <ProfileCard
+              character={el.character}
+              nickname={el.nickname}
+              tier={el.userTier}
+              margin="0 0 0 20px"
+              add={!el.isFriend}
+              friendId={el.userId}
+            >
+              {el.isHost && <S.Host>방장</S.Host>}
+            </ProfileCard>
+          </S.JoinedPlayer>
+        ))}
+        {/* {new Array(3 - props.playersData.length).fill("").map((_) => ( */}
+        {3 - tempPlayersData.length > 0 && (
+          <S.EmptyPlayer
+            key={uuidv4()}
+            onClick={() => router.push("/custom/invite")}
           >
-            <S.Host>방장</S.Host>
-          </ProfileCard>
-        </S.JoinedPlayer>
-        <S.JoinedPlayer>
-          <ProfileCard
-            character="beluga"
-            nickname="우주꼬맹단육"
-            tier="gold"
-            add
-            margin="0 0 0 20px"
-            friendId="test"
-          />
-        </S.JoinedPlayer>
-        <S.EmptyPlayer onClick={() => router.push("/custom/invite")}>
-          + 초대하기
-        </S.EmptyPlayer>
+            + 초대하기
+          </S.EmptyPlayer>
+        )}
       </S.PlayersWrapper>
       <S.SettingWrapper>
         <Label text="게임 모드" />
@@ -67,15 +104,12 @@ export default function CustomUI(props: ICustomUIProps) {
         <Label text="노래 선택" />
         {!props.roomInfo.songTitle ? (
           <Button
-            onClick={() => router.push("/custom/song")}
+            onClick={props.onClickSong}
             buttonType={buttonType.SEARCH}
             text="노래 찾기"
           />
         ) : (
-          <Button
-            onClick={() => router.push("/custom/song")}
-            buttonType={buttonType.ONECOLOR}
-          >
+          <Button onClick={props.onClickSong} buttonType={buttonType.ONECOLOR}>
             <S.SongButtonWrapper>
               <S.SearchIcon src="/icon/search.png" />
               <S.Song>
@@ -87,22 +121,24 @@ export default function CustomUI(props: ICustomUIProps) {
           </Button>
         )}
       </S.SettingWrapper>
-      {/* 노래 선택 전 */}
-      {!props.roomInfo.songTitle ? (
-        <Button
-          buttonType={buttonType.DISABLED}
-          text="게임 시작"
-          isFixedAtBottom
-          onClick={() => props.setIsSongModalOpen(true)}
-        />
-      ) : (
-        <Button
-          buttonType={buttonType.GRADATION}
-          text="게임 시작"
-          isFixedAtBottom
-          onClick={props.onClickGameStart}
-        />
-      )}
+
+      {/* 게임 시작 버튼은 방장에게만 노출 */}
+      {props.isHost &&
+        (!props.roomInfo.songTitle ? (
+          <Button
+            buttonType={buttonType.DISABLED}
+            text="게임 시작"
+            isFixedAtBottom
+            onClick={() => props.setIsSongModalOpen(true)}
+          />
+        ) : (
+          <Button
+            buttonType={buttonType.GRADATION}
+            text="게임 시작"
+            isFixedAtBottom
+            onClick={props.onClickGameStart}
+          />
+        ))}
     </>
   );
 }

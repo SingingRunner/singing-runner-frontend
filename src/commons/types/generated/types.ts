@@ -96,6 +96,7 @@ export type IMutation = {
   removeFriend: Scalars['String']['output'];
   saveReplay: IReply;
   updateCharacter: IUserCharacterResponseDto;
+  updateReplayIsPublic: IReplayIsPublicResponseDto;
   updateUserKeynote: IUserKeynoteResponseDto;
 };
 
@@ -158,6 +159,12 @@ export type IMutationUpdateCharacterArgs = {
 };
 
 
+export type IMutationUpdateReplayIsPublicArgs = {
+  isPublic: Scalars['Int']['input'];
+  replayId: Scalars['Int']['input'];
+};
+
+
 export type IMutationUpdateUserKeynoteArgs = {
   keynote: IUserKeynoteStatus;
   userId: Scalars['String']['input'];
@@ -180,7 +187,7 @@ export type IQuery = {
   fetchUserGuard: IAuthUserDto;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
-  searchFriend: Array<IUser>;
+  searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
 };
@@ -223,6 +230,12 @@ export type IQuerySearchUserArgs = {
   page: Scalars['Float']['input'];
 };
 
+export type IReplayIsPublicResponseDto = {
+  __typename?: 'ReplayIsPublicResponseDto';
+  isPublic: Scalars['Int']['output'];
+  replayId: Scalars['String']['output'];
+};
+
 export type IReplayWithSongInfo = {
   __typename?: 'ReplayWithSongInfo';
   createdAt: Scalars['DateTime']['output'];
@@ -242,6 +255,16 @@ export type IRequestDto = {
   __typename?: 'RequestDto';
   senderId: Scalars['String']['output'];
   senderNickname: Scalars['String']['output'];
+};
+
+export type ISearchFriendDto = {
+  __typename?: 'SearchFriendDto';
+  character: Scalars['String']['output'];
+  nickname: Scalars['String']['output'];
+  userActive: Scalars['Int']['output'];
+  userId: Scalars['String']['output'];
+  userMmr: Scalars['Int']['output'];
+  userTier: Scalars['String']['output'];
 };
 
 export type IUser = {
