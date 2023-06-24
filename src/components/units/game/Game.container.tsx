@@ -153,6 +153,7 @@ export default function Game(props: IGameProps) {
     socket?.on("game_terminated", (data: IGameResult[]) => {
       setGameResult(data);
       setIsTerminated(true);
+      console.log("게임 종료, on(game_terminated)");
     });
   }, [socket]);
 

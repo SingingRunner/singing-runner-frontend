@@ -1,9 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
-import { useRecoilValue } from "recoil";
+
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
+
 import { gql, useMutation } from "@apollo/client";
-import { userInfoState } from "../../../../commons/store";
+
+
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -58,7 +62,10 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const userInfo = useRecoilValue(userInfoState);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
 
   const pitchAveragesRef = useRef<number[]>([]);
 
@@ -157,7 +164,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     // 서버에 현재 유저의 점수 전송
     setPrevScore((prev) => {
       if (prev !== currentScore) {
-        socket?.emit("score", { userId: userInfo.userId, score: currentScore });
+        socket?.emit("score", { userId, score: currentScore });
       }
       return currentScore;
     });
@@ -175,9 +182,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
       socket?.emit("game_terminated", {
-        userId: userInfo.userId,
+        userId,
         score: currentScore,
       });
+
+      console.log("게임 종료, emit(game_terminated)");
+
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = () => {
@@ -185,11 +195,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         const result = uploadFile({
           variables: {
             userVocal: base64data,
-            userId: userInfo.userId,
+            userId,
           },
         });
         result.then(() => {});
       };
+
     };
     mediaRecorder.start();
 
