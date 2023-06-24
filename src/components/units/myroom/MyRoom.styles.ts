@@ -99,8 +99,9 @@ export const LetterTier = styled.div`
     } else if (props.tier === "SILVER") {
       return `color: #d3d3d3;`;
     } else if (props.tier === "BRONZE") {
-      return `color: #b56a2b;`
-    }}};
+      return `color: #b56a2b;`;
+    }
+  }};
 `;
 
 export const IconTier = styled.img`
