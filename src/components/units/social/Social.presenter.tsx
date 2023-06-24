@@ -37,9 +37,9 @@ export default function SocialUI(props: ISocialUIProps) {
                   rightChildren={
                     <div style={{width: "120px", display:"flex", alignItems: "center", justifyContent: "space-between"}}>
                       <div style={{width: "1px"}}></div>
-                      {el.userActive === 1 && <div style={{color: "#00B8FF"}}>온라인</div>}
-                      {el.userActive === 2 && <div style={{color: "#03FF49"}}>게임중</div>}
-                      {!el.userActive && <div style={{color: "#C7C7C7"}}>오프라인</div>}
+                      {el.userActive === 1 && <div style={{color: "#C7C7C7"}}>오프라인</div>}
+                      {el.userActive === 2 && <div style={{color: "#00B8FF"}}>게임중</div>}
+                      {!el.userActive && <div style={{color: "#03FF49"}}>온라인</div>}
                       <img onClick={props.onClickReplay} style={{width: "28px"}} src="/icon/replay.png" />
                     </div>
                   }
@@ -47,8 +47,8 @@ export default function SocialUI(props: ISocialUIProps) {
                   <ProfileCard
                     character={el.character}
                     nickname={el.nickname}
-                    online={el.userActive}
-                    offline={!el.userActive}
+                    online={el.userActive === 0 || el.userActive === 2}
+                    offline={el.userActive === 1}
                     tier={el.userTier}
                   >
                     <S.Mmr>{Number(el.userMmr)}</S.Mmr>
