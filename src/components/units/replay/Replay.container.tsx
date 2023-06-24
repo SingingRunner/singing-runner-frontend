@@ -1,8 +1,8 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import ReplayUI from "./Replay.presenter";
-import { userInfoState } from "../../../commons/store";
+import { userIdState } from "../../../commons/store";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { buttonType } from "../../commons/button/Button";
 import Modal from "../../commons/modal/Modal";
 import { gql, useMutation, useQuery } from "@apollo/client";
@@ -29,20 +29,28 @@ const UPDATE_PUBLIC = gql`
 `;
 
 export default function Replay() {
-  const userInfo = useRecoilValue(userInfoState);
-  const userId = userInfo.userId;
   const router = useRouter();
-  const isMyReplay = router.query.userId === userId;
+  const [isMyReplay, setIsMyReplay] = useState(false);
   const { data, fetchMore, refetch } = useQuery(FETCH_REPLAYS);
+  const [currentUserId, setCurrentUserId] = useRecoilState(userIdState);
   const [updatePublic] = useMutation(UPDATE_PUBLIC);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);
 
+  useEffect(() => {
+    setCurrentUserId(localStorage.getItem("userId") || "");
+    setIsMyReplay(currentUserId === router.query.userId);
+  }, []);
+
   const onLoadMore = (): void => {
     console.log("onLoadMore");
     void fetchMore({
-      variables: { page: Math.ceil(data?.fetchReplays.length ?? 10 / 10) + 1 },
+      variables: {
+        userId: currentUserId,
+        page: Math.ceil(data?.fetchReplays.length ?? 10 / 10) + 1,
+        isMyReplay: isMyReplay,
+      },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (fetchMoreResult.fetchReplays === undefined)
           return { fetchReplays: [...prev.fetchReplays] };
