@@ -1,5 +1,8 @@
 export interface ISocialSettingUIProps {
-  onClickExit;
-  onLoadMore;
-  data;
+  onClickExit: () => void
+  onLoadMore: () => void
+  data: any
+  onClickDelete: (id: string) => () => void
+  nickname: string
+  onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void
 }

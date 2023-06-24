@@ -1,5 +1,6 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 import {
@@ -9,6 +10,7 @@ import {
 // import _ from "lodash";
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
+import _ from 'lodash'
 
 const SEARCH_FRIEND = gql`
   query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
@@ -23,13 +25,21 @@ const SEARCH_FRIEND = gql`
   }
 `;
 
-export default function SocialSetting() {
-  const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
+const REMOVE_FRIEND = gql`
+  mutation RemoveFriend($addFriendDto: AddFriendDto!) {
+    removeFriend(addFriendDto: $addFriendDto)
+  }
+`;
 
-  const { data, fetchMore } = useQuery<
+export default function SocialSetting() {
+  const router = useRouter();
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const [nickname, setNickname] = useState("");
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
+  const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -38,6 +48,7 @@ export default function SocialSetting() {
       nickname: "",
       page: 1,
     },
+    fetchPolicy: 'network-only',
   });
 
   const onLoadMore = (): void => {
@@ -57,8 +68,38 @@ export default function SocialSetting() {
       },
     });
   };
+  const [removeFriend] = useMutation(REMOVE_FRIEND);
 
-  const router = useRouter();
+  const getDebounce = useCallback(
+    _.debounce((data) => {
+      refetch({ nickname: data.trim() });
+    }, 200),
+    [refetch]
+  );
+
+  const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
+    setNickname(e.target.value);
+    getDebounce(e.target.value);
+  };
+
+  const onClickDelete = (friendId: string) => () => {
+    try {
+      console.log("delete friendId: ", friendId);
+      console.log("delete userId: ", userId)
+      removeFriend({
+        variables: {
+          addFriendDto: {
+            userId,
+            friendId
+          }
+        }
+      });
+      alert("친구가 삭제되었습니다.");
+      refetch();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   // 나가기 버튼 클릭 시 소셜 페이지로 이동
   const onClickExit = () => {
@@ -69,6 +110,9 @@ export default function SocialSetting() {
     onClickExit,
     onLoadMore,
     data,
+    onClickDelete,
+    nickname,
+    onChangeNickname,
   };
 
   return <SocialSettingUI {...props} />;
