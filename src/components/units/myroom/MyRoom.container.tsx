@@ -28,6 +28,7 @@ const FETCH_USER = gql`
       userMmr
       userPoint
       character
+      userTier
     }
   }
 `;
@@ -43,15 +44,13 @@ const UPDATE_CHARACTER = gql`
 
 
 export default function MyRoom() {
-  // const userInfo = useRecoilValue(userInfoState);
-  // const userId = userInfo.userId;
-  
   const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [character, setCharacter] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
-  // const setUserInfo = useSetRecoilState(userInfoState);
+  const [tier, setTier] = useState("");
+  const [mmr, setMmr] = useState(0);
   const [userId, setUserId] = useRecoilState(userIdState);
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
@@ -65,29 +64,19 @@ export default function MyRoom() {
     router.push("/myroom/setting");
   };
 
-
-  // 새로고침 시 닉네임이 안보이는 현상 없애기 위해 로컬스토리지에 저장
-  useEffect(() => {
-    const storedNickname = localStorage.getItem("nickname");
-    if (storedNickname) {
-      setNickname(storedNickname);
-    }
-    const storedCharacter = localStorage.getItem("character");
-    if (storedCharacter) {
-      setCharacter(storedCharacter);
-    }
-  }, []);
-
   useEffect(() => {
     if (data?.fetchUser) {
       setNickname(data.fetchUser.nickname);
       localStorage.setItem("nickname", data.fetchUser.nickname);
-      // 로그인 된 사용자의 아이디로 userInfo 업데이트
-      // setUserInfo((prevUserInfo) => ({
-      //   ...prevUserInfo,
-      //   userId: data.fetchUser.userId,
-      //   character: data.fetchUser.character,
-      // }));
+      setCharacter(data.fetchUser.character);
+      localStorage.setItem("character", data.fetchUser.character);
+      setTier(data.fetchUser.userTier);
+      setMmr(data.fetchUser.userMmr);
+      const characterIndex = characters.findIndex(
+        (char) => char === data.fetchUser.character
+      );
+
+      setCurrentImageIndex(characterIndex);
     }
   }, [data]);
 
@@ -134,6 +123,8 @@ export default function MyRoom() {
     handlePreviousImage,
     handleNextImage,
     character,
+    tier,
+    mmr,
   };
 
   return <MyRoomUI {...props} />;

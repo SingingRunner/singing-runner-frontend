@@ -7,4 +7,6 @@ export interface IMyRoomUIProps {
   handlePreviousImage: () => void;
   handleNextImage: () => void;
   character: string;
+  tier: string;
+  mmr: number;
 }

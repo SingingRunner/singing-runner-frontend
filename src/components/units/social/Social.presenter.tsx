@@ -1,27 +1,25 @@
 import InfiniteScroll from "react-infinite-scroller";
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import Input, { inputType } from "../../commons/input/Input";
 import ListItem from "../../commons/listItem/ListItem";
+import ProfileCard from "../../commons/profileCard/ProfileCard";
 import { ISocialUIProps } from "./Social.types";
+import { v4 as uuidv4 } from "uuid";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <div style={{ height: "20px" }}>
-        <img
-          src="/icon/setting.png"
-          onClick={props.onClickSetting}
-          style={{
-            width: "40px",
-            height: "40px",
-            marginTop: "-68px",
-            marginLeft: "292px",
-            marginBottom: "48px",
-          }}
-        />
-      </div>
-
+      <img
+        src="/icon/setting.png"
+        onClick={props.onClickSetting}
+        style={{
+          position: "absolute",
+          height: "40px",
+          width: "auto",
+          top: "8px",
+          right: "8px",
+        }}
+      />
       <div
         style={{
           height: "100vh",
@@ -34,7 +32,11 @@ export default function SocialUI(props: ISocialUIProps) {
         }}
       >
         <div
-          style={{ position: "relative", width: "100%", marginTop: "-620px" }}
+          style={{
+            position: "fixed",
+            width: "calc(100% - 32px)",
+            top: "60px",
+          }}
         >
           <img
             style={{
@@ -54,7 +56,9 @@ export default function SocialUI(props: ISocialUIProps) {
         </div>
         <div
           style={{
-            height: "40px",
+            position: "absolute",
+            top: "54px",
+            height: "540px",
             width: "100%",
             overflow: "auto",
           }}
@@ -66,32 +70,24 @@ export default function SocialUI(props: ISocialUIProps) {
             useWindow={false}
           >
             {props.data?.getFriendList.map((el) => (
-              <div key={el._id}>
-                <span style={{ margin: "10px" }}>{el.nickname}</span>
-                <span style={{ margin: "10px" }}>{el.userMmr}</span>
-                <span style={{ margin: "10px" }}>{el.userTier}</span>
+              <div key={uuidv4()}>
+                <ListItem rightChildren={<div>내용</div>}>
+                  <ProfileCard
+                    character={el.character}
+                    nickname={el.nickname}
+                  ></ProfileCard>
+                </ListItem>
               </div>
-            ))}
+            )) ?? <div></div>}
           </InfiniteScroll>
-          <img
-            src="/icon/replay.png"
-            style={{ height: "24px", marginLeft: "280px", marginTop: "16px" }}
-            onClick={props.onClickReplay}
-          />
-          <ListItem
-            buttonType={buttonType.SHORT}
-            buttonText="이 부분 버튼 없어야함"
-          ></ListItem>
         </div>
       </div>
-
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.onClickExit}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        isFixedAtBottom
+        onClick={props.onClickExit}
+      />
     </>
   );
 }

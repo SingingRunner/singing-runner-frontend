@@ -1,15 +1,14 @@
 // import InfiniteScroll from "react-infinite-scroller";
+import InfiniteScroll from "react-infinite-scroller";
 import Button, { buttonType } from "../../../commons/button/Button";
-import ButtonWrapper from "../../../commons/buttons/wrapper";
 import Input, { inputType } from "../../../commons/input/Input";
 import ListItem from "../../../commons/listItem/ListItem";
+import ProfileCard from "../../../commons/profileCard/ProfileCard";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
     <>
-      <div style={{ height: "20px" }}></div>
-
       <div
         style={{
           height: "100vh",
@@ -22,7 +21,11 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
         }}
       >
         <div
-          style={{ position: "relative", width: "100%", marginTop: "-620px" }}
+          style={{
+            position: "fixed",
+            width: "calc(100% - 32px)",
+            top: "60px",
+          }}
         >
           <img
             style={{
@@ -42,12 +45,12 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
         </div>
         <div
           style={{
-            height: "40px",
+            height: "140px",
             width: "100%",
             overflow: "auto",
           }}
         >
-          {/* <InfiniteScroll
+          <InfiniteScroll
             pageStart={0}
             loadMore={props.onLoadMore}
             hasMore={true}
@@ -55,26 +58,23 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
           >
             {props.data?.getFriendList.map((el) => (
               <div key={el._id}>
-                <span style={{ margin: "10px" }}>{el.nickname}</span>
-                <span style={{ margin: "10px" }}>{el.userMmr}</span>
-                <span style={{ margin: "10px" }}>{el.userTier}</span>
+                <ListItem rightChildren={<div>내용</div>}>
+                  <ProfileCard
+                    character={el.character}
+                    nickname={el.nickname}
+                  ></ProfileCard>
+                </ListItem>
               </div>
             ))}
-          </InfiniteScroll> */}
-          <ListItem
-            buttonType={buttonType.SHORT_DISABLED}
-            buttonText="삭제"
-          ></ListItem>
+          </InfiniteScroll>
         </div>
       </div>
-
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.onClickExit}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        isFixedAtBottom
+        onClick={props.onClickExit}
+      />
     </>
   );
 }

@@ -1,51 +1,16 @@
+import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
 import Button, { buttonType } from "../../../commons/button/Button";
 import Modal from "../../../commons/modal/Modal";
-import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
+import * as S from "./MyRoomSetting.styles";
 
 export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
   return (
     <>
-      <div style={{ height: "32px", color: "white" }}>키 설정</div>
-      <div>
-        <Button buttonType={buttonType.ONECOLOR} text="원키" />
-        <img
-          src="/images/buttonleft.png"
-          style={{
-            position: "absolute",
-            height: "14px",
-            top: "124px",
-            left: "34px",
-          }}
-        />
-        <img
-          src="/images/buttonright.png"
-          style={{
-            position: "absolute",
-            height: "14px",
-            top: "124px",
-            right: "68px",
-          }}
-        />
-      </div>
-      <div style={{ height: "32px", color: "white" }}>리플레이</div>
-      <Button buttonType={buttonType.ONECOLOR} text="리플레이 목록" />
-      <div
-        onClick={props.onClickLogout}
-        style={{
-          position: "fixed",
-          bottom: "56px",
-          width: "calc(100% - 32px)",
-          height: "44px",
-          marginBottom: "16px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "16px",
-          color: "white",
-        }}
-      >
-        로그아웃
-      </div>
+      <S.Option>키 설정</S.Option>
+      <Button buttonType={buttonType.SELECT} text="원키" />
+      <S.Option>리플레이</S.Option>
+      <Button buttonType={buttonType.ONECOLOR_PINK} text="리플레이 목록" />
+      <S.Logout onClick={props.onClickLogout}>로그아웃</S.Logout>
       <Button
         buttonType={buttonType.EMPTY}
         text="나가기"

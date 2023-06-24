@@ -1,5 +1,8 @@
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { userIdState } from '../../../../commons/store';
 import {
   IQuery,
   IQueryGetFriendListArgs,
@@ -21,14 +24,17 @@ const GET_FRIEND_LIST = gql`
 `;
 
 export default function SocialSetting() {
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
   const { data, fetchMore } = useQuery<
     Pick<IQuery, "getFriendList">,
     IQueryGetFriendListArgs
-  >(GET_FRIEND_LIST, {
-    variables: {
-      userId: "b4179050-53e9-4641-9fde-bb20a2649286",
-      page: 1.0,
-    },
+  >(GET_FRIEND_LIST, {variables: {
+    userId,
+    page: 1}
   });
 
   const onLoadMore = (): void => {

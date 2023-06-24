@@ -7,10 +7,8 @@ interface ICenterProps {
 
 export default function Center(props: ICenterProps) {
   return (
-    <S.Wrapper>
       <S.Center>
-        <img src={props.src} alt={props.alt} />
+        <S.Image src={props.src} alt={props.alt} />
       </S.Center>
-    </S.Wrapper>
   );
 }

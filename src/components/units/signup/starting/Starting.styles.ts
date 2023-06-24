@@ -38,3 +38,12 @@ export const ImageVectorRight = styled.img`
   width: 36px; /* Set the desired width */
   height: auto; /* Adjust the height proportionally */
 `;
+
+export const ImageCharacter = styled.img`
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; /* Set the desired width */
+  height: auto; /* Adjust the height proportionally */
+  /* margin: 0 0; Center the image horizontally */
+`;

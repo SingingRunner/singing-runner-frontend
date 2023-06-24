@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import SignupUI from "./Initial.presenter";
+import InitialUI from './Initial.presenter';
 import { IInitialUIProps } from "./Initial.types";
 
 export default function Initial() {
@@ -18,5 +18,5 @@ export default function Initial() {
     handleLoginClick,
   };
 
-  return <SignupUI {...props} />;
+  return <InitialUI {...props} />;
 }

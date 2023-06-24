@@ -18,23 +18,24 @@ export const ImageCharacter = styled.img`
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 200px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
-  /* margin: 0 0; Center the image horizontally */
+  width: 200px;
+  height: auto;
 `;
 
-export const ImageVectorLeft = styled.img`
-  position: absolute;
-  left: 4vw;
-  transform: translate(-540%, 0%);
-  width: 36px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+export const Option = styled.div`
+  height: 32px;
+  color: white;
 `;
 
-export const ImageVectorRight = styled.img`
-  position: absolute;
-  right: 4vw;
-  transform: translate(540%, 0%);
-  width: 36px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+export const Logout = styled.div`
+  position: fixed;
+  bottom: 56px;
+  width: calc(100% - 32px);
+  height: 44px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: white;
 `;

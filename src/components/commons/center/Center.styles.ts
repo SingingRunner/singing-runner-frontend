@@ -1,15 +1,13 @@
 import styled from "@emotion/styled";
 
-export const Wrapper = styled.div`
-  position: relative;
-  top: 30%;
+export const Center = styled.div`
+  width: calc(100% - 32px);
+  height: calc(100vh - 240px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-export const Center = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: auto;
+export const Image = styled.img`
+  border-radius: 10%;
 `;

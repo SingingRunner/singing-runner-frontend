@@ -1,11 +1,17 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { IQuery, IQueryGetFriendListArgs } from '../../../commons/types/generated/types';
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../commons/store";
+import {
+  IQuery,
+  IQueryGetFriendListArgs,
+} from "../../../commons/types/generated/types";
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 
 const GET_FRIEND_LIST = gql`
-  query getFriendList($userId: String!, $page: Float!){
+  query getFriendList($userId: String!, $page: Float!) {
     getFriendList(userId: $userId, page: $page) {
       userId
       nickname
@@ -15,31 +21,43 @@ const GET_FRIEND_LIST = gql`
       userTier
     }
   }
-`
+`;
 
 export default function Social() {
+  const [userId, setUserId] = useRecoilState(userIdState);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId") || "");
+  }, []);
+
   const { data, fetchMore } = useQuery<
     Pick<IQuery, "getFriendList">,
     IQueryGetFriendListArgs
-  >(GET_FRIEND_LIST, {variables: {
-    userId: "b4179050-53e9-4641-9fde-bb20a2649286",
-    page: 1.0}
+  >(GET_FRIEND_LIST, {
+    variables: {
+      userId,
+      page: 1,
+    },
   });
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
 
     void fetchMore({
-      variables: { page: Math.ceil((data?.getFriendList.length ?? 10) / 10) + 1 },
+      variables: {
+        page: Math.ceil((data?.getFriendList.length ?? 0) / 10) + 1,
+      },
       updateQuery: (prev, { fetchMoreResult }) => {
         if (fetchMoreResult.getFriendList === undefined) {
-          return {
-            getFriendList: [...prev.getFriendList],
-          };
+          return prev;
+          // {
+          // getFriendList: [...prev.getFriendList],
+          // };
         }
-
         return {
-          getFriendList: [...prev.getFriendList, ...fetchMoreResult.getFriendList],
+          getFriendList: [
+            ...prev.getFriendList,
+            ...fetchMoreResult.getFriendList,
+          ],
         };
       },
     });
@@ -61,7 +79,6 @@ export default function Social() {
   const onClickExit = () => {
     router.push("/main");
   };
-
 
   const props: ISocialUIProps = {
     onClickSetting,
