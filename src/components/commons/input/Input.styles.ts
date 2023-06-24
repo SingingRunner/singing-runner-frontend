@@ -13,6 +13,7 @@ export const Input = styled.input`
   border: 1px solid #c7c7c7;
   border-radius: 4px;
   padding-left: 20px;
+  width: 100%;
   ::placeholder {
     color: #999;
   }
@@ -22,16 +23,11 @@ export const Input = styled.input`
   }
   ${(props: IInputProps) => {
     switch (props.inputType) {
-      case inputType.MEDIUM:
+      case inputType.BASIC:
         return `
-        `;
-      case inputType.LONG:
-        return `
-        width: 100%;
         `;
       case inputType.SEARCH:
         return `
-        width: 100%;
         padding-left: 40px;
         `;
     }

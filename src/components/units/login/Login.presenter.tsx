@@ -8,35 +8,32 @@ export default function LoginUI(props: ILoginUIProps) {
   return (
     <>
       <S.LoginContainer>
-        <S.LoginHeaderWrapper>
-          <LoginHeader />
-        </S.LoginHeaderWrapper>
-        <S.InputWrapper>
-          <Input
-            inputType={inputType.LONG}
-            type="text"
-            placeholder="이메일"
-            value={props.email}
-            onChange={props.handleEmailChange}
-            onBlur={props.validateEmail}
-          />
-          <S.EmailError>{props.emailError}</S.EmailError>
-        </S.InputWrapper>
-        <S.InputWrapper>
-          <Input
-            inputType={inputType.LONG}
-            type="password"
-            placeholder="비밀번호"
-            value={props.password}
-            onChange={props.handlePasswordChange}
-          />
-          {!props.passwordError ? (
-            <S.Blank />
-          ) : (
+        <LoginHeader />
+
+        <S.LoginInputContainer>
+          <S.InputWrapper>
+            <Input
+              inputType={inputType.BASIC}
+              type="text"
+              placeholder="이메일"
+              value={props.email}
+              onChange={props.handleEmailChange}
+              onBlur={props.validateEmail}
+            />
+            <S.EmailError>{props.emailError}</S.EmailError>
+          </S.InputWrapper>
+          <S.InputWrapper>
+            <Input
+              inputType={inputType.BASIC}
+              type="password"
+              placeholder="비밀번호"
+              value={props.password}
+              onChange={props.handlePasswordChange}
+            />
             <S.PasswordError>{props.passwordError}</S.PasswordError>
-          )}
-        </S.InputWrapper>
-      </S.LoginContainer>
+          </S.InputWrapper>
+        </S.LoginInputContainer>
+
         <Button
           buttonType={
             props.isLoginButtonEnabled
@@ -49,6 +46,7 @@ export default function LoginUI(props: ILoginUIProps) {
             props.isLoginButtonEnabled ? props.onClickLogin : props.dummyClick
           }
         />
+      </S.LoginContainer>
     </>
   );
 }
