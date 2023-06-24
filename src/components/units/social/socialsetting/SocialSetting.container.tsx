@@ -25,10 +25,10 @@ const SEARCH_FRIEND = gql`
 `;
 
 export default function SocialSetting() {
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,

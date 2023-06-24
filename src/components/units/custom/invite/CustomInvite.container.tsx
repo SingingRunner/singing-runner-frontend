@@ -8,13 +8,7 @@ import {
 } from "./CustomInvite.queries";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
-import {
-  ChangeEvent,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useCallback, useContext, useState } from "react";
 import {
   IQuery,
   IQueryFetchUserArgs,
@@ -29,10 +23,10 @@ export default function CustomInvite() {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data: userData } = useQuery<
     Pick<IQuery, "fetchUser">,

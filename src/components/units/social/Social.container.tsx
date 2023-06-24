@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import {
@@ -26,11 +25,11 @@ const SEARCH_FRIEND = gql`
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
-  
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
+
   const { data, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
@@ -44,7 +43,7 @@ export default function Social() {
 
   const onClickReplay = () => {
     router.push({
-      pathname: `/social/replay/${userId}` // 현재 유저 => 다른 유저로 수정 필요
+      pathname: `/social/replay/${userId}`, // 현재 유저 => 다른 유저로 수정 필요
     });
   };
 
@@ -63,10 +62,7 @@ export default function Social() {
           // };
         }
         return {
-          searchFriend: [
-            ...prev.searchFriend,
-            ...fetchMoreResult.searchFriend,
-          ],
+          searchFriend: [...prev.searchFriend, ...fetchMoreResult.searchFriend],
         };
       },
     });
