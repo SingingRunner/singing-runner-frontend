@@ -3,6 +3,7 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
+
 import Character from "./character/Character";
 
 export default function MainUI(props: IMainUIProps) {
@@ -79,6 +80,7 @@ export default function MainUI(props: IMainUIProps) {
           <option value="moose">무스</option>
         </select>
       </div> */}
+
       {/* 🚨 임시 가데이터 - 여기까지 */}
 
       <Character />
