@@ -16,7 +16,7 @@ export type Scalars = {
 };
 
 export type IAddFriendDto = {
-  firendId: Scalars['String']['input'];
+  friendId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 

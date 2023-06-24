@@ -1,41 +1,38 @@
 import styled from "@emotion/styled";
 
+interface ITierProps {
+  tier: string;
+}
+
 export const Container = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 85vh; /* Set the desired height of the container */
+  height: 100vh;
 `;
 
 export const ImageWrapper = styled.div`
   position: relative;
-  margin-top: 32vh;
-  margin-bottom: 48vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 200px;
 `;
 
 export const ImageCharacter = styled.img`
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  width: 200px;
+  height: auto;
   border-radius: 10%;
 `;
 
 export const ImageVectorLeft = styled.img`
-  position: absolute;
-  left: 4vw;
-  transform: translate(-540%, 0%);
-  width: 36px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  width: 36px;
+  height: auto;
 `;
 
 export const ImageVectorRight = styled.img`
-  position: absolute;
-  right: 4vw;
-  transform: translate(540%, 0%);
-  width: 36px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  width: 36px;
+  rotate: 180deg;
+  height: auto;
 `;
 
 export const Profile = styled.img`
@@ -45,7 +42,7 @@ export const Profile = styled.img`
 
 export const Nickname = styled.div`
   margin-left: 12px;
-  margin-top: 12px;
+  margin-top: 14px;
   font-size: 16px;
   color: white;
 `;
@@ -92,6 +89,18 @@ export const LetterTier = styled.div`
   font-size: 24px;
   color: #dcdcdc;
   font-family: Pretendard-bold;
+  ${(props: ITierProps) => {
+    if (props.tier === "DIAMOND") {
+      return `color: #99d4ff;`;
+    } else if (props.tier === "PLATINUM") {
+      return `color: #b6f9d9;`;
+    } else if (props.tier === "GOLD") {
+      return `color: #e5ae5b;`;
+    } else if (props.tier === "SILVER") {
+      return `color: #d3d3d3;`;
+    } else if (props.tier === "BRONZE") {
+      return `color: #b56a2b;`
+    }}};
 `;
 
 export const IconTier = styled.img`
