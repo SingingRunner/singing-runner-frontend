@@ -1,6 +1,6 @@
 export interface ISocialUIProps {
   data: any;
-  nickname: string;
+  keyword: string;
   onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClickAdd: () => void;
   onClickExit: () => void;

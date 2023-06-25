@@ -19,7 +19,7 @@ export default function Social() {
   // const [keyword, setKeyword] = useState("");
 
   const [userId, setUserId] = useRecoilState(userIdState);
-  const [nickname, setNickname] = useState("");
+  const [keyword, setKeyword] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -72,7 +72,7 @@ export default function Social() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
@@ -92,7 +92,7 @@ export default function Social() {
 
   const props: ISocialUIProps = {
     data,
-    nickname,
+    keyword,
     onChangeNickname,
     onClickAdd,
     onClickExit,

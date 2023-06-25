@@ -16,6 +16,7 @@ export default function Add() {
   const router = useRouter();
   const [isRequestClicked, setIsRequestClicked] = useState(false);
   const [userId, setUserId] = useRecoilState(userIdState);
+  const [keyword, setKeyword] = useState("");
   const [receiverNickname, setReceiverNickname] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
@@ -60,6 +61,7 @@ export default function Add() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
@@ -103,6 +105,7 @@ export default function Add() {
     onClickModalCheck,
     onLoadMore,
     receiverNickname,
+    keyword,
   };
 
   return <AddUI {...props} />;
