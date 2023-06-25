@@ -8,27 +8,10 @@ import { ICustomUIProps } from "./Custom.types";
 import Label from "../../commons/label/Label";
 import { v4 as uuidv4 } from "uuid";
 import VoiceChat from "./chat/Chat";
-// 🚨 가데이터
-const tempPlayersData = [
-  {
-    userId: "d56254be-d6f2-4c16-95f4-fe763d8753f7",
-    userTier: "bronze",
-    nickname: "닉네임1",
-    isHost: true,
-    isFriend: false,
-    character: "hare",
-  },
-  {
-    userId: "9e04f6e7-9c69-45d7-9c85-e6a4f4ed66dc",
-    userTier: "silver",
-    nickname: "닉네임2",
-    isHost: false,
-    isFriend: true,
-    character: "husky",
-  },
-];
+
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
+  console.log(props.playersData);
   return (
     <>
       {props.isSongModalOpen && (
@@ -71,8 +54,7 @@ export default function CustomUI(props: ICustomUIProps) {
         <VoiceChat roomId={String(props.roomInfo.roomId)} />
       )}
       <S.PlayersWrapper>
-        {tempPlayersData.map((el) => (
-          // {props.playersData.map((el) => (
+        {props.playersData.map((el) => (
           <S.JoinedPlayer key={uuidv4()}>
             <ProfileCard
               character={el.character}
@@ -86,8 +68,7 @@ export default function CustomUI(props: ICustomUIProps) {
             </ProfileCard>
           </S.JoinedPlayer>
         ))}
-        {/* {new Array(3 - props.playersData.length).fill("").map((_) => ( */}
-        {3 - tempPlayersData.length > 0 && (
+        {3 - props.playersData.length > 0 && (
           <S.EmptyPlayer
             key={uuidv4()}
             onClick={() => router.push("/custom/invite")}

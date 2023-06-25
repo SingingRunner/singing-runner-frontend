@@ -61,35 +61,31 @@ export default function Custom() {
 
     socket?.on("invite", (data) => {
       console.log("INVITE", data);
-      alert(JSON.stringify(data) + "invite 데이터!!");
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {
         data.forEach((playerGameDto) => {
           // 이미 들어와있는 유저인지 확인
           let isDuplicate = false;
-          prevPlayers.forEach((prevPlayer) => {
-            if (
-              prevPlayer.userId ===
-              playerGameDto.userGameDto.userMatchDTO.userId
-            )
-              isDuplicate = true;
+          newPlayersInfo.forEach((newPlayer) => {
+            if (newPlayer.userId === playerGameDto.userId) isDuplicate = true;
           });
 
           // 새로운 유저인 경우에만 추가
           if (!isDuplicate) {
             newPlayersInfo.push({
-              userId: playerGameDto.userGameDto.userMatchDTO.userId,
-              userTier: playerGameDto.userGameDto.userMatchDTO.userTier,
-              nickname: playerGameDto.userGameDto.userMatchDTO.nickname,
-              character: playerGameDto.userGameDto.userMatchDTO.character,
-              isHost: false, // 🚨
-              isFriend: false, // 🚨
+              userId: playerGameDto.userId,
+              userTier: playerGameDto.userTier,
+              nickname: playerGameDto.nickname,
+              character: playerGameDto.character,
+              isHost: playerGameDto.userId === playerGameDto.hostId,
+              isFriend:
+                playerGameDto.isFriend && userId !== playerGameDto.userId,
             });
             if (
               // 현재 유저가 방장이면
-              playerGameDto.userGameDto.userMatchDTO.isHost &&
-              playerGameDto.userGameDto.userMatchDTO.userId === userId
+              playerGameDto.isHost &&
+              playerGameDto.userId === userId
             )
               setIsHost(true);
           }

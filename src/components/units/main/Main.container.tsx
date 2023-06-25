@@ -117,15 +117,13 @@ const Main = () => {
   const onClickCustomMode = () => {
     // 소켓 연결
     const newSocket = socketConnect();
-    console.log("보냄");
     newSocket.emit("create_custom", {
-      UserMatchDTO: {
-        userId,
-        userMmr,
-        nickname,
-        userActive,
-        userKeynote,
-      },
+      userId,
+      userMmr,
+      nickname,
+      userActive,
+      userKeynote,
+      character,
     });
 
     // 커스텀 모드 화면으로 전환
