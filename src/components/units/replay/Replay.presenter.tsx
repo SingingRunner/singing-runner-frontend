@@ -1,5 +1,4 @@
 import Button, { buttonType } from "../../commons/button/Button";
-import ButtonWrapper from "../../commons/buttons/wrapper";
 import InfiniteScroll from "react-infinite-scroller";
 import ListItem from "../../commons/listItem/ListItem";
 import { IReplayUIProps } from "./Replay.types";
@@ -135,13 +134,11 @@ export default function ReplayUI(props: IReplayUIProps) {
           <></>
         </InfiniteScroll>
       </div>
-      <ButtonWrapper>
-        <Button
-          buttonType={buttonType.EMPTY}
-          text="나가기"
-          onClick={props.goPrevPage}
-        />
-      </ButtonWrapper>
+      <Button
+        buttonType={buttonType.EMPTY}
+        text="나가기"
+        onClick={props.goPrevPage}
+      />
     </>
   );
 }
