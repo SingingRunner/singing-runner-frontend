@@ -56,10 +56,12 @@ export default function Custom() {
 
   useEffect(() => {
     socket?.on("create_custom", (roomId) => {
-      setRoomInfo((prev) => ({ ...prev, roomId }));
+      setRoomInfo((prev) => ({ ...prev, roomId: String(roomId) }));
     });
 
     socket?.on("invite", (data) => {
+      console.log("INVITE", data);
+      alert(JSON.stringify(data) + "invite 데이터!!");
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {

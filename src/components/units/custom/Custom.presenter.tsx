@@ -67,7 +67,9 @@ export default function CustomUI(props: ICustomUIProps) {
         text="커스텀 모드"
         onClickPrev={() => props.setIsPrevModalOpen(true)}
       />
-      {props.roomInfo.roomId && <VoiceChat roomId={props.roomInfo.roomId} />}
+      {props.roomInfo.roomId && (
+        <VoiceChat roomId={String(props.roomInfo.roomId)} />
+      )}
       <S.PlayersWrapper>
         {tempPlayersData.map((el) => (
           // {props.playersData.map((el) => (
