@@ -7,21 +7,15 @@ import {
 } from "./CustomInvite.queries";
 import { useRecoilState } from "recoil";
 import { roomInfoState, userIdState } from "../../../../commons/store";
-import { ChangeEvent, useCallback, useContext, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import {
   IQuery,
   IQueryFetchUserArgs,
   IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
 import _ from "lodash";
-import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 export default function CustomInvite() {
-  // 소켓 가져오기
-  const socketContext = useContext(SocketContext);
-  if (!socketContext) return <div>Loading...</div>;
-  const { socket } = socketContext;
-
   const [userId] = useRecoilState(userIdState);
   // useEffect(() => {
   //   setUserId(localStorage.getItem("userId") || "");
