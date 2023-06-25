@@ -1,9 +1,10 @@
 export interface ISocialUIProps {
-  onClickSetting: () => void;
-  onClickExit: () => void;
-  onLoadMore: () => void;
   data: any;
-  onClickReplay: (id: string) => () => void;
-  onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void;
   nickname: string;
+  onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClickAdd: () => void;
+  onClickExit: () => void;
+  onClickReplay: (id: string) => () => void;
+  onClickSetting: () => void;
+  onLoadMore: () => void;
 }
