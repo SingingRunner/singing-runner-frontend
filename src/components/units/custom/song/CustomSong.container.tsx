@@ -69,8 +69,10 @@ export default function CustomSong() {
   useEffect(() => {
     // 노래가 변경된 경우
     socket?.on("set_song", (data) => {
+      console.log("노래 바뀌었다", data);
       setRoomInfo((prev) => ({
         ...prev,
+        players: [...prev.players],
         songTitle: data.songTitle,
         singer: data.singer,
         songId: data.songId,

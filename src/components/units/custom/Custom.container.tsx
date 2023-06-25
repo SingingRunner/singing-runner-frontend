@@ -18,6 +18,7 @@ export default function Custom() {
   //   setUserId(localStorage.getItem("userId") || "");
   // }, []);
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
+  console.log("방정보", roomInfo);
   // 🚨 방장 정보 받고 수정하기
   const [isHost, setIsHost] = useState(true);
 
@@ -52,7 +53,9 @@ export default function Custom() {
     socket?.emit("custom_start");
   };
 
-  const [playersData, setPlayersData] = useState<IPlayersData[]>([]);
+  const [playersData, setPlayersData] = useState<IPlayersData[]>([
+    ...roomInfo.players,
+  ]);
 
   useEffect(() => {
     socket?.on("create_custom", (roomId) => {
@@ -61,14 +64,20 @@ export default function Custom() {
 
     socket?.on("invite", (data) => {
       console.log("INVITE", data);
+
+      setRoomInfo((prev) => ({ ...prev, roomId: String(data[0].roomId) }));
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {
+        console.log(data);
         data.forEach((playerGameDto) => {
           // 이미 들어와있는 유저인지 확인
           let isDuplicate = false;
           newPlayersInfo.forEach((newPlayer) => {
             if (newPlayer.userId === playerGameDto.userId) isDuplicate = true;
+          });
+          prevPlayers.forEach((prevPlayer) => {
+            if (prevPlayer.userId === playerGameDto.userId) isDuplicate = true;
           });
 
           // 새로운 유저인 경우에만 추가
@@ -82,10 +91,17 @@ export default function Custom() {
               isFriend:
                 playerGameDto.isFriend && userId !== playerGameDto.userId,
             });
+            console.log(
+              "🚨방장 정보",
+              playerGameDto.userId,
+              playerGameDto.isHost,
+              userId,
+              playerGameDto.hostId
+            );
             if (
               // 현재 유저가 방장이면
-              playerGameDto.isHost &&
-              playerGameDto.userId === userId
+
+              playerGameDto.hostId === userId
             )
               setIsHost(true);
           }
@@ -122,6 +138,13 @@ export default function Custom() {
       else router.push("/game/normal");
     });
   }, [socket]);
+
+  useEffect(() => {
+    setRoomInfo((prev) => ({
+      ...prev,
+      players: [...playersData],
+    }));
+  }, [playersData]);
 
   return (
     <CustomUI
