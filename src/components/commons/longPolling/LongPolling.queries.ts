@@ -16,15 +16,3 @@ export const LONG_POLLING_MUTATION = gql`
     }
   }
 `;
-
-export const ADD_FRIEND = gql`
-  mutation AddFriend($addFriendDto: AddFriendDto!) {
-    addFriend(addFriendDto: $addFriendDto)
-  }
-`;
-
-export const DELETE_NOTIFICATION = gql`
-  mutation DeleteNotification($notificationDto: NotificationDto!) {
-    deleteNotification(notificationDto: $notificationDto)
-  }
-`;

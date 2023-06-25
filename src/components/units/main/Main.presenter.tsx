@@ -3,52 +3,47 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
-
 import Character from "./character/Character";
-import Header from "../../commons/layout/header/Header";
+import * as S from "./Main.styles";
+import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
+import { isNotificationState } from "../../../commons/store";
 
 export default function MainUI(props: IMainUIProps) {
+  const router = useRouter();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/popup.mp3");
+  }, []);
+
+  const onClickMenu = (path: string) => {
+    audioRef.current?.play();
+    router.push(path);
+  };
+  const [isNotification] = useRecoilState(isNotificationState);
   return (
     <>
-      <Header text="메인asdfsasdfasdfsdf" noPrev={true}></Header>
-
-
-      <img
-        style={{
-          width: "44px",
-          height: "auto",
-          position: "absolute",
-          marginTop: "-68px",
-          right: "82px",
-          // zIndex: 1,
-        }}
-        src="/icon/social.png"
-        onClick={props.onClickSocial}
-      />
-      <img
-        style={{
-          width: "44px",
-          height: "auto",
-          position: "absolute",
-          top: "8px",
-          right: "44px",
-          // zIndex: 1,
-        }}
-        src="/icon/notification.png"
-        onClick={props.onClickNotification}
-      />
+      <S.HeaderWrapper>
         <img
-          style={{
-            width: "24px",
-            height: "auto",
-            position: "absolute",
-            marginTop: "-60px",
-            right: "16px",
-            // zIndex: 1,
-          }}
-          src="/icon/myroom.png"
-          onClick={props.onClickMyRoom}
+          src="/icon/header/manual.png"
+          onClick={() => onClickMenu("/main/manual")}
         />
+        <img
+          src="/icon/header/social.png"
+          onClick={() => onClickMenu("/social")}
+        />
+        <img
+          src="/icon/header/notification.png"
+          onClick={() => onClickMenu("/notification")}
+        />
+        {isNotification && <S.Notification />}
+        <img
+          src="/icon/header/myroom.png"
+          onClick={() => onClickMenu("/myroom")}
+        />
+      </S.HeaderWrapper>
 
       <Character />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
