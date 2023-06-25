@@ -21,4 +21,5 @@ export interface IMainUIProps {
   data: any;
   character: string;
   onClickCustomMode: () => void;
+  onClickNotification: () => void;
 }

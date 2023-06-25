@@ -142,6 +142,11 @@ const Main = () => {
     router.push("/custom");
   };
 
+  const onClickNotification = () => {
+    // 알림 화면으로 전환
+    router.push("/notification");
+  };
+
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
@@ -220,6 +225,7 @@ const Main = () => {
     data,
     character,
     onClickCustomMode,
+    onClickNotification,
   };
 
   return <MainUI {...props} />;

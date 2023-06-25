@@ -5,34 +5,51 @@ import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
 
 import Character from "./character/Character";
+import Header from "../../commons/layout/header/Header";
 
 export default function MainUI(props: IMainUIProps) {
   return (
     <>
-      <img
-        style={{
-          width: "24px",
-          height: "auto",
-          position: "absolute",
-          marginTop: "-60px",
-          marginLeft: "312px",
-          zIndex: 1,
-        }}
-        src="/icon/myroom.png"
-        onClick={props.onClickMyRoom}
-      />
+      <Header text="메인asdfsasdfasdfsdf" noPrev={true}></Header>
+
+
       <img
         style={{
           width: "44px",
           height: "auto",
           position: "absolute",
           marginTop: "-68px",
-          marginLeft: "268px",
-          zIndex: 1,
+          right: "82px",
+          // zIndex: 1,
         }}
         src="/icon/social.png"
         onClick={props.onClickSocial}
       />
+      <img
+        style={{
+          width: "44px",
+          height: "auto",
+          position: "absolute",
+          top: "8px",
+          right: "44px",
+          // zIndex: 1,
+        }}
+        src="/icon/notification.png"
+        onClick={props.onClickNotification}
+      />
+        <img
+          style={{
+            width: "24px",
+            height: "auto",
+            position: "absolute",
+            marginTop: "-60px",
+            right: "16px",
+            // zIndex: 1,
+          }}
+          src="/icon/myroom.png"
+          onClick={props.onClickMyRoom}
+        />
+
       <Character />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}

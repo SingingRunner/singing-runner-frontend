@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const SEARCH_USER = gql`
-  query searchUser($nickname: String!, $page: Int!) {
-    searchUser(nickname: $nickname, page: $page) {
+  query searchUser($userId: String!, $nickname: String!, $page: Int!) {
+    searchUser(userId: $userId, nickname: $nickname, page: $page) {
       userId
       userMmr
       userTier
