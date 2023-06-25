@@ -45,7 +45,6 @@ export const PlaceholderProfile = styled.div`
   height: 46px;
   border-radius: 50%;
   background-color: #1a1128;
-  // 또는 사용할 placeholder 이미지: background-image: url('/path/to/placeholder-image.png');
 `;
 
 export const Nickname = styled.div`
@@ -94,7 +93,7 @@ export const PlaceholderMmr = styled.div`
   margin-right: 12px;
   font-size: 12px;
   text-shadow: -1px 0 #1a1128, 0 1px #1a1128, 1px 0 #1a1128, 0 -1px #1a1128;
-  color: transparent; // 텍스트 색상을 투명하게 만들어 레이아웃에 영향을 주지 않도록 함.
+  color: transparent;
 `;
 
 export const Tier = styled.div`
@@ -106,7 +105,6 @@ export const PlaceholderIconTier = styled.div`
   width: 16px;
   height: 16px;
   background-color: #1a1128;
-  // 또는 사용할 placeholder 이미지: background-image: url('/path/to/placeholder-image.png');
 `;
 
 export const LetterTier = styled.div`

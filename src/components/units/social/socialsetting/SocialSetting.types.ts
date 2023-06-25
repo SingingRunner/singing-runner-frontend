@@ -3,6 +3,6 @@ export interface ISocialSettingUIProps {
   onLoadMore: () => void
   data: any
   onClickDelete: (id: string) => () => void
-  nickname: string
+  keyword: string
   onChangeNickname: (event: React.ChangeEvent<HTMLInputElement>) => void
 }

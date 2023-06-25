@@ -17,7 +17,7 @@ import { REMOVE_FRIEND, SEARCH_FRIEND } from './SocialSetting.queries';
 export default function SocialSetting() {
   const router = useRouter();
   const [userId, setUserId] = useRecoilState(userIdState);
-  const [nickname, setNickname] = useState("");
+  const [keyword, setKeyword] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -61,7 +61,7 @@ export default function SocialSetting() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
@@ -94,7 +94,7 @@ export default function SocialSetting() {
     onLoadMore,
     data,
     onClickDelete,
-    nickname,
+    keyword,
     onChangeNickname,
   };
 
