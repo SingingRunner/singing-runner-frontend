@@ -11,7 +11,7 @@ import VoiceChat from "./chat/Chat";
 
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
-  console.log(props.playersData);
+  console.log(props.roomInfo);
   return (
     <>
       {props.isSongModalOpen && (
@@ -54,7 +54,7 @@ export default function CustomUI(props: ICustomUIProps) {
         <VoiceChat roomId={String(props.roomInfo.roomId)} />
       )}
       <S.PlayersWrapper>
-        {props.playersData.map((el) => (
+        {props.roomInfo.players.map((el) => (
           <S.JoinedPlayer key={uuidv4()}>
             <ProfileCard
               character={el.character}

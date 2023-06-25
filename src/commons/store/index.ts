@@ -32,6 +32,7 @@ export const roomInfoState = atom<IRoomInfoState>({
     songTitle: "",
     songId: "",
     playerCount: 1,
+    players: [],
   },
 });
 
@@ -54,3 +55,13 @@ export const isNotificationState = atom<boolean>({
   key: `isNotificationState${uuidv4()}`,
   default: false,
 });
+
+export const customInviteInfoState = atom<{ hostId: string; nickname: string }>(
+  {
+    key: `customInviteInfoState${uuidv4()}`,
+    default: {
+      hostId: "",
+      nickname: "",
+    },
+  }
+);

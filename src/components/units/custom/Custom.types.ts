@@ -23,6 +23,7 @@ export interface IRoomInfoState {
   songTitle: string;
   songId: string;
   playerCount: number;
+  players: any[];
 }
 
 export interface IPlayersData {
