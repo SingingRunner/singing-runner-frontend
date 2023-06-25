@@ -67,12 +67,10 @@ export default function LongPolling() {
   const onClickAcceptInvite = () => {
     const newSocket = socketConnect();
     newSocket?.emit("invite", {
-      data: {
-        userId,
-        HostUserDto: {
-          userId: hostId,
-          nickname: hostNickname,
-        },
+      userId,
+      HostUserDto: {
+        userId: hostId,
+        nickname: hostNickname,
       },
     });
     setHostNickname("");
