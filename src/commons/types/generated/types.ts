@@ -229,6 +229,7 @@ export type IQuerySearchSongArgs = {
 export type IQuerySearchUserArgs = {
   nickname: Scalars['String']['input'];
   page: Scalars['Int']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type IReplayIsPublicResponseDto = {
