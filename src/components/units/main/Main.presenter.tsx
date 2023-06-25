@@ -3,36 +3,36 @@ import MatchingModal from "./modals/MatchingModal";
 import WaitingModal from "./modals/WaitingModal";
 import BeforeClickModes from "./sections/beforeclickmodes";
 import AfterClickBattle from "./sections/afterclickbattle";
-
 import Character from "./character/Character";
+import * as S from "./Main.styles";
+import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 
 export default function MainUI(props: IMainUIProps) {
+  const router = useRouter();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/popup.mp3");
+  }, []);
+
+  const onClickMenu = (path: string) => {
+    audioRef.current?.play();
+    router.push(path);
+  };
+
   return (
     <>
-      <img
-        style={{
-          width: "24px",
-          height: "auto",
-          position: "absolute",
-          marginTop: "-60px",
-          marginLeft: "312px",
-          zIndex: 1,
-        }}
-        src="/icon/myroom.png"
-        onClick={props.onClickMyRoom}
-      />
-      <img
-        style={{
-          width: "44px",
-          height: "auto",
-          position: "absolute",
-          marginTop: "-68px",
-          marginLeft: "268px",
-          zIndex: 1,
-        }}
-        src="/icon/social.png"
-        onClick={props.onClickSocial}
-      />
+      <S.Header>
+        <img
+          src="/icon/manual.png"
+          onClick={() => onClickMenu("/main/manual")}
+        />
+        <img src="/icon/social.png" onClick={() => onClickMenu("/social")} />
+        <img src="/icon/notification.png" />
+        <img src="/icon/myroom.png" onClick={() => onClickMenu("/myroom")} />
+      </S.Header>
+
       <Character />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}

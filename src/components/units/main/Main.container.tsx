@@ -62,16 +62,6 @@ const Main = () => {
     setUserActive(data?.fetchUser.userActive);
   }, [data?.fetchUser.character]);
 
-  const onClickSocial = () => {
-    // 친구 화면으로 전환
-    router.push("/social");
-  };
-
-  const onClickMyRoom = () => {
-    // 내 방 화면으로 전환
-    router.push("/myroom");
-  };
-
   const router = useRouter();
 
   const handleChangeAddress = () => {
@@ -235,8 +225,6 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
-    onClickMyRoom,
-    onClickSocial,
     data,
     character,
     onClickCustomMode,

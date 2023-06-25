@@ -1,5 +1,15 @@
 import styled from "@emotion/styled";
-
+export const Header = styled.div`
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: flex-end;
+  img {
+    height: 40px;
+  }
+  z-index: 1;
+`;
 export const Wrapper = styled.div`
   position: fixed;
   bottom: 0;
