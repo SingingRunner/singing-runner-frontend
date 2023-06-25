@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import * as S from "./Modal.styles";
 
 interface IModalProps {
@@ -13,11 +14,15 @@ interface IModalProps {
   /* 노래 정보 */
   songTitle?: string;
   singer?: string;
-  onClickRight: () => void;
+  onClickRight?: () => void;
   onClickLeft?: () => void;
 }
 
 export default function Modal(props: IModalProps) {
+  useEffect(() => {
+    const audio = new Audio("/sound/effect/popup.mp3");
+    audio.play();
+  }, []);
   return (
     <>
       <S.Background>

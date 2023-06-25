@@ -1,6 +1,14 @@
 import styled from "@emotion/styled";
 
-export const SettingIcon = styled.img`
+export const Add = styled.img`
+  position: absolute;
+  height: 40px;
+  width: auto;
+  top: 8px;
+  right: 44px;
+`;
+
+export const Setting = styled.img`
   position: absolute;
   height: 40px;
   width: auto;

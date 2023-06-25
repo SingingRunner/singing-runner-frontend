@@ -46,6 +46,7 @@ export interface ISocketLoadingData {
     { userId: string; character: string },
     { userId: string; character: string }
   ];
+  userVocal?: string;
 }
 
 export interface ISocketGameSongData {

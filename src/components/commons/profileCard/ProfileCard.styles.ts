@@ -43,7 +43,7 @@ export const NicknameWrapper = styled.span`
   color: #fff;
   font-size: 16px;
   font-weight: 500;
-  margin-right: 4px;
+  margin-right: 8px;
 `;
 export const Nickname = styled.span`
   color: ${(props: { isMatched?: boolean }) =>

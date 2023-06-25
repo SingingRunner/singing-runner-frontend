@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { IAgoraRTCClient, IMicrophoneAudioTrack } from "agora-rtc-sdk-ng";
 import styled from "@emotion/styled";
+import Bgm from "../bgm/Bgm";
 
 const VoiceChat = (props: { roomId: string }) => {
   const [client, setClient] = useState<IAgoraRTCClient | null>(null);
@@ -12,7 +13,7 @@ const VoiceChat = (props: { roomId: string }) => {
     const loadAgora = async () => {
       const { initAgora } = await import("./initAgora"); // dynamic import
 
-      const APP_ID = process.env.APPKEY || "";
+      const APP_ID = process.env.NEXT_PUBLIC_APPKEY || "";
       const { client, microphoneTrack } = await initAgora(
         APP_ID,
         props.roomId,
@@ -40,9 +41,9 @@ const VoiceChat = (props: { roomId: string }) => {
 
   return (
     <Wrapper>
-      <div></div>
+      <Bgm />
       <div>
-        <span>음성채팅</span>
+        <Label>음성채팅</Label>
         <Btn isMuted={isMuted} onClick={toggleMute}>
           {isMuted ? "ON" : "OFF"}
         </Btn>
@@ -58,13 +59,13 @@ const Wrapper = styled.div`
   margin-bottom: 8px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  span {
-    font-size: 16px;
-    color: #fff;
-    font-weight: 500;
-    margin-right: 8px;
-  }
+  justify-content: flex-end;
+`;
+const Label = styled.span`
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+  margin: 0 8px 0 24px;
 `;
 const Btn = styled.button`
   text-align: center;

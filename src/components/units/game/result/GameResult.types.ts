@@ -2,9 +2,10 @@ export interface IGameResult {
   nickname: string;
   score: number;
   mmrDiff: number;
-  isFreind: boolean;
+  isFriend: boolean;
   tier: string;
   userId: string;
+  character: string;
 }
 export interface IGameResultUIProps {
   gameResult: IGameResult[];

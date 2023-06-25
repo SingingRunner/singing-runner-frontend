@@ -1,9 +1,10 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 import StartingUI from "./Starting.presenter";
+import { FETCH_USER, UPDATE_CHARACTER } from './Starting.queries';
 import { IStartingUIProps } from "./Starting.types";
 
 const characters = [
@@ -17,37 +18,10 @@ const characters = [
   "snowleopard",
 ];
 
-const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
-      userId
-      userEmail
-      nickname
-      userActive
-      userKeynote
-      userMmr
-      userPoint
-      character
-    }
-  }
-`;
-
-const UPDATE_CHARACTER = gql`
-  mutation UpdateCharacter($userId: String!, $character: String!) {
-    updateCharacter(userId: $userId, character: $character) {
-      userId
-      character
-    }
-  }
-`;
-
 export default function Starting() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },
   });

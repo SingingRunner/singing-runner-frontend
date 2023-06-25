@@ -5,7 +5,7 @@ import Button, { buttonType } from "../../../commons/button/Button";
 export default function AfterClickBattle(props: IMainUIProps) {
   return (
     <>
-      <Button buttonType={buttonType.ONECOLOR} isFixedAtBottomSecond>
+      <Button buttonType={buttonType.TIMER} isFixedAtBottomSecond>
         <S.Timer>{props.formatTime(props.timer)}</S.Timer>
         게임 찾는 중...
       </Button>
