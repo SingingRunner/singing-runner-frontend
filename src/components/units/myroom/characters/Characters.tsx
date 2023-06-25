@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -144,5 +145,22 @@ export default function MyroomCharacters(props: { character: string }) {
     animate();
   }, []);
 
-  return <div ref={canvasRef} />;
+  return (
+    <Wrapper>
+      <div ref={canvasRef} />
+      <Text>함께 달릴 캐릭터를 선택하세요!</Text>
+    </Wrapper>
+  );
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+const Text = styled.div`
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+`;

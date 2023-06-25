@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
 import { IMyRoomUIProps } from "./MyRoom.types";
-import { FETCH_USER, UPDATE_CHARACTER } from './MyRoom.queries';
+import { FETCH_USER, UPDATE_CHARACTER } from "./MyRoom.queries";
 
 const characters = [
   "beluga",
@@ -36,10 +36,6 @@ export default function MyRoom() {
     variables: { userId },
     fetchPolicy: "network-only",
   });
-
-  const onClickSetting = () => {
-    router.push("/myroom/setting");
-  };
 
   useEffect(() => {
     if (data?.fetchUser) {
@@ -80,12 +76,20 @@ export default function MyRoom() {
     router.push("/main");
   };
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/pop.mp3");
+  }, []);
+
   const handleNextImage = () => {
+    audioRef.current?.play();
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
     console.log(characters[currentImageIndex]);
   };
 
   const handlePreviousImage = () => {
+    audioRef.current?.play();
     setCurrentImageIndex(
       (prevIndex) => (prevIndex - 1 + characters.length) % characters.length
     );
@@ -94,7 +98,6 @@ export default function MyRoom() {
   const props: IMyRoomUIProps = {
     onClickComplete,
     userData: { ...data?.fetchUser, nickname },
-    onClickSetting,
     characters,
     currentImageIndex,
     handlePreviousImage,

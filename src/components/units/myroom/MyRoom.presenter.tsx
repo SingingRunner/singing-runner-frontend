@@ -2,11 +2,32 @@ import Button, { buttonType } from "../../commons/button/Button";
 import { IMyRoomUIProps } from "./MyRoom.types";
 import * as S from "./MyRoom.styles";
 import MyroomCharacters from "./characters/Characters";
+import Header from "../../commons/layout/header/Header";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 
 export default function MyRoomUI(props: IMyRoomUIProps) {
+  const router = useRouter();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/popup.mp3");
+  }, []);
+
+  const onClickMenu = (path: string) => {
+    audioRef.current?.play();
+    router.push(path);
+  };
+
   return (
     <>
-      <S.Setting onClick={props.onClickSetting} src="/icon/setting.png" />
+      <Header text="" />
+      <S.HeaderWrapper>
+        <img
+          src="/icon/header/setting.png"
+          onClick={() => onClickMenu("/myroom/setting")}
+        />
+      </S.HeaderWrapper>
 
       <S.Wrapper>
         <S.ProfileWrapper>
