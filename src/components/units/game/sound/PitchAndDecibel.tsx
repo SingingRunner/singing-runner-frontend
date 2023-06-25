@@ -5,8 +5,6 @@ import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 
-import { gql, useMutation } from "@apollo/client";
-
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
   const pitchReference = 440.0; // Reference pitch for A4 (440 Hz)
@@ -45,15 +43,6 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   else return 30;
 };
 
-const UPLOAD_FILE = gql`
-  mutation SaveReplay($userVocal: String!, $userId: String!) {
-    saveReplay(userVocal: $userVocal, userId: $userId) {
-      message
-      code
-    }
-  }
-`;
-
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
@@ -66,8 +55,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   // }, []);
 
   const pitchAveragesRef = useRef<number[]>([]);
-
-  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   const avgPitchWindowSize = 1000;
   let avgPitch: number = 0;
@@ -179,25 +166,18 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     };
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
-      socket?.emit("game_terminated", {
-        userId,
-        score: currentScore,
-      });
-
-      console.log("게임 종료, emit(game_terminated)", userId);
-
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = () => {
-        const base64data = reader.result;
-        const result = uploadFile({
-          variables: {
-            userVocal: base64data,
-            userId,
-          },
+        props.setBase64Data(reader.result as string);
+        console.log("result: ", reader.result);
+        socket?.emit("game_terminated", {
+          userId,
+          score: currentScore,
         });
-        result.then(() => {});
       };
+
+      console.log("게임 종료, emit(game_terminated)", userId);
     };
     mediaRecorder.start();
 

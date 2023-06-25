@@ -276,6 +276,7 @@ export default function Sound(props: ISoundProps) {
         setIsLoadComplete={props.setIsLoadComplete}
         setStartTime={props.setStartTime}
         setIsTerminated={props.setIsTerminated}
+        setBase64Data={props.setBase64Data}
       />
     </>
   );
