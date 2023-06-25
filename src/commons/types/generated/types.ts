@@ -255,6 +255,7 @@ export type IReply = {
 
 export type IRequestDto = {
   __typename?: 'RequestDto';
+  receivedAt: Scalars['DateTime']['output'];
   senderId: Scalars['String']['output'];
   senderNickname: Scalars['String']['output'];
 };
@@ -323,6 +324,7 @@ export enum ICharacterEnum {
   Hare = 'HARE',
   Husky = 'HUSKY',
   Lynx = 'LYNX',
+  Moose = 'MOOSE',
   Narwhal = 'NARWHAL',
   Puffin = 'PUFFIN',
   Puma = 'PUMA',

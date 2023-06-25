@@ -24,6 +24,7 @@ export const GET_NOTIFICATION = gql`
     getNotification(userId: $userId, page: $page) {
       senderId
       senderNickname
+      receivedAt
     }
   }
 `;

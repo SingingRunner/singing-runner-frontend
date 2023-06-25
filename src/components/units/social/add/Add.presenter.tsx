@@ -8,10 +8,14 @@ import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
 import { IAddUIProps } from "./Add.types";
 import Modal from "../../../commons/modal/Modal";
+import Header from '../../../commons/layout/header/Header';
 
 export default function AddUI(props: IAddUIProps) {
   return (
     <>
+    <Header
+      text="친구 추가"
+    />
       <S.Container>
 
         <S.InputWrapper>

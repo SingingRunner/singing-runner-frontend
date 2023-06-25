@@ -16,6 +16,7 @@ const characters = [
   "puffin",
   "puma",
   "snowleopard",
+  "moose",
 ];
 
 export default function Starting() {
