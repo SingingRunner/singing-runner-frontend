@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -7,40 +7,16 @@ import {
   IQuery,
   IQuerySearchUserArgs,
 } from "../../../../commons/types/generated/types";
-// import _ from "lodash";
-import _ from 'lodash'
-import AddUI from './Add.presenter';
-import { IAddUIProps } from './Add.types';
-
-const SEARCH_USER = gql`
-  query searchUser($nickname: String!, $page: Float!) {
-    searchUser(nickname: $nickname, page: $page) {
-      userId
-      userMmr
-      userTier
-      nickname
-      userActive
-      character
-    }
-  }
-`;
-
-const FRIEND_REQUEST = gql`
-  mutation friendRequest($notificationDto: NotificationDto!) {
-    friendRequest(notificationDto: $notificationDto)
-  }
-`;
-
-const ADD_FRIEND = gql`
-  mutation addFriend($addFriendDto: AddFriendDto!) {
-    addFriend(addFriendDto: $addFriendDto)
-  }
-`;
+import _ from "lodash";
+import AddUI from "./Add.presenter";
+import { IAddUIProps } from "./Add.types";
+import { FRIEND_REQUEST, SEARCH_USER } from './Add.queries';
 
 export default function Add() {
   const router = useRouter();
+  const [isRequestClicked, setIsRequestClicked] = useState(false);
   const [userId, setUserId] = useRecoilState(userIdState);
-  const [nickname, setNickname] = useState("");
+  const [receiverNickname, setReceiverNickname] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -53,7 +29,7 @@ export default function Add() {
       nickname: "",
       page: 1,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   const onLoadMore = (): void => {
@@ -83,27 +59,33 @@ export default function Add() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
     getDebounce(e.target.value);
   };
 
-  const handleAddRequest = (receiverId: string) => () => {
-      friendRequest({
-        variables: {
-          notificationDto: {
-            userId: receiverId,
-            senderId: userId,
-          }
-        }
-      })
-      .then(response => {
-        console.log('Add friend request sent:', response);
+  const handleAddRequest = (nickname: string, receiverId: string) => () => {
+    setReceiverNickname(nickname);
+    setIsRequestClicked(true);
+
+    friendRequest({
+      variables: {
+        notificationDto: {
+          userId: receiverId,
+          senderId: userId,
+        },
+      },
+    })
+      .then((response) => {
+        console.log("Add friend request sent:", response);
         console.log("receiverId:", receiverId);
         console.log("senderId:", userId);
       })
-      .catch(error => {
-        console.error('Error sending add friend request:', error);
+      .catch((error) => {
+        console.error("Error sending add friend request:", error);
       });
+  };
+
+  const onClickModalCheck = () => {
+    setIsRequestClicked(false);
   };
 
   // 나가기 버튼 클릭 시 소셜 페이지로 이동
@@ -114,10 +96,12 @@ export default function Add() {
   const props: IAddUIProps = {
     data,
     handleAddRequest,
-    nickname,
+    isRequestClicked,
     onChangeNickname,
     onClickExit,
+    onClickModalCheck,
     onLoadMore,
+    receiverNickname,
   };
 
   return <AddUI {...props} />;
