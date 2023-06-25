@@ -56,8 +56,8 @@ export default function Sound(props: ISoundProps) {
 
   useEffect(() => {
     if (socket) {
-      if (props.preventEvent) {
-        socket.emit("load_replay");
+      if (props.isReplay) {
+        socket.emit("load_replay", router.query.id);
       } else {
         socket.emit("loading");
       }
