@@ -10,15 +10,24 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
 
       <S.Wrapper>
         <S.ProfileWrapper>
-          <S.Profile src={`/game/player/profile/${props.character}.png`} />
+          {props.character ? (
+            <S.Profile src={`/game/player/profile/${props.character}.png`} />
+          ) : (
+            <S.PlaceholderProfile />
+          )}
           <S.Nickname>{props.userData?.nickname}</S.Nickname>
         </S.ProfileWrapper>
 
         <S.TierWrapper>
-          <S.Mmr>{props.mmr}</S.Mmr>
+          {props.mmr ? <S.Mmr>{props.mmr}</S.Mmr> : <S.PlaceholderMmr />}
+          {/* <S.Mmr>{props.mmr}</S.Mmr> */}
           <S.Tier>
             <S.LetterTier tier={props.tier}>{props.tier}</S.LetterTier>
-            <S.IconTier src={`/tier/${props.tier}.png`} />
+            {props.tier ? (
+              <S.IconTier src={`/tier/${props.tier}.png`} />
+            ) : (
+              <S.PlaceholderIconTier />
+            )}
           </S.Tier>
         </S.TierWrapper>
       </S.Wrapper>
@@ -35,13 +44,6 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
               character={props.characters[props.currentImageIndex]}
             />
           )}
-
-          {/* <S.ImageCharacter
-            src={`/game/player/profile/${
-              props.characters[props.currentImageIndex]
-            }.png`}
-            alt="character"
-          /> */}
           <S.ImageVectorRight
             src="/icon/arrow.png"
             alt="next"

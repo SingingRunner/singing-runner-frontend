@@ -40,6 +40,14 @@ export const Profile = styled.img`
   border-radius: 50%;
 `;
 
+export const PlaceholderProfile = styled.div`
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #1a1128;
+  // 또는 사용할 placeholder 이미지: background-image: url('/path/to/placeholder-image.png');
+`;
+
 export const Nickname = styled.div`
   margin-left: 12px;
   margin-top: 14px;
@@ -80,10 +88,27 @@ export const Mmr = styled.div`
   text-shadow: -1px 0 #1a1128, 0 1px #1a1128, 1px 0 #1a1128, 0 -1px #1a1128;
   color: #dff45b;
 `;
+
+export const PlaceholderMmr = styled.div`
+  height: 14px;
+  margin-right: 12px;
+  font-size: 12px;
+  text-shadow: -1px 0 #1a1128, 0 1px #1a1128, 1px 0 #1a1128, 0 -1px #1a1128;
+  color: transparent; // 텍스트 색상을 투명하게 만들어 레이아웃에 영향을 주지 않도록 함.
+`;
+
 export const Tier = styled.div`
   display: flex;
   align-items: center;
 `;
+
+export const PlaceholderIconTier = styled.div`
+  width: 16px;
+  height: 16px;
+  background-color: #1a1128;
+  // 또는 사용할 placeholder 이미지: background-image: url('/path/to/placeholder-image.png');
+`;
+
 export const LetterTier = styled.div`
   margin-right: 8px;
   font-size: 24px;
