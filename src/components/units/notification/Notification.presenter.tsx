@@ -14,7 +14,7 @@ export default function NotificationUI(props: INotificationUIProps) {
       <Header
         text="알림"
       />
-      <Label text="알림 목록" marginTop="16px" />
+      <Label text="알림 목록" marginTop="12px" />
       <S.Container>
           {props.data?.getNotification.length === 0 && (
             <div
@@ -54,7 +54,6 @@ export default function NotificationUI(props: INotificationUIProps) {
                           color: "gray",
                         }}
                       >
-                        시간 전
                       </div>
                       <Button
                         buttonType={buttonType.SHORT_PINK}

@@ -19,7 +19,7 @@ export const Container = styled.div`
 
 export const InfiniteScrollWrapper = styled.div`
   position: absolute;
-  height: calc(100% - 180px);
+  height: 100%;
   width: 100%;
   overflow: auto;
 

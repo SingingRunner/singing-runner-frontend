@@ -63,6 +63,32 @@ export default function Notification() {
     });
   };
 
+//   // 시간 단위로 변환하는 함수
+// const convertTimeToUnit = (receivedAt: Date) => {
+//   const now = new Date();
+//   const diff = Math.floor((now - new Date(receivedAt)) / 1000); // 초 단위 차이 계산
+
+//   if (diff < 60) {
+//     return `${diff}초 전`;
+//   } else if (diff < 60 * 60) {
+//     const minutes = Math.floor(diff / 60);
+//     return `${minutes}분 전`;
+//   } else if (diff < 60 * 60 * 24) {
+//     const hours = Math.floor(diff / (60 * 60));
+//     return `${hours}시간 전`;
+//   } else if (diff < 60 * 60 * 24 * 30) {
+//     const days = Math.floor(diff / (60 * 60 * 24));
+//     return `${days}일 전`;
+//   } else if (diff < 60 * 60 * 24 * 365) {
+//     const months = Math.floor(diff / (60 * 60 * 24 * 30));
+//     return `${months}달 전`;
+//   } else {
+//     const years = Math.floor(diff / (60 * 60 * 24 * 365));
+//     return `${years}년 전`;
+//   }
+// };
+
+
   const onClickCheck = (friendId: string, sender: string) => () => {
     setSenderName(sender);
     setSenderId(friendId);
