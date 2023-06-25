@@ -31,13 +31,13 @@ export default function GameResultUI(props: IGameResultUIProps) {
               <div>
                 <S.Ranking>{i + 1}</S.Ranking>
                 <ProfileCard
-                  character={el.character}
+                  character={el.charcter}
                   nickname={el.nickname}
                   tier={el.tier}
                   add={!el.isFriend}
                 />
               </div>
-              <S.Mmr>{el.mmrDiff}</S.Mmr>
+              <S.Mmr>{el.userScore}</S.Mmr>
             </S.Rank>
           );
         })}

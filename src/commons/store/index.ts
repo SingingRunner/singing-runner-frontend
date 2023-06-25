@@ -40,12 +40,12 @@ export const gameResultState = atom<IGameResult[]>({
   default: [
     {
       nickname: "",
-      score: 0,
+      userScore: 0,
       mmrDiff: 0,
       isFriend: false,
       tier: "bronze",
       userId: "",
-      character: "",
+      charcter: "",
     },
   ],
 });
