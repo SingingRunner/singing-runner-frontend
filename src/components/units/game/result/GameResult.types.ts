@@ -1,11 +1,11 @@
 export interface IGameResult {
   nickname: string;
-  score: number;
+  userScore: number;
   mmrDiff: number;
   isFriend: boolean;
   tier: string;
   userId: string;
-  character: string;
+  charcter: string;
 }
 export interface IGameResultUIProps {
   gameResult: IGameResult[];
