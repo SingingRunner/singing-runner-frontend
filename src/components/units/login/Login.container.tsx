@@ -4,29 +4,12 @@ import { useRecoilState } from "recoil";
 import { accessTokenState, userIdState } from "../../../commons/store";
 import LoginUI from "./Login.presenter";
 import { ILoginUIProps } from "./Login.types";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   IMutation,
   IMutationLoginUserArgs,
 } from "../../../commons/types/generated/types";
-
-const LOGIN_USER = gql`
-  mutation LoginUser($userLoginDto: UserLoginDto!) {
-    loginUser(userLoginDto: $userLoginDto) {
-      accessToken
-      user {
-        userId
-        userEmail
-        nickname
-        userActive
-        userKeynote
-        userMmr
-        userPoint
-        character
-      }
-    }
-  }
-`;
+import { LOGIN_USER } from './Login.queries';
 
 export default function Login() {
   const router = useRouter();

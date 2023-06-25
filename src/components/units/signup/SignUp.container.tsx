@@ -2,25 +2,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ISignUpUIProps } from "./SignUp.types";
 import SignUpUI from "./SignUp.presenter";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   IMutation,
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
-import { useRecoilState } from "recoil";
-import { userIdState } from "../../../commons/store";
 
-const REGISTER_USER = gql`
-  mutation RegisterUser($newUser: UserRegisterDto!) {
-    registerUser(newUser: $newUser) {
-      accessToken
-      user {
-        userId
-        character
-      }
-    }
-  }
-`;
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { userIdState, userInfoState } from "../../../commons/store";
+import { REGISTER_USER } from './SignUp.queries';
 
 export default function SignUp() {
   const [email, setEmail] = useState("");

@@ -1,41 +1,15 @@
 import { useEffect, useState } from "react";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { accessTokenState, userIdState } from "../../../../commons/store";
 import MyRoomSettingUI from "./MyRoomSetting.presenter";
 import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
-
-const UPDATE_USER_KEYNOTE = gql`
-  mutation UpdateUserKeynote($userId: String!, $keynote: userKeynoteStatus!) {
-    updateUserKeynote(userId: $userId, keynote: $keynote) {
-      userId
-      userKeynote
-    }
-  }
-`;
-
-const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
-      userId
-      userEmail
-      nickname
-      userActive
-      userKeynote
-      userMmr
-      userPoint
-      character
-      userTier
-    }
-  }
-`;
-
-const LOGOUT_USER = gql`
-  mutation Logout($userId: String!) {
-    logout(userId: $userId)
-  }
-`;
+import {
+  FETCH_USER,
+  LOGOUT_USER,
+  UPDATE_USER_KEYNOTE,
+} from "./MyRoomSetting.queries";
 
 const keynoteNames = ["ORIGINAL_KEY", "FEMALE_KEY", "MALE_KEY"];
 const keynoteDisplayNames = ["원키", "여키", "남키"];
