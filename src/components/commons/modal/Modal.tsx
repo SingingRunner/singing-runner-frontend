@@ -14,7 +14,7 @@ interface IModalProps {
   /* 노래 정보 */
   songTitle?: string;
   singer?: string;
-  onClickRight: () => void;
+  onClickRight?: () => void;
   onClickLeft?: () => void;
 }
 

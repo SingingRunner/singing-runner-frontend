@@ -3,24 +3,10 @@ import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
-
-const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
-      userId
-      userEmail
-      nickname
-      userActive
-      userKeynote
-      userMmr
-      userPoint
-      character
-    }
-  }
-`;
+import { FETCH_USER } from './Main.queries';
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
@@ -44,10 +30,6 @@ const Main = () => {
   const [userActive, setUserActive] = useState(false);
 
   const [userId] = useRecoilState(userIdState);
-
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const { data } = useQuery(FETCH_USER, {
     variables: { userId },

@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
@@ -12,18 +12,8 @@ import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 import _ from "lodash";
 
-const SEARCH_FRIEND = gql`
-  query searchFriend($userId: String!, $nickname: String!, $page: Int!) {
-    searchFriend(userId: $userId, nickname: $nickname, page: $page) {
-      userId
-      userMmr
-      userTier
-      nickname
-      userActive
-      character
-    }
-  }
-`;
+import { SEARCH_FRIEND } from './Social.queries';
+
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
@@ -88,24 +78,27 @@ export default function Social() {
 
   const router = useRouter();
 
-  // 설정 버튼 클릭 시 설정 페이지로 이동
+  const onClickAdd = () => {
+    router.push("/social/add");
+  };
+
   const onClickSetting = () => {
     router.push("/social/setting");
   };
 
-  // 나가기 버튼 클릭 시 이전 페이지로 이동
   const onClickExit = () => {
     router.push("/main");
   };
 
   const props: ISocialUIProps = {
-    onClickSetting,
-    onClickReplay,
-    onClickExit,
-    onLoadMore,
     data,
-    onChangeNickname,
     nickname,
+    onChangeNickname,
+    onClickAdd,
+    onClickExit,
+    onClickReplay,
+    onClickSetting,
+    onLoadMore,
   };
 
   return <SocialUI {...props} />;
