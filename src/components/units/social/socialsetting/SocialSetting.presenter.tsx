@@ -7,10 +7,14 @@ import ProfileCard from "../../../commons/profileCard/ProfileCard";
 import { v4 as uuidv4 } from "uuid";
 import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
+import Header from '../../../commons/layout/header/Header';
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
     <>
+    <Header
+      text="친구 관리"
+    />
       <S.Container>
         <S.InputWrapper>
           <S.SearchIcon src="/icon/search-purple.png" />
@@ -23,6 +27,7 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
+        {!props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>표시할 친구가 없습니다.</div>)}
         {props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>검색 결과가 없습니다.</div>)}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll

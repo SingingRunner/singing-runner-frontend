@@ -10,10 +10,11 @@ export const Setting = styled.img`
 
 export const Container = styled.div`
   height: 100vh;
-  background-color: #1a1128;
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const InfiniteScrollWrapper = styled.div`

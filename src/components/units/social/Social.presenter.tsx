@@ -7,10 +7,12 @@ import { ISocialUIProps } from "./Social.types";
 import { v4 as uuidv4 } from "uuid";
 import * as S from "./Social.styles";
 import Label from "../../commons/label/Label";
+import Header from '../../commons/layout/header/Header';
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
+      <Header/>
       <S.Add src="/icon/friends.png" onClick={props.onClickAdd} />
       <S.Setting src="/icon/setting.png" onClick={props.onClickSetting} />
 
@@ -26,6 +28,7 @@ export default function SocialUI(props: ISocialUIProps) {
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
+        {!props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>아직 친구가 없으시네요!</div>)}
         {props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>검색 결과가 없습니다.</div>)}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
