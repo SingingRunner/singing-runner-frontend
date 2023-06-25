@@ -52,9 +52,7 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
                 key={uuidv4()}
                 buttonText="선택"
                 buttonType={buttonType.SHORT}
-                // 🚨 songId로 변경 예정
-                // onClick={() => props.onChangeSong(el.songId)}
-                onClick={() => props.onChangeSong(el.songTitle)}
+                onClick={() => props.onChangeSong(el.songId)}
               >
                 <S.SongWrapper>
                   {props.keyword !== "" ? (

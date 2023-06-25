@@ -55,6 +55,10 @@ export default function Custom() {
   const [playersData, setPlayersData] = useState<IPlayersData[]>([]);
 
   useEffect(() => {
+    socket?.on("create_custom", (roomId) => {
+      setRoomInfo((prev) => ({ ...prev, roomId }));
+    });
+
     socket?.on("invite", (data) => {
       const newPlayersInfo: IPlayersData[] = [];
 

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const SEARCH_FRIEND = gql`
-  query SearchFriend($userId: String!, $page: Float!, $nickname: String!) {
+  query SearchFriend($userId: String!, $page: Int!, $nickname: String!) {
     searchFriend(userId: $userId, page: $page, nickname: $nickname) {
       userId
       character

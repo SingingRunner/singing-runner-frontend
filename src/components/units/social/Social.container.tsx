@@ -11,7 +11,9 @@ import {
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 import _ from "lodash";
+
 import { SEARCH_FRIEND } from './Social.queries';
+
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
