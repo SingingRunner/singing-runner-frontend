@@ -104,13 +104,34 @@ export default function Sound(props: ISoundProps) {
             })
           );
 
+          if (props.isReplay) {
+            fetch(data.userVocal || "")
+              .then((res) => res.text())
+              .then((data) => {
+                const base64Data = data.split(",")[1];
+                const decodedData = atob(base64Data);
+                const byteArray = new Uint8Array(decodedData.length);
+                for (let i = 0; i < decodedData.length; i++) {
+                  byteArray[i] = decodedData.charCodeAt(i);
+                }
+                audioCtx.decodeAudioData(byteArray.buffer).then((buffer) => {
+                  const source = audioCtx.createBufferSource();
+                  const gainNode = audioCtx.createGain();
+                  source.buffer = buffer;
+                  source.connect(gainNode).connect(audioCtx.destination);
+                  sources.current.push(source);
+                  gainNode.gain.value = 1;
+                });
+              });
+          }
+
           gainNodes.current = audioBuffers.map((buffer, i) => {
             const gainNode = audioCtx.createGain();
             gainNode.gain.value = 0; // Start all audios muted
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
             source.connect(gainNode).connect(audioCtx.destination);
-            sources.current[i] = source;
+            sources.current.push(source);
             if (i === 0) {
               gainNode.gain.value = 1;
             }
