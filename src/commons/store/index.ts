@@ -26,6 +26,7 @@ export const userIdState = atom<string>({
 export const roomInfoState = atom<IRoomInfoState>({
   key: `roomInfoState${uuidv4()}`,
   default: {
+    roomId: "",
     mode: "아이템",
     singer: "",
     songTitle: "",

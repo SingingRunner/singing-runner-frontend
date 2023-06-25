@@ -10,10 +10,10 @@ import {
 } from "../../../commons/types/generated/types";
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
-import _ from 'lodash'
+import _ from "lodash";
 
 const SEARCH_FRIEND = gql`
-  query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
+  query searchFriend($userId: String!, $nickname: String!, $page: Int!) {
     searchFriend(userId: $userId, nickname: $nickname, page: $page) {
       userId
       userMmr
@@ -33,9 +33,8 @@ export default function Social() {
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
-  
-  const { data, fetchMore, refetch } = useQuery<
 
+  const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -50,7 +49,7 @@ export default function Social() {
     try {
       console.log("replay friendId: ", friendId);
       router.push({
-        pathname: `/replay/${friendId}`
+        pathname: `/replay/${friendId}`,
       });
     } catch (error) {
       alert(error.message);

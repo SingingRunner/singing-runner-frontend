@@ -10,10 +10,10 @@ import {
 // import _ from "lodash";
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
-import _ from 'lodash'
+import _ from "lodash";
 
 const SEARCH_FRIEND = gql`
-  query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
+  query searchFriend($userId: String!, $nickname: String!, $page: Int!) {
     searchFriend(userId: $userId, nickname: $nickname, page: $page) {
       userId
       userMmr
@@ -48,7 +48,7 @@ export default function SocialSetting() {
       nickname: "",
       page: 1,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   const onLoadMore = (): void => {
@@ -85,14 +85,14 @@ export default function SocialSetting() {
   const onClickDelete = (friendId: string) => () => {
     try {
       console.log("delete friendId: ", friendId);
-      console.log("delete userId: ", userId)
+      console.log("delete userId: ", userId);
       removeFriend({
         variables: {
           addFriendDto: {
             userId,
-            friendId
-          }
-        }
+            friendId,
+          },
+        },
       });
       alert("친구가 삭제되었습니다.");
       refetch();

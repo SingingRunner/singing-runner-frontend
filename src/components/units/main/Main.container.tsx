@@ -125,9 +125,6 @@ const Main = () => {
     setIsClicked(true);
   };
 
-  // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  // const [dummyUserId, setDummyUserId] = useState("test99");
-  // const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
     userId,
     userMmr,
@@ -148,6 +145,7 @@ const Main = () => {
   const onClickCustomMode = () => {
     // 소켓 연결
     const newSocket = socketConnect();
+    console.log("보냄");
     newSocket.emit("create_custom", {
       UserMatchDTO: {
         userId,
