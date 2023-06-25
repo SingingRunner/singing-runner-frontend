@@ -8,9 +8,9 @@ import {
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
 
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { userIdState, userInfoState } from "../../../commons/store";
-import { REGISTER_USER } from './SignUp.queries';
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../commons/store";
+import { REGISTER_USER } from "./SignUp.queries";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
