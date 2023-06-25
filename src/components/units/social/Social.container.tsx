@@ -11,13 +11,15 @@ import {
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 import _ from "lodash";
+
 import { SEARCH_FRIEND } from './Social.queries';
+
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
 
   const [userId, setUserId] = useRecoilState(userIdState);
-  const [nickname, setNickname] = useState("");
+  const [keyword, setKeyword] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -30,7 +32,7 @@ export default function Social() {
       userId,
       nickname: "",
       page: 1,
-    },
+    }, fetchPolicy: "network-only",
   });
 
   const onClickReplay = (friendId: string) => () => {
@@ -46,17 +48,17 @@ export default function Social() {
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
-
+  
     void fetchMore({
       variables: {
         page: Math.ceil((data?.searchFriend.length ?? 0) / 10) + 1,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (fetchMoreResult.searchFriend === undefined) {
-          return prev;
-        }
+        const prevSearchFriend = Array.isArray(prev.searchFriend) ? prev.searchFriend : [];
+        const newSearchFriend = Array.isArray(fetchMoreResult.searchFriend) ? fetchMoreResult.searchFriend : [];
+  
         return {
-          searchFriend: [...prev.searchFriend, ...fetchMoreResult.searchFriend],
+          searchFriend: [...prevSearchFriend, ...newSearchFriend],
         };
       },
     });
@@ -70,7 +72,7 @@ export default function Social() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
@@ -90,7 +92,7 @@ export default function Social() {
 
   const props: ISocialUIProps = {
     data,
-    nickname,
+    keyword,
     onChangeNickname,
     onClickAdd,
     onClickExit,

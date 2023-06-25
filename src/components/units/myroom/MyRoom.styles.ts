@@ -15,7 +15,7 @@ export const ImageWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 200px;
+  margin-bottom: 250px;
 `;
 
 export const ImageCharacter = styled.img`
@@ -40,11 +40,29 @@ export const Profile = styled.img`
   border-radius: 50%;
 `;
 
+export const PlaceholderProfile = styled.div`
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #1a1128;
+`;
+
 export const Nickname = styled.div`
   margin-left: 12px;
   margin-top: 14px;
   font-size: 16px;
   color: white;
+`;
+
+export const HeaderWrapper = styled.div`
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  img {
+    height: 40px;
+    width: 40px;
+    margin: 0 -4px;
+  }
 `;
 
 export const Setting = styled.img`
@@ -58,7 +76,7 @@ export const Setting = styled.img`
 export const Wrapper = styled.div`
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -67,23 +85,39 @@ export const ProfileWrapper = styled.div`
 `;
 
 export const TierWrapper = styled.div`
-  display: flex;
-  margin-top: -8px;
-  flex-direction: column;
-  align-items: flex-end;
+  position: relative;
 `;
 
 export const Mmr = styled.div`
+  position: absolute;
+  right: 0;
+  top: -12px;
+  height: 14px;
+  font-size: 12px;
+  font-weight: 300;
+  text-shadow: -1px 0 #1a1128, 0 1px #1a1128, 1px 0 #1a1128, 0 -1px #1a1128;
+  color: #dff45b;
+`;
+
+export const PlaceholderMmr = styled.div`
   height: 14px;
   margin-right: 12px;
   font-size: 12px;
   text-shadow: -1px 0 #1a1128, 0 1px #1a1128, 1px 0 #1a1128, 0 -1px #1a1128;
-  color: #dff45b;
+  color: transparent;
 `;
+
 export const Tier = styled.div`
   display: flex;
   align-items: center;
 `;
+
+export const PlaceholderIconTier = styled.div`
+  width: 16px;
+  height: 16px;
+  background-color: #1a1128;
+`;
+
 export const LetterTier = styled.div`
   margin-right: 8px;
   font-size: 24px;

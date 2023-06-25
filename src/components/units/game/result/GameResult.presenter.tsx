@@ -5,9 +5,12 @@ import Button, { buttonType } from "../../../commons/button/Button";
 import { useRouter } from "next/router";
 import { IGameResultUIProps } from "./GameResult.types";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { userIdState } from "../../../../commons/store";
 
 export default function GameResultUI(props: IGameResultUIProps) {
   const router = useRouter();
+  const [userId] = useRecoilState(userIdState);
 
   const [mmr, setMMR] = useState(0);
   useEffect(() => {
@@ -31,13 +34,13 @@ export default function GameResultUI(props: IGameResultUIProps) {
               <div>
                 <S.Ranking>{i + 1}</S.Ranking>
                 <ProfileCard
-                  character={el.character}
+                  character={el.charcter}
                   nickname={el.nickname}
                   tier={el.tier}
-                  add={!el.isFriend}
+                  add={!el.isFriend && el.userId !== userId}
                 />
               </div>
-              <S.Mmr>{el.mmrDiff}</S.Mmr>
+              <S.Mmr>{el.userScore}</S.Mmr>
             </S.Rank>
           );
         })}

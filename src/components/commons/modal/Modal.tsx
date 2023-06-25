@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import * as S from "./Modal.styles";
+import { useRouter } from "next/router";
 
 interface IModalProps {
   /* 아이콘 */
@@ -18,7 +19,12 @@ interface IModalProps {
   onClickLeft?: () => void;
 }
 
+const NO_MODAL_PAGES = ["/game"];
 export default function Modal(props: IModalProps) {
+  const router = useRouter();
+
+  if (NO_MODAL_PAGES.includes(router.asPath)) return <></>;
+
   useEffect(() => {
     const audio = new Audio("/sound/effect/popup.mp3");
     audio.play();

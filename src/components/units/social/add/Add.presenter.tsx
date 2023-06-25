@@ -8,11 +8,16 @@ import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
 import { IAddUIProps } from "./Add.types";
 import Modal from "../../../commons/modal/Modal";
+import Header from '../../../commons/layout/header/Header';
 
 export default function AddUI(props: IAddUIProps) {
   return (
     <>
+    <Header
+      text="친구 추가"
+    />
       <S.Container>
+
         <S.InputWrapper>
           <S.SearchIcon src="/icon/search-purple.png" />
           <Input
@@ -23,6 +28,8 @@ export default function AddUI(props: IAddUIProps) {
           />
           <Label text="유저 목록" marginTop="16px" />
         </S.InputWrapper>
+        {!props.keyword && <div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>닉네임으로 검색하세요.</div>}
+        {props.keyword && !props.data?.searchUser.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>검색 결과가 없습니다.</div>)}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
@@ -54,6 +61,7 @@ export default function AddUI(props: IAddUIProps) {
                   <ProfileCard
                     character={el.character}
                     nickname={el.nickname}
+                    hilightNickname={props.keyword}
                     online={el.userActive === 0 || el.userActive === 2}
                     offline={el.userActive === 1}
                     tier={el.userTier}

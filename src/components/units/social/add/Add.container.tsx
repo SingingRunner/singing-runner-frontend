@@ -16,6 +16,7 @@ export default function Add() {
   const router = useRouter();
   const [isRequestClicked, setIsRequestClicked] = useState(false);
   const [userId, setUserId] = useRecoilState(userIdState);
+  const [keyword, setKeyword] = useState("");
   const [receiverNickname, setReceiverNickname] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
@@ -26,6 +27,7 @@ export default function Add() {
     IQuerySearchUserArgs
   >(SEARCH_USER, {
     variables: {
+      userId,
       nickname: "",
       page: 1,
     },
@@ -34,17 +36,17 @@ export default function Add() {
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
-
+  
     void fetchMore({
       variables: {
         page: Math.ceil((data?.searchUser.length ?? 0) / 10) + 1,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (fetchMoreResult.searchUser === undefined) {
-          return prev;
-        }
+        const prevSearchUser = Array.isArray(prev.searchUser) ? prev.searchUser : [];
+        const newSearchUser = Array.isArray(fetchMoreResult.searchUser) ? fetchMoreResult.searchUser : [];
+  
         return {
-          searchUser: [...prev.searchUser, ...fetchMoreResult.searchUser],
+          searchUser: [...prevSearchUser, ...newSearchUser],
         };
       },
     });
@@ -59,6 +61,7 @@ export default function Add() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
@@ -102,6 +105,7 @@ export default function Add() {
     onClickModalCheck,
     onLoadMore,
     receiverNickname,
+    keyword,
   };
 
   return <AddUI {...props} />;

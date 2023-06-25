@@ -18,6 +18,7 @@ export default function Custom() {
   //   setUserId(localStorage.getItem("userId") || "");
   // }, []);
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
+  console.log("방정보", roomInfo);
   // 🚨 방장 정보 받고 수정하기
   const [isHost, setIsHost] = useState(true);
 
@@ -27,7 +28,7 @@ export default function Custom() {
 
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
-    router.back();
+    router.push("/main");
   };
 
   const onClickMode = () => {
@@ -52,38 +53,55 @@ export default function Custom() {
     socket?.emit("custom_start");
   };
 
-  const [playersData, setPlayersData] = useState<IPlayersData[]>([]);
+  const [playersData, setPlayersData] = useState<IPlayersData[]>([
+    ...roomInfo.players,
+  ]);
 
   useEffect(() => {
+    socket?.on("create_custom", (roomId) => {
+      setRoomInfo((prev) => ({ ...prev, roomId: String(roomId) }));
+    });
+
     socket?.on("invite", (data) => {
+      console.log("INVITE", data);
+
+      setRoomInfo((prev) => ({ ...prev, roomId: String(data[0].roomId) }));
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {
+        console.log(data);
         data.forEach((playerGameDto) => {
           // 이미 들어와있는 유저인지 확인
           let isDuplicate = false;
+          newPlayersInfo.forEach((newPlayer) => {
+            if (newPlayer.userId === playerGameDto.userId) isDuplicate = true;
+          });
           prevPlayers.forEach((prevPlayer) => {
-            if (
-              prevPlayer.userId ===
-              playerGameDto.userGameDto.userMatchDTO.userId
-            )
-              isDuplicate = true;
+            if (prevPlayer.userId === playerGameDto.userId) isDuplicate = true;
           });
 
           // 새로운 유저인 경우에만 추가
           if (!isDuplicate) {
             newPlayersInfo.push({
-              userId: playerGameDto.userGameDto.userMatchDTO.userId,
-              userTier: playerGameDto.userGameDto.userMatchDTO.userTier,
-              nickname: playerGameDto.userGameDto.userMatchDTO.nickname,
-              character: playerGameDto.userGameDto.userMatchDTO.character,
-              isHost: false, // 🚨
-              isFriend: false, // 🚨
+              userId: playerGameDto.userId,
+              userTier: playerGameDto.userTier,
+              nickname: playerGameDto.nickname,
+              character: playerGameDto.character,
+              isHost: playerGameDto.userId === playerGameDto.hostId,
+              isFriend:
+                playerGameDto.isFriend && userId !== playerGameDto.userId,
             });
+            console.log(
+              "🚨방장 정보",
+              playerGameDto.userId,
+              playerGameDto.isHost,
+              userId,
+              playerGameDto.hostId
+            );
             if (
               // 현재 유저가 방장이면
-              playerGameDto.userGameDto.userMatchDTO.isHost &&
-              playerGameDto.userGameDto.userMatchDTO.userId === userId
+
+              playerGameDto.hostId === userId
             )
               setIsHost(true);
           }
@@ -120,6 +138,13 @@ export default function Custom() {
       else router.push("/game/normal");
     });
   }, [socket]);
+
+  useEffect(() => {
+    setRoomInfo((prev) => ({
+      ...prev,
+      players: [...playersData],
+    }));
+  }, [playersData]);
 
   return (
     <CustomUI

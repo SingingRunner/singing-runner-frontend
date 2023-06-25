@@ -26,11 +26,13 @@ export const userIdState = atom<string>({
 export const roomInfoState = atom<IRoomInfoState>({
   key: `roomInfoState${uuidv4()}`,
   default: {
+    roomId: "",
     mode: "아이템",
     singer: "",
     songTitle: "",
     songId: "",
     playerCount: 1,
+    players: [],
   },
 });
 
@@ -39,12 +41,27 @@ export const gameResultState = atom<IGameResult[]>({
   default: [
     {
       nickname: "",
-      score: 0,
+      userScore: 0,
       mmrDiff: 0,
       isFriend: false,
       tier: "bronze",
       userId: "",
-      character: "",
+      charcter: "",
     },
   ],
 });
+
+export const isNotificationState = atom<boolean>({
+  key: `isNotificationState${uuidv4()}`,
+  default: false,
+});
+
+export const customInviteInfoState = atom<{ hostId: string; nickname: string }>(
+  {
+    key: `customInviteInfoState${uuidv4()}`,
+    default: {
+      hostId: "",
+      nickname: "",
+    },
+  }
+);

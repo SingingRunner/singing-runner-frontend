@@ -6,7 +6,7 @@ import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useQuery } from "@apollo/client";
 import { userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
-import { FETCH_USER } from './Main.queries';
+import { FETCH_USER } from "./Main.queries";
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
@@ -97,9 +97,6 @@ const Main = () => {
     setIsClicked(true);
   };
 
-  // 🚨 로그인 기능 추가하기 전에 임시로 사용할 유저 정보
-  // const [dummyUserId, setDummyUserId] = useState("test99");
-  // const [dummyCharacter, setDummyCharacter] = useState("husky");
   const UserMatchDto = {
     userId,
     userMmr,
@@ -121,13 +118,12 @@ const Main = () => {
     // 소켓 연결
     const newSocket = socketConnect();
     newSocket.emit("create_custom", {
-      UserMatchDTO: {
-        userId,
-        userMmr,
-        nickname,
-        userActive,
-        userKeynote,
-      },
+      userId,
+      userMmr,
+      nickname,
+      userActive,
+      userKeynote,
+      character,
     });
 
     // 커스텀 모드 화면으로 전환

@@ -7,4 +7,5 @@ export interface IAddUIProps {
   onClickModalCheck: () => void
   onLoadMore: () => void
   receiverNickname: string
+  keyword: string
 }

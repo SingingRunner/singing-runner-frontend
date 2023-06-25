@@ -1,15 +1,25 @@
 import styled from "@emotion/styled";
-export const Header = styled.div`
+export const HeaderWrapper = styled.div`
   position: fixed;
   top: 8px;
   right: 8px;
-  display: flex;
-  justify-content: flex-end;
   img {
     height: 40px;
+    width: 40px;
+    margin: 0 -4px;
   }
-  z-index: 1;
 `;
+
+export const Notification = styled.div`
+  position: fixed;
+  top: 18px;
+  right: 46px;
+  background-color: red;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+`;
+
 export const Wrapper = styled.div`
   position: fixed;
   bottom: 0;

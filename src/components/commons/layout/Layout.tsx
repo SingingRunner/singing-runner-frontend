@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
 import * as S from "./Layout.styles";
 import { useRouter } from "next/router";
+import LongPolling from "../longPolling/LongPolling";
 
 interface ILayoutProps {
   children: ReactNode;
 }
 
 const NO_LAYOUT = ["/game"];
+const NO_LONG_POLLING = ["/game", "/custom", "/signup", "/login"];
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
 
@@ -17,6 +19,7 @@ export default function Layout(props: ILayoutProps) {
       ) : (
         <S.Background>
           <S.Body>
+            {NO_LONG_POLLING.includes(router.asPath) || <LongPolling />}
             <S.Wrapper>{props.children}</S.Wrapper>
           </S.Body>
         </S.Background>

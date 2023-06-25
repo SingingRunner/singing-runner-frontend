@@ -121,7 +121,7 @@ export default function Character() {
       style={{
         top: 0,
         left: 0,
-        position: "fixed",
+        // position: "fixed",
       }}
       ref={canvasRef}
     />

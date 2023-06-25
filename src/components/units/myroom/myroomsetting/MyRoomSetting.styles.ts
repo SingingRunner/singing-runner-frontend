@@ -23,7 +23,7 @@ export const ImageCharacter = styled.img`
 `;
 
 export const Option = styled.div`
-  height: 32px;
+  height: 28px;
   color: white;
 `;
 
@@ -36,6 +36,6 @@ export const Logout = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   color: white;
 `;

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import * as S from "./Header.styles";
 
 interface IHeaderProps {
-  text: string;
+  text?: string;
   onClickPrev?: () => void;
   noPrev?: boolean;
 }

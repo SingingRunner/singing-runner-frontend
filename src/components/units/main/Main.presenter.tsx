@@ -7,6 +7,8 @@ import Character from "./character/Character";
 import * as S from "./Main.styles";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
+import { useRecoilState } from "recoil";
+import { isNotificationState } from "../../../commons/store";
 
 export default function MainUI(props: IMainUIProps) {
   const router = useRouter();
@@ -20,18 +22,28 @@ export default function MainUI(props: IMainUIProps) {
     audioRef.current?.play();
     router.push(path);
   };
-
+  const [isNotification] = useRecoilState(isNotificationState);
   return (
     <>
-      <S.Header>
+      <S.HeaderWrapper>
         <img
-          src="/icon/manual.png"
+          src="/icon/header/manual.png"
           onClick={() => onClickMenu("/main/manual")}
         />
-        <img src="/icon/social.png" onClick={() => onClickMenu("/social")} />
-        <img src="/icon/notification.png" />
-        <img src="/icon/myroom.png" onClick={() => onClickMenu("/myroom")} />
-      </S.Header>
+        <img
+          src="/icon/header/social.png"
+          onClick={() => onClickMenu("/social")}
+        />
+        <img
+          src="/icon/header/notification.png"
+          onClick={() => onClickMenu("/notification")}
+        />
+        {isNotification && <S.Notification />}
+        <img
+          src="/icon/header/myroom.png"
+          onClick={() => onClickMenu("/myroom")}
+        />
+      </S.HeaderWrapper>
 
       <Character />
       {!props.isBattleClicked && <BeforeClickModes {...props} />}

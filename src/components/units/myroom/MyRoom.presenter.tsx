@@ -2,23 +2,53 @@ import Button, { buttonType } from "../../commons/button/Button";
 import { IMyRoomUIProps } from "./MyRoom.types";
 import * as S from "./MyRoom.styles";
 import MyroomCharacters from "./characters/Characters";
+import Header from "../../commons/layout/header/Header";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 
 export default function MyRoomUI(props: IMyRoomUIProps) {
+  const router = useRouter();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/popup.mp3");
+  }, []);
+
+  const onClickMenu = (path: string) => {
+    audioRef.current?.play();
+    router.push(path);
+  };
+
   return (
     <>
-      <S.Setting onClick={props.onClickSetting} src="/icon/setting.png" />
+      <Header text="" />
+      <S.HeaderWrapper>
+        <img
+          src="/icon/header/setting.png"
+          onClick={() => onClickMenu("/myroom/setting")}
+        />
+      </S.HeaderWrapper>
 
       <S.Wrapper>
         <S.ProfileWrapper>
-          <S.Profile src={`/game/player/profile/${props.character}.png`} />
+          {props.character ? (
+            <S.Profile src={`/game/player/profile/${props.character}.png`} />
+          ) : (
+            <S.PlaceholderProfile />
+          )}
           <S.Nickname>{props.userData?.nickname}</S.Nickname>
         </S.ProfileWrapper>
 
         <S.TierWrapper>
-          <S.Mmr>{props.mmr}</S.Mmr>
+          {props.mmr ? <S.Mmr>{props.mmr}</S.Mmr> : <S.PlaceholderMmr />}
+          {/* <S.Mmr>{props.mmr}</S.Mmr> */}
           <S.Tier>
             <S.LetterTier tier={props.tier}>{props.tier}</S.LetterTier>
-            <S.IconTier src={`/tier/${props.tier}.png`} />
+            {props.tier ? (
+              <S.IconTier src={`/tier/${props.tier}.png`} />
+            ) : (
+              <S.PlaceholderIconTier />
+            )}
           </S.Tier>
         </S.TierWrapper>
       </S.Wrapper>
@@ -35,13 +65,6 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
               character={props.characters[props.currentImageIndex]}
             />
           )}
-
-          {/* <S.ImageCharacter
-            src={`/game/player/profile/${
-              props.characters[props.currentImageIndex]
-            }.png`}
-            alt="character"
-          /> */}
           <S.ImageVectorRight
             src="/icon/arrow.png"
             alt="next"

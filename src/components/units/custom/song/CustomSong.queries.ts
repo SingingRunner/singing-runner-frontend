@@ -5,6 +5,7 @@ export const SEARCH_SONG_QUERY = gql`
     searchSong(keyword: $keyword, page: $page, filter: $filter) {
       songTitle
       singer
+      songId
     }
   }
 `;

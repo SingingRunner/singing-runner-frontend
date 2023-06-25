@@ -55,14 +55,14 @@ export default function Replay() {
     variables: {
       isMyReplay,
       pageNumber: 1,
-      userId: currentUserId,
+      userId: router.query.userId as string,
     },
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
     setCurrentUserId(localStorage.getItem("userId") || "");
-    setIsMyReplay(currentUserId !== router.query.userId);
+    setIsMyReplay(currentUserId === router.query.userId);
   }, []);
 
   const onLoadMore = (): void => {

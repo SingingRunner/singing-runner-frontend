@@ -9,13 +9,15 @@ import {
 } from "../../../../commons/types/generated/types";
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
+
 import _ from 'lodash'
 import { REMOVE_FRIEND, SEARCH_FRIEND } from './SocialSetting.queries';
+
 
 export default function SocialSetting() {
   const router = useRouter();
   const [userId, setUserId] = useRecoilState(userIdState);
-  const [nickname, setNickname] = useState("");
+  const [keyword, setKeyword] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -29,7 +31,7 @@ export default function SocialSetting() {
       nickname: "",
       page: 1,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   const onLoadMore = (): void => {
@@ -59,21 +61,21 @@ export default function SocialSetting() {
   );
 
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
-    setNickname(e.target.value);
+    setKeyword(e.target.value);
     getDebounce(e.target.value);
   };
 
   const onClickDelete = (friendId: string) => () => {
     try {
       console.log("delete friendId: ", friendId);
-      console.log("delete userId: ", userId)
+      console.log("delete userId: ", userId);
       removeFriend({
         variables: {
           addFriendDto: {
             userId,
-            friendId
-          }
-        }
+            friendId,
+          },
+        },
       });
       alert("친구가 삭제되었습니다.");
       refetch();
@@ -92,7 +94,7 @@ export default function SocialSetting() {
     onLoadMore,
     data,
     onClickDelete,
-    nickname,
+    keyword,
     onChangeNickname,
   };
 

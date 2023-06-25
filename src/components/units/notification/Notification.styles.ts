@@ -1,13 +1,5 @@
 import styled from "@emotion/styled";
 
-export const Add = styled.img`
-  position: absolute;
-  height: 40px;
-  width: auto;
-  top: 8px;
-  right: 44px;
-`;
-
 export const Setting = styled.img`
   position: absolute;
   height: 40px;
@@ -25,17 +17,9 @@ export const Container = styled.div`
   justify-content: center;
 `;
 
-export const SearchIcon = styled.img`
-  position: absolute;
-  width: 20px;
-  top: 10px;
-  left: 12px;
-`;
-
 export const InfiniteScrollWrapper = styled.div`
   position: absolute;
-  top: 54px;
-  height: calc(100% - 200px);
+  height: 100%;
   width: 100%;
   overflow: auto;
 
@@ -59,9 +43,4 @@ export const Mmr = styled.div`
   color: white;
   font-size: 10px;
   margin-left: 4px;
-`;
-
-export const Label = styled.div`
-  color: white;
-  margintop: 16px;
 `;

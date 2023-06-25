@@ -8,12 +8,12 @@ import { gameResultState, userIdState } from "../../../commons/store";
 import { IGameProps, IPlayersInfo, ISocketItem } from "./Game.types";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo.styles";
 import { IGameResult } from "./result/GameResult.types";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   IQuery,
   IQueryFetchUserArgs,
 } from "../../../commons/types/generated/types";
-import { FETCH_USER } from "./Game.queries";
+import { FETCH_USER, UPLOAD_FILE } from "./Game.queries";
 
 const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
 
@@ -26,6 +26,8 @@ export default function Game(props: IGameProps) {
     FETCH_USER,
     { variables: { userId } }
   );
+
+  const [uploadFile] = useMutation(UPLOAD_FILE);
 
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
@@ -41,6 +43,8 @@ export default function Game(props: IGameProps) {
   const [isTerminated, setIsTerminated] = useState(false);
 
   const [songInfo, setSongInfo] = useState({ title: "", singer: "" });
+
+  const [base64data, setBase64Data] = useState("");
 
   // 전체 유저의 정보
   const [playersInfo, setPlayersInfo] = useState<IPlayersInfo[]>([]);
@@ -138,9 +142,22 @@ export default function Game(props: IGameProps) {
     socket?.on("game_terminated", (data: IGameResult[]) => {
       setGameResult(data);
       setIsTerminated(true);
-      console.log("게임 종료, on(game_terminated)");
     });
   }, [socket]);
+
+  useEffect(() => {
+    if (isTerminated && base64data) {
+      const result = uploadFile({
+        variables: {
+          userVocal: base64data,
+          userId,
+        },
+      });
+      result.then(() => {
+        console.log(base64data);
+      });
+    }
+  }, [base64data, isTerminated]);
 
   /** 현재 유저 화면에 아이템 효과를 시작하는 함수 */
   const onItem = (item: string) => {
@@ -224,6 +241,7 @@ export default function Game(props: IGameProps) {
         setStartTime={setStartTime}
         setIsTerminated={setIsTerminated}
         isReplay={props.isReplay}
+        setBase64Data={setBase64Data}
       />
     </>
   );
