@@ -20,6 +20,7 @@ export interface ISoundProps {
   setStartTime: Dispatch<SetStateAction<number>>;
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
   setIsTerminated: Dispatch<SetStateAction<boolean>>;
+  setBase64Data: Dispatch<SetStateAction<string>>;
 }
 
 export interface ISocketLoadingData {

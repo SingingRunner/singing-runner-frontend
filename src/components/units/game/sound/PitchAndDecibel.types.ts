@@ -18,6 +18,7 @@ export interface IPitchAndDecibelProps {
   setIsTerminated: Dispatch<SetStateAction<boolean>>;
   preventEvent?: boolean;
   isReplay?: boolean;
+  setBase64Data: Dispatch<SetStateAction<string>>;
 }
 
 export interface ISocketScore {
