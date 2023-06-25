@@ -193,7 +193,7 @@ export default function Graphic(props: IGrapicProps) {
     if (props.isTerminated) moveCameraToPlayer();
   }, [props.isTerminated]);
 
-  const terminateAudio = new Audio("/game/terminate/cloud_chaser.mp3");
+  const terminateAudio = new Audio("/sound/bgm/terminated.mp3");
   const moveCameraToPlayer = () => {
     const camera = cameraRef.current;
     if (camera) {
