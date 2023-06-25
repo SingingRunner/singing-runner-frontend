@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -7,29 +7,10 @@ import {
   IQuery,
   IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
-// import _ from "lodash";
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
 import _ from 'lodash'
-
-const SEARCH_FRIEND = gql`
-  query searchFriend($userId: String!, $nickname: String!, $page: Float!) {
-    searchFriend(userId: $userId, nickname: $nickname, page: $page) {
-      userId
-      userMmr
-      userTier
-      nickname
-      userActive
-      character
-    }
-  }
-`;
-
-const REMOVE_FRIEND = gql`
-  mutation RemoveFriend($addFriendDto: AddFriendDto!) {
-    removeFriend(addFriendDto: $addFriendDto)
-  }
-`;
+import { REMOVE_FRIEND, SEARCH_FRIEND } from './SocialSetting.queries';
 
 export default function SocialSetting() {
   const router = useRouter();

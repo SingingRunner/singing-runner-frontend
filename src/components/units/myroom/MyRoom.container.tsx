@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
 import { IMyRoomUIProps } from "./MyRoom.types";
+import { FETCH_USER, UPDATE_CHARACTER } from './MyRoom.queries';
 
 const characters = [
   "beluga",
@@ -17,31 +18,6 @@ const characters = [
   "snowleopard",
   "moose",
 ];
-
-const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
-      userId
-      userEmail
-      nickname
-      userActive
-      userKeynote
-      userMmr
-      userPoint
-      character
-      userTier
-    }
-  }
-`;
-
-const UPDATE_CHARACTER = gql`
-  mutation UpdateCharacter($userId: String!, $character: String!) {
-    updateCharacter(userId: $userId, character: $character) {
-      userId
-      character
-    }
-  }
-`;
 
 export default function MyRoom() {
   const router = useRouter();
