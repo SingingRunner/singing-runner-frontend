@@ -1,13 +1,7 @@
 import { gameResultState, userIdState } from "../../../../commons/store";
 import { useRecoilState } from "recoil";
 import { useContext, useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
-import { FETCH_USER } from "./GameResult.queries";
 import GameResultUI from "./GameResult.presenter";
-import {
-  IQuery,
-  IQueryFetchUserArgs,
-} from "../../../../commons/types/generated/types";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 
 export default function GameResult() {
@@ -22,26 +16,30 @@ export default function GameResult() {
   // useEffect(() => {
   //   setUserId(localStorage.getItem("userId") || "");
   // }, []);
-  const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
-    FETCH_USER,
-    { variables: { userId } }
-  );
 
   const [currentUserResult, setCurrentUserResult] = useState({
-    mmrDiff: -100,
+    mmrDiff: 0,
     tier: "bronze",
   });
 
   useEffect(() => {
     gameResult.forEach((el) => {
       if (el.userId === userId) {
-        setCurrentUserResult({ mmrDiff: el.mmrDiff, tier: el.tier });
+        setCurrentUserResult({
+          mmrDiff: el.mmrDiff,
+          tier: el.tier,
+        });
       }
     });
-  }, [data]);
+  }, [gameResult]);
 
   // 소켓 연결 끊기
   socketDisconnect();
+
+  useEffect(() => {
+    const audio = new Audio("/sound/effect/game_reseult.mp3");
+    audio.play();
+  }, []);
 
   return (
     <GameResultUI
