@@ -57,7 +57,7 @@ export default function Sound(props: ISoundProps) {
   useEffect(() => {
     if (socket) {
       if (props.isReplay) {
-        socket.emit("load_replay", router.query.id);
+        socket.emit("load_replay", router.query.replayId);
       } else {
         socket.emit("loading");
       }
@@ -104,27 +104,6 @@ export default function Sound(props: ISoundProps) {
             })
           );
 
-          if (props.isReplay) {
-            fetch(data.userVocal || "")
-              .then((res) => res.text())
-              .then((data) => {
-                const base64Data = data.split(",")[1];
-                const decodedData = atob(base64Data);
-                const byteArray = new Uint8Array(decodedData.length);
-                for (let i = 0; i < decodedData.length; i++) {
-                  byteArray[i] = decodedData.charCodeAt(i);
-                }
-                audioCtx.decodeAudioData(byteArray.buffer).then((buffer) => {
-                  const source = audioCtx.createBufferSource();
-                  const gainNode = audioCtx.createGain();
-                  source.buffer = buffer;
-                  source.connect(gainNode).connect(audioCtx.destination);
-                  sources.current.push(source);
-                  gainNode.gain.value = 1;
-                });
-              });
-          }
-
           gainNodes.current = audioBuffers.map((buffer, i) => {
             const gainNode = audioCtx.createGain();
             gainNode.gain.value = 0; // Start all audios muted
@@ -137,6 +116,19 @@ export default function Sound(props: ISoundProps) {
             }
             return gainNode;
           });
+
+          if (props.isReplay) {
+            const userVocal = await fetch(data.userVocal || "").then((res) =>
+              res.text()
+            );
+            const base64Data = userVocal.split(",")[1];
+            const decodedData = Buffer.from(base64Data, "base64");
+            const buffer = await audioCtx.decodeAudioData(decodedData.buffer);
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioCtx.destination);
+            sources.current.push(source);
+          }
 
           // 유저 정보
           props.setPlayersInfo(() => {
