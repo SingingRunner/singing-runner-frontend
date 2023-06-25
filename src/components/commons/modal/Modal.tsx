@@ -19,7 +19,7 @@ interface IModalProps {
   onClickLeft?: () => void;
 }
 
-const NO_MODAL_PAGES = ["/game", "/custom"];
+const NO_MODAL_PAGES = ["/game"];
 export default function Modal(props: IModalProps) {
   const router = useRouter();
 

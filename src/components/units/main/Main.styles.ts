@@ -1,4 +1,24 @@
 import styled from "@emotion/styled";
+export const HeaderWrapper = styled.div`
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  img {
+    height: 40px;
+    width: 40px;
+    margin: 0 -4px;
+  }
+`;
+
+export const Notification = styled.div`
+  position: fixed;
+  top: 18px;
+  right: 46px;
+  background-color: red;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+`;
 
 export const Wrapper = styled.div`
   position: fixed;

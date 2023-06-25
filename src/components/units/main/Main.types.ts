@@ -1,5 +1,3 @@
-
-
 export interface IMainUIProps {
   isClicked: boolean;
   handleClick: () => void;
@@ -16,10 +14,7 @@ export interface IMainUIProps {
   singer: string;
   setShowWaiting: (flag: boolean) => void;
   showWaiting: boolean;
-  onClickSocial: () => void;
-  onClickMyRoom: () => void;
   data: any;
   character: string;
   onClickCustomMode: () => void;
-  onClickNotification: () => void;
 }

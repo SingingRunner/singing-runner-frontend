@@ -27,7 +27,7 @@ export default function Custom() {
 
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
-    router.back();
+    router.push("/main");
   };
 
   const onClickMode = () => {

@@ -49,3 +49,8 @@ export const gameResultState = atom<IGameResult[]>({
     },
   ],
 });
+
+export const isNotificationState = atom<boolean>({
+  key: `isNotificationState${uuidv4()}`,
+  default: false,
+});

@@ -6,7 +6,7 @@ import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useQuery } from "@apollo/client";
 import { userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
-import { FETCH_USER } from './Main.queries';
+import { FETCH_USER } from "./Main.queries";
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
@@ -43,16 +43,6 @@ const Main = () => {
     setUserKeynote(data?.fetchUser.userKeynote);
     setUserActive(data?.fetchUser.userActive);
   }, [data?.fetchUser.character]);
-
-  const onClickSocial = () => {
-    // 친구 화면으로 전환
-    router.push("/social");
-  };
-
-  const onClickMyRoom = () => {
-    // 내 방 화면으로 전환
-    router.push("/myroom");
-  };
 
   const router = useRouter();
 
@@ -142,11 +132,6 @@ const Main = () => {
     router.push("/custom");
   };
 
-  const onClickNotification = () => {
-    // 알림 화면으로 전환
-    router.push("/notification");
-  };
-
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
@@ -220,12 +205,9 @@ const Main = () => {
     singer,
     setShowWaiting,
     showWaiting,
-    onClickMyRoom,
-    onClickSocial,
     data,
     character,
     onClickCustomMode,
-    onClickNotification,
   };
 
   return <MainUI {...props} />;

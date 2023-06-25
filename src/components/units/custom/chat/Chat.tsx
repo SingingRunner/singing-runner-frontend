@@ -16,7 +16,7 @@ const VoiceChat = (props: { roomId: string }) => {
       const APP_ID = process.env.NEXT_PUBLIC_APPKEY || "";
       const { client, microphoneTrack } = await initAgora(
         APP_ID,
-        props.roomId,
+        String(props.roomId),
         null
       );
 
