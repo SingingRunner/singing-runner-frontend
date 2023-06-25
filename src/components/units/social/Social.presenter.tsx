@@ -11,7 +11,8 @@ import Label from "../../commons/label/Label";
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <S.SettingIcon src="/icon/setting.png" onClick={props.onClickSetting} />
+      <S.Add src="/icon/friends.png" onClick={props.onClickAdd} />
+      <S.Setting src="/icon/setting.png" onClick={props.onClickSetting} />
 
       <S.Container>
         <S.InputWrapper>

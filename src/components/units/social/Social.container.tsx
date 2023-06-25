@@ -89,24 +89,27 @@ export default function Social() {
 
   const router = useRouter();
 
-  // 설정 버튼 클릭 시 설정 페이지로 이동
+  const onClickAdd = () => {
+    router.push("/social/add");
+  };
+
   const onClickSetting = () => {
     router.push("/social/setting");
   };
 
-  // 나가기 버튼 클릭 시 이전 페이지로 이동
   const onClickExit = () => {
     router.push("/main");
   };
 
   const props: ISocialUIProps = {
-    onClickSetting,
-    onClickReplay,
-    onClickExit,
-    onLoadMore,
     data,
-    onChangeNickname,
     nickname,
+    onChangeNickname,
+    onClickAdd,
+    onClickExit,
+    onClickReplay,
+    onClickSetting,
+    onLoadMore,
   };
 
   return <SocialUI {...props} />;
