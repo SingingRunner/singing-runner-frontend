@@ -162,6 +162,16 @@ export const Button = styled.button`
         box-shadow: 0px 0px 10px 0px #DFF45B;
         color: #000000;
         `;
+      case buttonType.TIMER:
+        return `
+        display: flex;
+        flex-direction: column;  
+        height: 56px;
+        border: 2px solid #BD00FE;
+        box-shadow: 0px 0px 10px 1.5px #BD00FE;
+        background: #BD00FE;
+        font-size: 18px;
+          `;
     }
   }}
 `;

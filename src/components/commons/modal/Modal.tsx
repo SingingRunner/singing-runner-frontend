@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import * as S from "./Modal.styles";
 
 interface IModalProps {
@@ -18,6 +19,10 @@ interface IModalProps {
 }
 
 export default function Modal(props: IModalProps) {
+  useEffect(() => {
+    const audio = new Audio("/sound/effect/popup.mp3");
+    audio.play();
+  }, []);
   return (
     <>
       <S.Background>

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import * as S from "./Button.styles";
 interface IButtonProps {
   buttonType: buttonType;
@@ -23,12 +24,30 @@ export enum buttonType {
   "SHORT_GRAY",
   "SHORT_DISABLED",
   "FILTER",
+  "TIMER",
 }
 
 export default function Button(props: IButtonProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (
+      [buttonType.DISABLED, buttonType.SHORT_DISABLED].includes(
+        props.buttonType
+      )
+    )
+      audioRef.current = new Audio("/sound/effect/disabled_button.mp3");
+    else audioRef.current = new Audio("/sound/effect/button.mp3");
+  }, []);
+
   return (
     <S.Button
-      onClick={props.onClick}
+      onClick={() => {
+        if (props.onClick) {
+          props.onClick();
+          audioRef.current?.play();
+        }
+      }}
       buttonType={props.buttonType}
       isFixedAtBottom={props.isFixedAtBottom}
       isFixedAtBottomSecond={props.isFixedAtBottomSecond}

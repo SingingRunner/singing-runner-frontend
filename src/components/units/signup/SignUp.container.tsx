@@ -7,6 +7,7 @@ import {
   IMutation,
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
+
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { userIdState, userInfoState } from "../../../commons/store";
 import { REGISTER_USER } from './SignUp.queries';
@@ -27,7 +28,6 @@ export default function SignUp() {
     IMutationRegisterUserArgs
   >(REGISTER_USER);
 
-  const setUserInfo = useSetRecoilState(userInfoState);
   const [, setUserId] = useRecoilState(userIdState);
 
   const onClickSignUp = async (): Promise<void> => {
@@ -46,12 +46,7 @@ export default function SignUp() {
       alert("회원가입을 축하합니다.");
       localStorage.setItem("userId", registeredUser?.userId || "");
       setUserId(registeredUser?.userId || "");
-      // 유저 정보 저장
-      setUserInfo({
-        userId: registeredUser?.userId || "",
-        character: registeredUser?.character || "",
-        userKeynote: "origin", // TODO: 추후 수정
-      });
+
       console.log("registeredUser: ", registeredUser);
 
       router.push("/signup/starting");
