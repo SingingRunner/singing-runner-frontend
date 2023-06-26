@@ -20,6 +20,7 @@ export default function SignUpUI(props: ISignUpUIProps) {
                 value={props.email}
                 onChange={props.handleEmailChange}
                 onBlur={props.validateEmail}
+                onKeyDown={props.onKeyDown}
               />
               <S.Error>{props.emailError}</S.Error>
             </S.InputErrorWrapper>
@@ -36,6 +37,7 @@ export default function SignUpUI(props: ISignUpUIProps) {
               placeholder="비밀번호"
               value={props.password}
               onChange={props.handlePasswordChange}
+              onKeyDown={props.onKeyDown}
             />
             <S.Error>{props.passwordError}</S.Error>
           </S.PasswordWrapper>
@@ -46,6 +48,7 @@ export default function SignUpUI(props: ISignUpUIProps) {
               placeholder="비밀번호 확인"
               value={props.passwordCheck}
               onChange={props.handlePasswordCheckChange}
+              onKeyDown={props.onKeyDown}
             />
             <S.Error>{props.passwordCheckError}</S.Error>
           </S.PasswordWrapper>
@@ -57,6 +60,7 @@ export default function SignUpUI(props: ISignUpUIProps) {
                 placeholder="닉네임"
                 value={props.nickname}
                 onChange={props.handleNicknameChange}
+                onKeyDown={props.onKeyDown}
               />
               <S.ErrorNickname>{props.nicknameError}</S.ErrorNickname>
             </S.InputErrorWrapper>

@@ -178,6 +178,14 @@ export default function SignUp() {
     console.log("dummy");
   };
 
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (isSignUpButtonEnabled) {
+        onClickSignUp();
+      }
+    }
+  }
+
   const router = useRouter();
 
   const props: ISignUpUIProps = {
@@ -198,6 +206,7 @@ export default function SignUp() {
     checkDuplicateEmail,
     isSignUpButtonEnabled,
     dummyClick,
+    onKeyDown,
   };
 
   return <SignUpUI {...props} />;
