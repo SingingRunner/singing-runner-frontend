@@ -2,6 +2,7 @@ import Draggable from "react-draggable";
 import styled from "@emotion/styled";
 import { memo, useEffect, useState, useRef, useContext } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
+import { ILyricProps } from "./Lyric.types";
 
 const data = [
   { timeStamp: 4500, lyrics: "나비처럼 날아가 볼까" },
@@ -29,11 +30,6 @@ const data = [
   { timeStamp: -1, lyrics: "끝 !" },
 ];
 
-interface ILyricProps {
-  startTime: number;
-  isCloud: boolean;
-}
-
 function Lyric(props: ILyricProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
@@ -41,7 +37,7 @@ function Lyric(props: ILyricProps) {
   const { socket } = socketContext;
 
   const [lyricIdx, setLyricIdx] = useState(0);
-  const endLyric = useRef(data[0].timeStamp);
+  const endLyric = useRef(data[0].endTime);
   const lyricRef = useRef(0);
 
   useEffect(() => {
@@ -53,7 +49,7 @@ function Lyric(props: ILyricProps) {
           const currentTime = new Date().getTime();
           const diff = Math.floor((currentTime - props.startTime) / 100) * 100;
           if (diff >= endLyric.current && lyricRef.current < data.length - 1) {
-            endLyric.current = data[lyricRef.current + 1].timeStamp;
+            endLyric.current = props.lyrics[lyricRef.current + 1].endTime;
             setLyricIdx((prev) => prev + 1);
             lyricRef.current++;
           }
@@ -108,9 +104,9 @@ function Lyric(props: ILyricProps) {
   return (
     <LyricWrapper>
       {exit && <DisconnectMsg>겁쟁이 “{exit}”님이 탈주했습니다!</DisconnectMsg>}
-      <Text key={lyricIdx}>{data[lyricIdx].lyrics}</Text>
-      {lyricIdx < data.length - 1 ? (
-        <Text key={lyricIdx + 1}>{data[lyricIdx + 1].lyrics}</Text>
+      <Text key={lyricIdx}>{props.lyrics[lyricIdx].lyric}</Text>
+      {lyricIdx < props.lyrics.length - 1 ? (
+        <Text key={lyricIdx + 1}>{props.lyrics[lyricIdx + 1].lyric}</Text>
       ) : (
         <></>
       )}

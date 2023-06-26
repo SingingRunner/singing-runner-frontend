@@ -58,6 +58,7 @@ export default function GameUI(props: IGameUIProps) {
               <Lyric
                 startTime={props.startTime}
                 isCloud={props.appliedItems.includes("cloud")}
+                lyrics={props.lyrics}
               />
             )}
             {!props.isTerminated && (

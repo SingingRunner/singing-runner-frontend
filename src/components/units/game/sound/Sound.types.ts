@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { IPlayersInfo } from "../Game.types";
+import { ILyric } from "../lyric/Lyric.types";
 
 export interface ISoundProps {
   preventEvent?: boolean;
@@ -21,6 +22,7 @@ export interface ISoundProps {
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
   setIsTerminated: Dispatch<SetStateAction<boolean>>;
   setBase64Data: Dispatch<SetStateAction<string>>;
+  setLyrics: Dispatch<SetStateAction<ILyric[]>>;
 }
 
 export interface ISocketLoadingData {
@@ -35,12 +37,12 @@ export interface ISocketLoadingData {
     songFemale: string;
     songFemaleUp: string;
     songFemaleDown: string;
-    vocalMale: number[];
-    vocalMaleUp: number[];
-    vocalMaleDown: number[];
-    vocalFemale: number[];
-    vocalFemaleUp: number[];
-    vocalFemaleDown: number[];
+    vocalMale: string;
+    vocalMaleUp: string;
+    vocalMaleDown: string;
+    vocalFemale: string;
+    vocalFemaleUp: string;
+    vocalFemaleDown: string;
   };
   characterList: [
     { userId: string; character: string },
@@ -61,10 +63,10 @@ export interface ISocketGameSongData {
   songFemale: string;
   songFemaleUp: string;
   songFemaleDown: string;
-  vocalMale: number[];
-  vocalMaleUp: number[];
-  vocalMaleDown: number[];
-  vocalFemale: number[];
-  vocalFemaleUp: number[];
-  vocalFemaleDown: number[];
+  vocalMale: string;
+  vocalMaleUp: string;
+  vocalMaleDown: string;
+  vocalFemale: string;
+  vocalFemaleUp: string;
+  vocalFemaleDown: string;
 }
