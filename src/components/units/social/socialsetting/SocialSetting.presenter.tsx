@@ -51,7 +51,7 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
                     >
                       <div style={{ width: "1px" }}></div>
                       <Button 
-                      buttonType={buttonType.SHORT_GRAY} 
+                      buttonType={buttonType.SHORT_GRAY}
                       text="삭제"
                       onClick={props.onClickDelete(el.userId)} />
                     </div>
