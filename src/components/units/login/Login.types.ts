@@ -9,4 +9,6 @@ export interface ILoginUIProps {
   dummyClick: () => void;
   onClickLogin: () => void;
   isLoginButtonEnabled: boolean;
+  onEmailKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onPasswordKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
