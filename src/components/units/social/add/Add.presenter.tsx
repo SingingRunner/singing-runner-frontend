@@ -91,7 +91,8 @@ export default function AddUI(props: IAddUIProps) {
       {props.isRequestClicked && (
         <Modal
           isCheck={true}
-          firstText={`${props.receiverNickname}님에게`}
+          hilightText={props.receiverNickname}
+          firstText="님에게"
           secondText="친구 요청을 보냈어요!"
           buttonText="확인"
           onClickRight={props.onClickModalCheck}
