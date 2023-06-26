@@ -6,6 +6,7 @@ import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 import ApolloSetting from "../src/components/commons/apollo";
+import { PollingProvider } from "../src/commons/contexts/PollingContext";
 
 const assetFiles = [
   "/game/floor/neon.png",
@@ -58,20 +59,22 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
     <RecoilRoot>
       <ApolloSetting>
         <SocketProvider>
-          <Global styles={globalStyles} />
-          <Head>
-            {allFiles.map((file, index) => (
-              <link
-                key={index}
-                rel="preload"
-                href={file}
-                as={getAsAttribute(file)}
-              />
-            ))}
-          </Head>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <PollingProvider>
+            <Global styles={globalStyles} />
+            <Head>
+              {allFiles.map((file, index) => (
+                <link
+                  key={index}
+                  rel="preload"
+                  href={file}
+                  as={getAsAttribute(file)}
+                />
+              ))}
+            </Head>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </PollingProvider>
         </SocketProvider>
       </ApolloSetting>
     </RecoilRoot>

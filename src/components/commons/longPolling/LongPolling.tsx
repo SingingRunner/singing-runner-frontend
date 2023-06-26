@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { isNotificationState, userIdState } from "../../../commons/store";
 import {
@@ -10,9 +10,15 @@ import Modal from "../modal/Modal";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useRouter } from "next/router";
 import { LONG_POLLING_MUTATION } from "./LongPolling.queries";
+import { PollingContext } from "../../../commons/contexts/PollingContext";
 
 export default function LongPolling() {
   const router = useRouter();
+  const pollingContext = useContext(PollingContext);
+  if (!pollingContext) return <div>Loading...</div>;
+  const { isPolling, setIsPolling } = pollingContext;
+  const pollingRef = useRef(isPolling);
+  pollingRef.current = isPolling;
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
@@ -32,19 +38,24 @@ export default function LongPolling() {
 
   useEffect(() => {
     console.log(userId);
+    console.log(pollingRef.current);
     const pollData = async () => {
-      try {
-        const response = await longPolling({ variables: { userId } });
-        if (response) {
-          pollData(); // recursively call the polling function after response received
+      while (pollingRef.current) {
+        console.log(pollingRef.current);
+        try {
+          const response = await longPolling({ variables: { userId } });
+          if (response) {
+            // pollData(); // recursively call the polling function after response received
+            console.log(response);
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     };
 
     pollData();
-  }, [longPolling, userId]);
+  }, [longPolling, userId, isPolling]);
 
   useEffect(() => {
     console.log("롱폴링 데이터", data);
@@ -65,6 +76,7 @@ export default function LongPolling() {
   }, [data]);
 
   const onClickAcceptInvite = () => {
+    setIsPolling(false);
     const newSocket = socketConnect();
     newSocket?.emit("invite", {
       userId,
