@@ -19,6 +19,7 @@ export default function LoginUI(props: ILoginUIProps) {
               value={props.email}
               onChange={props.handleEmailChange}
               onBlur={props.validateEmail}
+              onKeyDown={props.onEmailKeyDown}
             />
             <S.EmailError>{props.emailError}</S.EmailError>
           </S.InputWrapper>
@@ -29,6 +30,7 @@ export default function LoginUI(props: ILoginUIProps) {
               placeholder="비밀번호"
               value={props.password}
               onChange={props.handlePasswordChange}
+              onKeyDown={props.onPasswordKeyDown}
             />
             <S.PasswordError>{props.passwordError}</S.PasswordError>
           </S.InputWrapper>

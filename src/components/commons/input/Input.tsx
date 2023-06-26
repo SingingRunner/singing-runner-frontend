@@ -8,6 +8,7 @@ interface IInputProps {
   placeholder?: string;
   value?: string;
   searchIcon?: boolean;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export enum inputType {
@@ -25,6 +26,7 @@ export default function Input(props: IInputProps) {
         value={props.value}
         onChange={props.onChange}
         onBlur={props.onBlur}
+        onKeyDown={props.onKeyDown}
       />
       {props.searchIcon && <S.SearchIcon src="/icon/search-purple.png" />}
     </S.Wrapper>

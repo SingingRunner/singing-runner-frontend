@@ -81,6 +81,21 @@ export default function Login() {
     }
   };
 
+  const onEmailKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (isLoginButtonEnabled) {
+        onClickLogin();
+      }
+    }
+  }
+
+  const onPasswordKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (isLoginButtonEnabled) {
+        onClickLogin();
+      }
+    }
+  }
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setEmailError("");
@@ -130,6 +145,8 @@ export default function Login() {
     dummyClick,
     onClickLogin,
     isLoginButtonEnabled,
+    onEmailKeyDown,
+    onPasswordKeyDown,
   };
 
   return <LoginUI {...props} />;
