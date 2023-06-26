@@ -14,6 +14,7 @@ import {
   IQueryFetchUserArgs,
 } from "../../../commons/types/generated/types";
 import { FETCH_USER, UPLOAD_FILE } from "./Game.queries";
+import { ILyric } from "./lyric/Lyric.types";
 
 const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
 
@@ -43,6 +44,7 @@ export default function Game(props: IGameProps) {
   const [isTerminated, setIsTerminated] = useState(false);
 
   const [songInfo, setSongInfo] = useState({ title: "", singer: "" });
+  const [lyrics, setLyrics] = useState<ILyric[]>([]);
 
   const [base64data, setBase64Data] = useState("");
 
@@ -226,6 +228,7 @@ export default function Game(props: IGameProps) {
         isFrozenActiveRight={isFrozenActiveRight}
         isFrozenActiveLeft={isFrozenActiveLeft}
         isTerminated={isTerminated}
+        lyrics={lyrics}
       />
       <Sound
         preventEvent={props.preventEvent}
@@ -242,6 +245,7 @@ export default function Game(props: IGameProps) {
         setIsTerminated={setIsTerminated}
         isReplay={props.isReplay}
         setBase64Data={setBase64Data}
+        setLyrics={setLyrics}
       />
     </>
   );
