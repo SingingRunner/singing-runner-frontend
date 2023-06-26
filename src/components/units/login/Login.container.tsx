@@ -64,13 +64,11 @@ export default function Login() {
       // });
 
       if (accessToken === undefined) {
-        alert("로그인에 실패했습니다! 다시 시도해주세요!");
         return;
       }
 
       // 2-2. accessToken을 global state에 저장
       setAccessToken(accessToken);
-      alert("로그인에 성공했습니다!");
       localStorage.setItem("userId", loginUserInfo?.userId || "");
       setUserId(loginUserInfo?.userId || "");
 
