@@ -4,32 +4,6 @@ import { memo, useEffect, useState, useRef, useContext } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { ILyricProps } from "./Lyric.types";
 
-const data = [
-  { timeStamp: 4500, lyrics: "나비처럼 날아가 볼까" },
-  { timeStamp: 7800, lyrics: "일렁거리는 바람에 실려" },
-  { timeStamp: 10000, lyrics: "이런 느낌을" },
-  { timeStamp: 11800, lyrics: "언제나 느낄 수 있을까" },
-  { timeStamp: 16800, lyrics: "마음속을 좁혀오는" },
-  { timeStamp: 18800, lyrics: "사소한 일은 신경 쓰지 마" },
-  { timeStamp: 21800, lyrics: "지금 이대로" },
-  { timeStamp: 23000, lyrics: "날아가 모두 잊으면 돼" },
-  { timeStamp: 27800, lyrics: "어떻게 wow wow" },
-  { timeStamp: 28800, lyrics: "wow wow wow" },
-  { timeStamp: 30800, lyrics: "하늘 끝까지 닿을 수 있을까" },
-  { timeStamp: 33800, lyrics: "이렇게 wow wow" },
-  { timeStamp: 34800, lyrics: "wow wow wow" },
-  { timeStamp: 36700, lyrics: "여린 날개가" },
-  { timeStamp: 37700, lyrics: "힘을 낼 수 있을까" },
-  { timeStamp: 42800, lyrics: "그래 그리 쉽지는 않겠지" },
-  { timeStamp: 46800, lyrics: "나를 허락해준 세상이란" },
-  { timeStamp: 48800, lyrics: "손쉽게 다가오는" },
-  { timeStamp: 50800, lyrics: "편하고도 감미로운 공간이 아냐" },
-  { timeStamp: 54800, lyrics: "그래도 날아오를 거야" },
-  { timeStamp: 58800, lyrics: "작은 날갯짓에 꿈을 담아" },
-  { timeStamp: 60800, lyrics: "조금만 기다려봐 oh my love" },
-  { timeStamp: -1, lyrics: "끝 !" },
-];
-
 function Lyric(props: ILyricProps) {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
@@ -37,7 +11,7 @@ function Lyric(props: ILyricProps) {
   const { socket } = socketContext;
 
   const [lyricIdx, setLyricIdx] = useState(0);
-  const endLyric = useRef(data[0].endTime);
+  const endLyric = useRef(props.lyrics[0].endTime);
   const lyricRef = useRef(0);
 
   useEffect(() => {
@@ -48,7 +22,10 @@ function Lyric(props: ILyricProps) {
         if (cnt++ % 3 === 0) {
           const currentTime = new Date().getTime();
           const diff = Math.floor((currentTime - props.startTime) / 100) * 100;
-          if (diff >= endLyric.current && lyricRef.current < data.length - 1) {
+          if (
+            diff >= endLyric.current &&
+            lyricRef.current < props.lyrics.length - 1
+          ) {
             endLyric.current = props.lyrics[lyricRef.current + 1].endTime;
             setLyricIdx((prev) => prev + 1);
             lyricRef.current++;

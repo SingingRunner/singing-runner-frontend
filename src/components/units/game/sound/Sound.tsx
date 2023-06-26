@@ -67,6 +67,13 @@ export default function Sound(props: ISoundProps) {
       const fetchRoomInfo = async (data: ISocketLoadingData) => {
         try {
           // 정답 데이터
+          const lyricsData = await fetch(data.gameSong.songLyrics);
+          const lyricsList = await lyricsData.json();
+          props.setLyrics(
+            lyricsList.data.map((el) => {
+              return { endTime: el.endTime, lyric: el.lyric };
+            })
+          );
           const answers = getAnswerData(data.gameSong); // 🚨 정답 데이터 받을 때 쓰세요
           const ans1 = await fetch(answers[0]);
           const ans2 = await fetch(answers[1]);
