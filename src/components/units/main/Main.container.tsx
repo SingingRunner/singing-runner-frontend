@@ -7,12 +7,17 @@ import { useQuery } from "@apollo/client";
 import { userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
 import { FETCH_USER } from "./Main.queries";
+import { PollingContext } from "../../../commons/contexts/PollingContext";
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect } = socketContext;
+
+  const pollingContext = useContext(PollingContext);
+  if (!pollingContext) return <div>Loading...</div>;
+  const { isPolling, setIsPolling } = pollingContext;
 
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
@@ -35,6 +40,11 @@ const Main = () => {
     variables: { userId },
     fetchPolicy: "network-only",
   });
+
+  useEffect(() => {
+    console.log(isPolling);
+    setIsPolling(true);
+  }, []);
 
   useEffect(() => {
     setCharacter(data?.fetchUser.character);
@@ -110,6 +120,7 @@ const Main = () => {
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
     // 소켓 연결
     const newSocket = socketConnect();
+    setIsPolling(false);
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
   };
@@ -117,6 +128,7 @@ const Main = () => {
   const onClickCustomMode = () => {
     // 소켓 연결
     const newSocket = socketConnect();
+    setIsPolling(false);
     newSocket.emit("create_custom", {
       userId,
       userMmr,
