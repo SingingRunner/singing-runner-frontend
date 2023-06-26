@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
 import Header from '../../../commons/layout/header/Header';
+import Modal from '../../../commons/modal/Modal';
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
@@ -67,13 +68,21 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
           </InfiniteScroll>
         </S.InfiniteScrollWrapper>
       </S.Container>
-
       <Button
         buttonType={buttonType.EMPTY}
         text="나가기"
         isFixedAtBottom
         onClick={props.onClickExit}
       />
+      {props.isDeleteClicked && (
+        <Modal
+          isCheck={false}
+          firstText="정말로 삭제하시겠습니까?"
+          buttonText='확인'
+          leftButtonText='취소'
+          onClickRight={props.handelDelete}
+          onClickLeft={props.onClickCancel}
+        />)}
     </>
   );
 }
