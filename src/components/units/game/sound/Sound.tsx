@@ -67,10 +67,10 @@ export default function Sound(props: ISoundProps) {
       const fetchRoomInfo = async (data: ISocketLoadingData) => {
         try {
           // 정답 데이터
-          getAnswerData(data.gameSong); // 🚨 정답 데이터 받을 때 쓰세요
-          const ans1 = await fetch("/origin.txt");
-          const ans2 = await fetch("/keyUp.txt");
-          const ans3 = await fetch("/keyDown.txt");
+          const answers = getAnswerData(data.gameSong); // 🚨 정답 데이터 받을 때 쓰세요
+          const ans1 = await fetch(answers[0]);
+          const ans2 = await fetch(answers[1]);
+          const ans3 = await fetch(answers[2]);
           const ans1Text = await ans1.text();
           const ans2Text = await ans2.text();
           const ans3Text = await ans3.text();
@@ -215,9 +215,9 @@ export default function Sound(props: ISoundProps) {
   };
 
   const getAnswerData = (gameSong: ISocketGameSongData) => {
-    let answerOrigin: number[];
-    let answerUp: number[];
-    let answerDown: number[];
+    let answerOrigin: string;
+    let answerUp: string;
+    let answerDown: string;
     switch (userData?.fetchUser.userKeynote) {
       case 1:
         answerOrigin = gameSong.vocalFemale;
