@@ -77,7 +77,6 @@ export default function SocialSetting() {
           },
         },
       });
-      alert("친구가 삭제되었습니다.");
       refetch();
     } catch (error) {
       alert(error.message);
