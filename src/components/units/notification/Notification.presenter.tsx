@@ -48,10 +48,10 @@ export default function NotificationUI(props: INotificationUIProps) {
                         style={{
                           width: "60px",
                           fontSize: "12px",
-                          marginLeft: "16px",
                           color: "gray",
+                          textAlign: "right",
                         }}
-                      ></div>
+                      >{props.convertTimeToUnit(el.receivedAt)}</div>
                       <Button
                         buttonType={buttonType.SHORT_PINK}
                         text="보기"

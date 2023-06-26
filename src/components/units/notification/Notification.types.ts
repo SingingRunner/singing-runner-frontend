@@ -7,4 +7,5 @@ export interface INotificationUIProps {
   onClickAccept: () => void
   onClickDeny: () => void
   senderName: string
+  convertTimeToUnit: (time: string) => string
 }
