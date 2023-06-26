@@ -8,16 +8,13 @@ import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
 import { IAddUIProps } from "./Add.types";
 import Modal from "../../../commons/modal/Modal";
-import Header from '../../../commons/layout/header/Header';
+import Header from "../../../commons/layout/header/Header";
 
 export default function AddUI(props: IAddUIProps) {
   return (
     <>
-    <Header
-      text="친구 추가"
-    />
+      <Header text="친구 추가" />
       <S.Container>
-
         <S.InputWrapper>
           <S.SearchIcon src="/icon/search-purple.png" />
           <Input
@@ -28,8 +25,20 @@ export default function AddUI(props: IAddUIProps) {
           />
           <Label text="유저 목록" marginTop="16px" />
         </S.InputWrapper>
-        {!props.keyword && <div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>닉네임으로 검색하세요.</div>}
-        {props.keyword && !props.data?.searchUser.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>검색 결과가 없습니다.</div>)}
+        {!props.keyword && (
+          <div
+            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
+          >
+            닉네임으로 검색하세요.
+          </div>
+        )}
+        {props.keyword && !props.data?.searchUser.length && (
+          <div
+            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
+          >
+            검색 결과가 없습니다.
+          </div>
+        )}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
@@ -53,6 +62,7 @@ export default function AddUI(props: IAddUIProps) {
                       <Button
                         buttonType={buttonType.SHORT_PINK}
                         text="친구 요청"
+                        height="30px"
                         onClick={props.handleAddRequest(el.nickname, el.userId)}
                       />
                     </div>
@@ -81,7 +91,8 @@ export default function AddUI(props: IAddUIProps) {
       {props.isRequestClicked && (
         <Modal
           isCheck={true}
-          firstText={`${props.receiverNickname}님에게`}
+          hilightText={props.receiverNickname}
+          firstText="님에게"
           secondText="친구 요청을 보냈어요!"
           buttonText="확인"
           onClickRight={props.onClickModalCheck}

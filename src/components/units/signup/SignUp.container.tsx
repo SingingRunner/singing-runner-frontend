@@ -42,8 +42,7 @@ export default function SignUp() {
       const { data } = await registerUser({ variables: { newUser } });
       const registeredUser = data?.registerUser.user;
 
-      // 회원가입 성공
-      alert("회원가입을 축하합니다.");
+      // 회원가입 성공 시 로컬 스토리지에 userId 저장
       localStorage.setItem("userId", registeredUser?.userId || "");
       setUserId(registeredUser?.userId || "");
 
@@ -179,6 +178,14 @@ export default function SignUp() {
     console.log("dummy");
   };
 
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (isSignUpButtonEnabled) {
+        onClickSignUp();
+      }
+    }
+  }
+
   const router = useRouter();
 
   const props: ISignUpUIProps = {
@@ -199,6 +206,7 @@ export default function SignUp() {
     checkDuplicateEmail,
     isSignUpButtonEnabled,
     dummyClick,
+    onKeyDown,
   };
 
   return <SignUpUI {...props} />;

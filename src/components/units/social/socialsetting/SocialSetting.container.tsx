@@ -10,14 +10,15 @@ import {
 import SocialSettingUI from "./SocialSetting.presenter";
 import { ISocialSettingUIProps } from "./SocialSetting.types";
 
-import _ from 'lodash'
-import { REMOVE_FRIEND, SEARCH_FRIEND } from './SocialSetting.queries';
-
+import _ from "lodash";
+import { REMOVE_FRIEND, SEARCH_FRIEND } from "./SocialSetting.queries";
 
 export default function SocialSetting() {
   const router = useRouter();
   const [userId, setUserId] = useRecoilState(userIdState);
   const [keyword, setKeyword] = useState("");
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
+  const [friendId, setFriendId] = useState("");
   useEffect(() => {
     setUserId(localStorage.getItem("userId") || "");
   }, []);
@@ -66,10 +67,17 @@ export default function SocialSetting() {
   };
 
   const onClickDelete = (friendId: string) => () => {
+    setFriendId(friendId);
+    setIsDeleteClicked(true);
+  };
+
+  const onClickCancel = () => {
+    setIsDeleteClicked(false);
+  };
+
+  const handelDelete = async () => {
     try {
-      console.log("delete friendId: ", friendId);
-      console.log("delete userId: ", userId);
-      removeFriend({
+      await removeFriend({
         variables: {
           addFriendDto: {
             userId,
@@ -77,8 +85,8 @@ export default function SocialSetting() {
           },
         },
       });
-      alert("친구가 삭제되었습니다.");
-      refetch();
+      setIsDeleteClicked(false);
+      refetch({ nickname: "" });
     } catch (error) {
       alert(error.message);
     }
@@ -93,9 +101,12 @@ export default function SocialSetting() {
     onClickExit,
     onLoadMore,
     data,
-    onClickDelete,
     keyword,
+    isDeleteClicked,
     onChangeNickname,
+    onClickDelete,
+    handelDelete,
+    onClickCancel,
   };
 
   return <SocialSettingUI {...props} />;

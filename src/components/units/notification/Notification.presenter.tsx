@@ -6,27 +6,25 @@ import { v4 as uuidv4 } from "uuid";
 import { INotificationUIProps } from "./Notification.types";
 import Label from "../../commons/label/Label";
 import Modal from "../../commons/modal/Modal";
-import Header from '../../commons/layout/header/Header';
+import Header from "../../commons/layout/header/Header";
 
 export default function NotificationUI(props: INotificationUIProps) {
   return (
     <>
-      <Header
-        text="알림"
-      />
+      <Header text="알림" />
       <Label text="알림 목록" marginTop="12px" />
       <S.Container>
-          {props.data?.getNotification.length === 0 && (
-            <div
-              style={{
-                color: "white",
-                marginBottom: "280px",
-                fontSize: "24px",
-              }}
-            >
-              표시할 알림이 없습니다.
-            </div>
-          )}
+        {props.data?.getNotification.length === 0 && (
+          <div
+            style={{
+              color: "white",
+              marginBottom: "280px",
+              fontSize: "24px",
+            }}
+          >
+            표시할 알림이 없습니다.
+          </div>
+        )}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
@@ -50,14 +48,14 @@ export default function NotificationUI(props: INotificationUIProps) {
                         style={{
                           width: "60px",
                           fontSize: "12px",
-                          marginLeft: "16px",
                           color: "gray",
+                          textAlign: "right",
                         }}
-                      >
-                      </div>
+                      >{props.convertTimeToUnit(el.receivedAt)}</div>
                       <Button
                         buttonType={buttonType.SHORT_PINK}
                         text="보기"
+                        height="30px"
                         onClick={props.onClickCheck(
                           el.senderId,
                           el.senderNickname

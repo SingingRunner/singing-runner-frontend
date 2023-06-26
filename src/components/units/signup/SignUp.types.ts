@@ -16,4 +16,5 @@ export interface ISignUpUIProps {
   checkDuplicateEmail: () => void;
   isSignUpButtonEnabled: boolean;
   dummyClick: () => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
