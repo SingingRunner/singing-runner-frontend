@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { ISignUpUIProps } from "./SignUp.types";
 import SignUpUI from "./SignUp.presenter";
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   IMutation,
   IMutationRegisterUserArgs,
@@ -10,7 +10,11 @@ import {
 
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
-import { REGISTER_USER } from "./SignUp.queries";
+import {
+  IS_EMAIL_TAKEN,
+  IS_NICKNAME_TAKEN,
+  REGISTER_USER,
+} from "./SignUp.queries";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -29,6 +33,22 @@ export default function SignUp() {
   >(REGISTER_USER);
 
   const [, setUserId] = useRecoilState(userIdState);
+  const [emailCheck, { data: emailCheckData }] = useLazyQuery(IS_EMAIL_TAKEN, {
+    fetchPolicy: "network-only",
+  });
+  const [nicknameCheck, { data: nicknameCheckData }] = useLazyQuery(
+    IS_NICKNAME_TAKEN,
+    {
+      fetchPolicy: "network-only",
+    }
+  );
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [nicknameVerified, setNicknameVerified] = useState(false);
+  const [emailMessage, setEmailMessage] = useState("");
+  const [nicknameMessage, setNicknameMessage] = useState("");
+  // 이메일과 닉네임 중복확인 버튼이 각각 눌릴 때 useEffect에서 간섭이 안되게 관리하는 플래그
+  const [checkEmail, setCheckEmail] = useState(false);
+  const [checkNickname, setCheckNickname] = useState(false);
 
   const onClickSignUp = async (): Promise<void> => {
     // 메인 화면으로 전환
@@ -66,7 +86,9 @@ export default function SignUp() {
       email !== "" &&
       password !== "" &&
       passwordCheck !== "" &&
-      nickname !== ""
+      nickname !== "" &&
+      emailVerified &&
+      nicknameVerified
     ) {
       setSignUpButtonEnabled(true);
     } else {
@@ -81,59 +103,23 @@ export default function SignUp() {
     password,
     passwordCheck,
     nickname,
+    emailVerified,
+    nicknameVerified,
   ]);
 
-  const handleNicknameChange = (e) => {
-    const enteredNickname = e.target.value;
-    setNickname(enteredNickname);
-    validateNickname(enteredNickname);
-  };
-
-  const validateNickname = (enteredNickname) => {
-    const koreanContainsOnlyConsonantsRegex = /[ㄱ-ㅎ]+/;
-    const koreanContainsOnlyVowelsRegex = /[ㅏ-ㅣ]+/;
-    const specialCharactersRegex = /[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/;
-    const whitespaceRegex = /\s+/;
-
-    if (enteredNickname === "") {
-      setNicknameError("");
-    } else if (specialCharactersRegex.test(enteredNickname)) {
-      setNicknameError("* 닉네임에는 한글, 영어, 숫자만 입력 가능합니다.");
-    } else if (
-      koreanContainsOnlyConsonantsRegex.test(enteredNickname) ||
-      koreanContainsOnlyVowelsRegex.test(enteredNickname)
-    ) {
-      setNicknameError("* 닉네임에 한글 모음, 자음만 사용하실 수는 없습니다.");
-    } else if (whitespaceRegex.test(enteredNickname)) {
-      setNicknameError("* 닉네임에 띄어쓰기를 사용할 수 없습니다.");
-    } else if (enteredNickname.length < 2 || enteredNickname.length > 6) {
-      setNicknameError("* 닉네임은 2~6자로 입력해주세요.");
-    } else {
-      setNicknameError("");
-    }
-  };
-
+  
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setEmailError("");
-    // validateEmail();
+    setEmailMessage("");
+    setCheckEmail(false);
   };
 
-  const validateEmail = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic regex for email validation
-    if (email === "") {
-      setEmailError("");
-    } else if (!emailRegex.test(email)) {
-      setEmailError("* 올바른 이메일 형식으로 입력해주세요.");
-    }
-  };
-
-  const checkDuplicateEmail = () => {
-    console.log("이메일 중복 확인 버튼 눌림");
-    // 중복 확인 로직 추가
-    // if (isEmailInUse(email)) {
-    //   setEmailError('이미 사용 중인 이메일입니다.');
-    // }
+  const handleNicknameChange = (e) => {
+    setNickname(e.target.value);
+    setNicknameError("");
+    setNicknameMessage("");
+    setCheckNickname(false);
   };
 
   const handlePasswordChange = (e) => {
@@ -142,20 +128,88 @@ export default function SignUp() {
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
 
     if (enteredPassword === "") {
-      setPasswordError("");
+      setPasswordError(" ");
     } else if (enteredPassword.length < 6 || enteredPassword.length > 12) {
       setPasswordError("* 비밀번호는 6~12자로 입력해주세요.");
     } else if (!passwordRegex.test(enteredPassword)) {
       setPasswordError(
         "* 영문자, 숫자, 특수문자를 최소 하나씩 포함해야 합니다."
-      );
-    } else {
+        );
+      } else {
       setPasswordError("");
     }
 
     setPassword(enteredPassword);
     validatePasswordMatch(enteredPassword, passwordCheck);
   };
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic regex for email validation
+    if (email === "") {
+      setEmailError(" ");
+    } else if (!emailRegex.test(email)) {
+      setEmailError("* 올바른 이메일 형식으로 입력해주세요.");
+    }
+  };
+  
+  const validateNickname = () => {
+    const koreanContainsOnlyConsonantsRegex = /[ㄱ-ㅎ]+/;
+    const koreanContainsOnlyVowelsRegex = /[ㅏ-ㅣ]+/;
+    const specialCharactersRegex = /[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ]/;
+    const whitespaceRegex = /\s+/;
+
+    if (nickname === "") {
+      setNicknameError(" ");
+    } else if (specialCharactersRegex.test(nickname)) {
+      setNicknameError("* 닉네임에는 한글, 영어, 숫자만 입력 가능합니다.");
+    } else if (
+      koreanContainsOnlyConsonantsRegex.test(nickname) ||
+      koreanContainsOnlyVowelsRegex.test(nickname)
+    ) {
+      setNicknameError("* 닉네임에 한글 모음, 자음만 사용하실 수는 없습니다.");
+    } else if (whitespaceRegex.test(nickname)) {
+      setNicknameError("* 닉네임에 띄어쓰기를 사용할 수 없습니다.");
+    } else if (nickname.length < 2 || nickname.length > 6) {
+      setNicknameError("* 닉네임은 2~6자로 입력해주세요.");
+    } else {
+      setNicknameError("");
+    }
+  };
+
+  const checkDuplicateEmail = async () => {
+    console.log("이메일 중복 확인 버튼 눌림");
+    emailCheck({ variables: { userEmail: email } });
+    setEmailVerified(false);
+    setCheckEmail(true);
+  };
+
+  const checkDuplicateNickname = async () => {
+    console.log("닉네임 중복 확인 버튼 눌림");
+    nicknameCheck({ variables: { nickname } });
+    setNicknameVerified(false);
+    setCheckNickname(true);
+  };
+
+  useEffect(() => {
+    const emailIsTaken = emailCheckData?.isEmailTaken;
+    const nicknameIsTaken = nicknameCheckData?.isNicknameTaken;
+
+    if (checkEmail && emailIsTaken === true) {
+      setEmailError("* 이메일이 이미 사용 중입니다.");
+      setEmailMessage("");
+    } else if (checkEmail && emailIsTaken === false) {
+      setEmailVerified(true);
+      setEmailMessage("사용 가능한 이메일입니다.");
+    }
+
+    if (checkNickname && nicknameIsTaken === true) {
+      setNicknameError("* 닉네임이 이미 사용 중입니다.");
+      setNicknameMessage("");
+    } else if (checkNickname && nicknameIsTaken === false) {
+      setNicknameVerified(true);
+      setNicknameMessage("사용 가능한 닉네임입니다.");
+    }
+  }, [emailCheckData, nicknameCheckData]);
 
   const handlePasswordCheckChange = (e) => {
     const enteredPasswordCheck = e.target.value;
@@ -179,12 +233,12 @@ export default function SignUp() {
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       if (isSignUpButtonEnabled) {
         onClickSignUp();
       }
     }
-  }
+  };
 
   const router = useRouter();
 
@@ -207,6 +261,10 @@ export default function SignUp() {
     isSignUpButtonEnabled,
     dummyClick,
     onKeyDown,
+    checkDuplicateNickname,
+    emailMessage,
+    nicknameMessage,
+    validateNickname,
   };
 
   return <SignUpUI {...props} />;
