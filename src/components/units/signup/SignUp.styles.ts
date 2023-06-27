@@ -28,9 +28,21 @@ export const Error = styled.div`
   color: red;
 `;
 
+export const Success = styled.div`
+  height: 18px;
+  color: yellow;
+  margin-left: 8px;
+`;
+
 export const ErrorNickname = styled.div`
   height: 160px;
   color: red;
+`;
+
+export const SuccessNickname = styled.div`
+  height: 160px;
+  color: yellow;
+  margin-left: 8px;
 `;
 
 export const PasswordWrapper = styled.div`
