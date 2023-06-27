@@ -4,7 +4,6 @@ import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { userIdState } from "../../../../commons/store";
-import { IPlayersInfo } from "../Game.types";
 
 import {
   ISocketGameSongData,
@@ -12,7 +11,7 @@ import {
   ISoundProps,
 } from "./Sound.types";
 import { FETCH_USER } from "../Game.queries";
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
   IQuery,
   IQueryFetchUserArgs,
