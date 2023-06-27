@@ -51,6 +51,21 @@ export default function Custom() {
 
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
+    setRoomInfo((prev) => ({
+      ...prev,
+      players: [
+        {
+          roomId: "",
+          mode: "아이템",
+          singer: "",
+          songTitle: "",
+          songId: "",
+          playerCount: 1,
+          players: [],
+          hostId: "",
+        },
+      ],
+    }));
     router.push("/main");
   };
 

@@ -5,7 +5,7 @@ import { io, Socket } from "socket.io-client";
 // SocketContext 생성
 export interface ISocketContext {
   socket: Socket | null;
-  socketConnect: () => Socket;
+  socketConnect: (userId: string) => Socket;
   socketDisconnect: () => void;
 }
 
@@ -18,11 +18,14 @@ interface SocketProviderProps {
 export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const socketConnect = () => {
+  const socketConnect = (userId: string) => {
     /* 🚨 배포 시 사용 */
-    const newSocket = io("https://injungle.shop", { path: "/api/socket.io" });
+    const newSocket = io("https://injungle.shop", {
+      path: "/api/socket.io",
+      query: { userId },
+    });
     /* 로컬 테스트 시 사용 */
-    // const newSocket = io("http://localhost:3000");
+    // const newSocket = io("http://localhost:3000", { query: { userId } });
     setSocket(newSocket);
     return newSocket;
   };
