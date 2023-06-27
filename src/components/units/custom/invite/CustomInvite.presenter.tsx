@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import Modal from "../../../commons/modal/Modal";
 import * as S from "./CustomInvite.styles";
 import InfiniteScroll from "react-infinite-scroller";
+import LoadingData from "../../../commons/loadingData/LoadingData";
 
 export default function CustomInviteUI(props: ICustomInviteUIProps) {
   const router = useRouter();
@@ -36,7 +37,9 @@ export default function CustomInviteUI(props: ICustomInviteUIProps) {
 
       <Label text="친구 목록" marginTop="16px" />
 
-      {props.data?.searchFriend.length ? (
+      {props.loading ? (
+        <LoadingData />
+      ) : props.data?.searchFriend.length ? (
         <S.ListWrapper>
           <InfiniteScroll
             pageStart={0}

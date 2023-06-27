@@ -7,7 +7,7 @@ import {
   IQuery,
   IQuerySearchUserArgs,
 } from "../../../../commons/types/generated/types";
-import _ from "lodash";
+import debounce from "lodash/debounce";
 import AddUI from "./Add.presenter";
 import { IAddUIProps } from "./Add.types";
 import { FRIEND_REQUEST, SEARCH_USER } from "./Add.queries";
@@ -18,9 +18,6 @@ export default function Add() {
   const [userId] = useRecoilState(userIdState);
   const [keyword, setKeyword] = useState("");
   const [receiverNickname, setReceiverNickname] = useState("");
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchUser">,
@@ -58,7 +55,7 @@ export default function Add() {
   const [friendRequest] = useMutation(FRIEND_REQUEST);
 
   const getDebounce = useCallback(
-    _.debounce((data) => {
+    debounce((data) => {
       refetch({ nickname: data.trim() });
     }, 200),
     [refetch]

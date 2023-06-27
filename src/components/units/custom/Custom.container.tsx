@@ -5,12 +5,6 @@ import { useRecoilState } from "recoil";
 import { roomInfoState, userIdState } from "../../../commons/store";
 import { IPlayersData } from "./Custom.types";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useLazyQuery } from "@apollo/client";
-import {
-  IQuery,
-  IQueryFetchUserArgs,
-} from "../../../commons/types/generated/types";
-import { FETCH_USER } from "./Custom.queries";
 
 export default function Custom() {
   const router = useRouter();
@@ -21,27 +15,6 @@ export default function Custom() {
 
   const [userId] = useRecoilState(userIdState);
 
-  const [fetchUser] = useLazyQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, {
-    onCompleted: (userData) => {
-      setRoomInfo((prev) => ({
-        ...prev,
-        players: [
-          {
-            userId,
-            userTier: userData?.fetchUser.userTier,
-            nickname: userData?.fetchUser.nickname,
-            character: userData?.fetchUser.character,
-            isHost: true,
-            isFriend: false,
-          },
-        ],
-      }));
-    },
-  });
-
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
   const [isHost, setIsHost] = useState(roomInfo.hostId === userId);
 
@@ -51,6 +24,21 @@ export default function Custom() {
 
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
+    setRoomInfo((prev) => ({
+      ...prev,
+      players: [
+        {
+          roomId: "",
+          mode: "아이템",
+          singer: "",
+          songTitle: "",
+          songId: "",
+          playerCount: 1,
+          players: [],
+          hostId: "",
+        },
+      ],
+    }));
     router.push("/main");
   };
 
@@ -82,16 +70,6 @@ export default function Custom() {
   ]);
 
   useEffect(() => {
-    // 방장인 경우, 방 생성 이후에 처음 받는 메세지
-    socket?.on("create_custom", (roomId) => {
-      fetchUser({ variables: { userId } });
-      setRoomInfo((prev) => ({
-        ...prev,
-        roomId: String(roomId),
-        hostId: userId,
-      }));
-    });
-
     socket?.on("invite", (data) => {
       setRoomInfo((prev) => ({ ...prev, roomId: String(data[0].roomId) }));
       const newPlayersInfo: IPlayersData[] = [];

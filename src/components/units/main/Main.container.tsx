@@ -3,11 +3,15 @@ import MainUI from "./Main.presenter";
 import { IMainUIProps } from "./Main.types";
 import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useQuery } from "@apollo/client";
-import { userIdState } from "../../../commons/store";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { roomInfoState, userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
 import { FETCH_USER } from "./Main.queries";
 import { PollingContext } from "../../../commons/contexts/PollingContext";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../commons/types/generated/types";
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
@@ -119,15 +123,38 @@ const Main = () => {
   const handleBattleModeClick = () => {
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
     // 소켓 연결
-    const newSocket = socketConnect();
+    const newSocket = socketConnect(userId);
     setIsPolling(false);
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
   };
 
-  const onClickCustomMode = () => {
+  const [, setRoomInfo] = useRecoilState(roomInfoState);
+
+  const [fetchUser] = useLazyQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, {
+    onCompleted: (userData) => {
+      setRoomInfo((prev) => ({
+        ...prev,
+        players: [
+          {
+            userId,
+            userTier: userData?.fetchUser.userTier,
+            nickname: userData?.fetchUser.nickname,
+            character: userData?.fetchUser.character,
+            isHost: true,
+            isFriend: false,
+          },
+        ],
+      }));
+    },
+  });
+
+  const onClickCustomMode = async () => {
     // 소켓 연결
-    const newSocket = socketConnect();
+    const newSocket = socketConnect(userId);
     setIsPolling(false);
     newSocket.emit("create_custom", {
       userId,
@@ -137,11 +164,21 @@ const Main = () => {
       userKeynote,
       character,
     });
-
-    // 커스텀 모드 화면으로 전환
-    router.push("/custom");
   };
+  useEffect(() => {
+    // 방장인 경우, 방 생성 이후에 처음 받는 메세지
+    socket?.on("create_custom", async (roomId) => {
+      await fetchUser({ variables: { userId } });
+      setRoomInfo((prev) => ({
+        ...prev,
+        roomId: String(roomId),
+        hostId: userId,
+      }));
 
+      // 커스텀 모드 화면으로 전환
+      router.push("/custom");
+    });
+  }, [socket]);
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경

@@ -13,7 +13,7 @@ import {
   IQueryFetchUserArgs,
   IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
-import _ from "lodash";
+import debounce from "lodash/debounce";
 
 export default function CustomInvite() {
   const [userId] = useRecoilState(userIdState);
@@ -30,7 +30,7 @@ export default function CustomInvite() {
 
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch, fetchMore } = useQuery<
+  const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -43,7 +43,7 @@ export default function CustomInvite() {
   });
 
   const getDebounce = useCallback(
-    _.debounce((data) => {
+    debounce((data) => {
       refetch({ nickname: data.trim() });
     }, 200),
     [refetch]
@@ -93,6 +93,7 @@ export default function CustomInvite() {
   return (
     <CustomInviteUI
       onClickInvite={onClickInvite}
+      loading={loading}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}

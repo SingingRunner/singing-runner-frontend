@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { accessTokenState, userIdState } from "../../../commons/store";
@@ -81,13 +81,21 @@ export default function Login() {
     }
   };
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/disabled_button.mp3");
+  }, []);
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+
+    if (event.key === "Enter") {
       if (isLoginButtonEnabled) {
+        audioRef.current?.play();
         onClickLogin();
       }
     }
-  }
+  };
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);

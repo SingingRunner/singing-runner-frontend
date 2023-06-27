@@ -52,9 +52,8 @@ export default function MyRoom() {
     }
   }, [data]);
 
-  const onClickComplete = () => {
-    // Call the mutation
-    updateCharacterMutation({
+  const onClickComplete = async () => {
+    await updateCharacterMutation({
       variables: {
         userId,
         character: characters[currentImageIndex],
@@ -73,7 +72,7 @@ export default function MyRoom() {
         console.error(error);
       });
 
-    router.push("/main");
+    router.replace("/main");
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);

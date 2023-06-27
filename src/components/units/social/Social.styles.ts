@@ -63,5 +63,5 @@ export const Mmr = styled.div`
 
 export const Label = styled.div`
   color: white;
-  margintop: 16px;
+  margin-top: 16px;
 `;

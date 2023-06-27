@@ -4,7 +4,7 @@ export const LogoWrapper = styled.div`
   position: fixed;
   top: 8px;
   left: 16px;
-  height: 40px;
+  height: 45px;
   display: flex;
   align-items: center;
 `;
@@ -21,8 +21,8 @@ export const HeaderWrapper = styled.div`
   top: 8px;
   right: 8px;
   img {
-    height: 40px;
-    width: 40px;
+    height: 45px;
+    width: 45px;
     margin: 0 -4px;
   }
 `;
