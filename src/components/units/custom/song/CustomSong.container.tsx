@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import CustomSongUI from "./CustomSong.presenter";
 import { useRecoilState } from "recoil";
-import { roomInfoState } from "../../../../commons/store";
+import { roomInfoState, userIdState } from "../../../../commons/store";
 import { ChangeEvent, useCallback, useContext, useState } from "react";
 import { SEARCH_SONG_QUERY } from "./CustomSong.queries";
 import {
@@ -18,6 +18,8 @@ export default function CustomSong() {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
+
+  const [userId] = useRecoilState(userIdState);
 
   const [roomInfo] = useRecoilState(roomInfoState);
   const [filter, setFilter] = useState("createdAt");
@@ -56,7 +58,8 @@ export default function CustomSong() {
 
   const onChangeSong = (songId: string) => {
     // 노래가 변경되었으면 emit (roomInfo 변경은 on에서 처리)
-    if (roomInfo.songId !== songId) socket?.emit("set_song", songId);
+    if (roomInfo.songId !== songId)
+      socket?.emit("set_song", { songId, userId });
     router.push("/custom");
   };
 

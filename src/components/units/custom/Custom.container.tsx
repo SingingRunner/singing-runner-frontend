@@ -74,7 +74,7 @@ export default function Custom() {
   };
 
   const onClickGameStart = () => {
-    socket?.emit("custom_start");
+    socket?.emit("custom_start", { userId });
   };
 
   const [playersData, setPlayersData] = useState<IPlayersData[]>([
