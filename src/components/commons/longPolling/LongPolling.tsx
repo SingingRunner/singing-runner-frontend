@@ -74,7 +74,7 @@ export default function LongPolling() {
 
   const onClickAcceptInvite = () => {
     setIsPolling(false);
-    const newSocket = socketConnect();
+    const newSocket = socketConnect(userId);
     newSocket?.emit("invite", {
       userId,
       HostUserDto: {

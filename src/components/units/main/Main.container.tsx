@@ -119,7 +119,7 @@ const Main = () => {
   const handleBattleModeClick = () => {
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
     // 소켓 연결
-    const newSocket = socketConnect();
+    const newSocket = socketConnect(userId);
     setIsPolling(false);
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
@@ -127,7 +127,7 @@ const Main = () => {
 
   const onClickCustomMode = () => {
     // 소켓 연결
-    const newSocket = socketConnect();
+    const newSocket = socketConnect(userId);
     setIsPolling(false);
     newSocket.emit("create_custom", {
       userId,
