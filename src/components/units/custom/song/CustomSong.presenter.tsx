@@ -10,6 +10,7 @@ import { ICustomSongUIProps } from "./CustomSong.types";
 import { v4 as uuidv4 } from "uuid";
 import { isKeyword } from "../../../../commons/libraries/isKeyword";
 import InfiniteScroll from "react-infinite-scroller";
+import LoadingData from "../../../commons/loadingData/LoadingData";
 
 export default function CustomSongUI(props: ICustomSongUIProps) {
   const router = useRouter();
@@ -39,7 +40,9 @@ export default function CustomSongUI(props: ICustomSongUIProps) {
         }
         onClick={props.onClickFilter}
       />
-      {props.data?.searchSong.length ? (
+      {props.loading ? (
+        <LoadingData />
+      ) : props.data?.searchSong.length ? (
         <S.ListWrapper>
           <InfiniteScroll
             pageStart={0}

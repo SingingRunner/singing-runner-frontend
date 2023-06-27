@@ -98,8 +98,8 @@ export default function Custom() {
 
   useEffect(() => {
     // 방장인 경우, 방 생성 이후에 처음 받는 메세지
-    socket?.on("create_custom", (roomId) => {
-      fetchUser({ variables: { userId } });
+    socket?.on("create_custom", async (roomId) => {
+      await fetchUser({ variables: { userId } });
       setRoomInfo((prev) => ({
         ...prev,
         roomId: String(roomId),

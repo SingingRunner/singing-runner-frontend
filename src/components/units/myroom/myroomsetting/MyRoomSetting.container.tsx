@@ -78,6 +78,7 @@ export default function MyRoomSetting() {
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력
       console.log(error.message);
+      router.push("/");
     }
   };
 
