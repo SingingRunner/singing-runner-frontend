@@ -11,7 +11,7 @@ import Header from "../../commons/layout/header/Header";
 export default function NotificationUI(props: INotificationUIProps) {
   return (
     <>
-      <Header text="알림" />
+      <Header text="알림" onClickPrev={props.onClickExit} />
       <Label text="알림 목록" marginTop="12px" />
       <S.Container>
         {props.data?.getNotification.length === 0 && (
@@ -51,7 +51,9 @@ export default function NotificationUI(props: INotificationUIProps) {
                           color: "gray",
                           textAlign: "right",
                         }}
-                      >{props.convertTimeToUnit(el.receivedAt)}</div>
+                      >
+                        {props.convertTimeToUnit(el.receivedAt)}
+                      </div>
                       <Button
                         buttonType={buttonType.SHORT_PINK}
                         text="보기"

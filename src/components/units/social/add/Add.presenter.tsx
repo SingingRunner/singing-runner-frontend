@@ -13,7 +13,7 @@ import Header from "../../../commons/layout/header/Header";
 export default function AddUI(props: IAddUIProps) {
   return (
     <>
-      <Header text="친구 추가" />
+      <Header text="친구 추가" onClickPrev={props.onClickExit} />
       <S.Container>
         <S.InputWrapper>
           <S.SearchIcon src="/icon/search-purple.png" />

@@ -14,7 +14,7 @@ import {
   DELETE_NOTIFICATION,
   GET_NOTIFICATION,
 } from "./Notification.queries";
-import moment from 'moment';
+import moment from "moment";
 
 export default function Notification() {
   const router = useRouter();
@@ -146,7 +146,6 @@ export default function Notification() {
     refetch();
   };
 
-  // 나가기 버튼 클릭 시 소셜 페이지로 이동
   const onClickExit = () => {
     router.push("/main");
   };

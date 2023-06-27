@@ -7,7 +7,7 @@ import Header from "../../../commons/layout/header/Header";
 export default function MyRoomSettingUI(props: IMyRoomSettingUIProps) {
   return (
     <>
-      <Header text="" />
+      <Header onClickPrev={props.onClickExit} />
       <S.Option>키 설정</S.Option>
       <Button
         buttonType={buttonType.SELECT}

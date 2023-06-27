@@ -21,7 +21,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
 
   return (
     <>
-      <Header text="" />
+      <Header onClickPrev={props.onClickComplete} />
       <S.HeaderWrapper>
         <img
           src="/icon/header/setting.png"
