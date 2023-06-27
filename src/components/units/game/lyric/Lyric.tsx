@@ -16,7 +16,6 @@ function Lyric(props: ILyricProps) {
 
   useEffect(() => {
     if (props.startTime !== 0) {
-      console.log(props.startTime);
       let cnt = 0;
       const changeLyric = () => {
         if (cnt++ % 3 === 0) {

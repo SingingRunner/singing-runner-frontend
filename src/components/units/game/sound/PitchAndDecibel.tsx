@@ -161,17 +161,25 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const handleAudioStream = (stream: MediaStream) => {
     const mediaRecorder = new MediaRecorder(stream);
     const chunks: Blob[] = [];
+    let isGameTerminated = false;
 
+    audioContext = new window.AudioContext();
+    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    analyzer = audioContext.createAnalyser();
+    analyzer.fftSize = 2048;
+    mediaStreamSource.connect(analyzer);
+    const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     mediaRecorder.ondataavailable = (e) => {
       chunks.push(e.data);
     };
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
       const reader = new FileReader();
+      pitchWorker.terminate();
       reader.readAsDataURL(blob);
+      isGameTerminated = true;
       reader.onloadend = () => {
         props.setBase64Data(reader.result as string);
-        console.log("result: ", reader.result);
         socket?.emit("game_terminated", {
           userId,
           score: currentScore,
@@ -186,12 +194,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       mediaRecorder.stop();
     };
 
-    audioContext = new window.AudioContext();
-    mediaStreamSource = audioContext.createMediaStreamSource(stream);
-    analyzer = audioContext.createAnalyser();
-    analyzer.fftSize = 2048;
-    mediaStreamSource.connect(analyzer);
-    const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     pitchWorker.addEventListener("message", (event) => {
       const pitch: number = event.data.pitch;
       if (pitch != null && pitch > 0) {
@@ -231,9 +233,11 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
 
     const processAudioCb = (fps) => {
       const fpsInterval = 1000 / fps;
-      let then;
+      let then: number;
+      if (isGameTerminated) return;
 
       const cb = (timestamp) => {
+        if (isGameTerminated) return;
         if (startTime === 0 && then === undefined) {
           startTime = performance.now();
           then = performance.now();
