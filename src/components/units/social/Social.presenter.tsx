@@ -7,12 +7,12 @@ import { ISocialUIProps } from "./Social.types";
 import { v4 as uuidv4 } from "uuid";
 import * as S from "./Social.styles";
 import Label from "../../commons/label/Label";
-import Header from '../../commons/layout/header/Header';
+import Header from "../../commons/layout/header/Header";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <Header/>
+      <Header onClickPrev={props.onClickExit} />
       <S.Add src="/icon/friends.png" onClick={props.onClickAdd} />
       <S.Setting src="/icon/setting.png" onClick={props.onClickSetting} />
 
@@ -28,8 +28,20 @@ export default function SocialUI(props: ISocialUIProps) {
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
-        {!props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>아직 친구가 없으시네요!</div>)}
-        {props.keyword && !props.data?.searchFriend.length && (<div style={{color: "white", marginBottom: "150px", fontSize: "24px"}}>검색 결과가 없습니다.</div>)}
+        {!props.keyword && !props.data?.searchFriend.length && (
+          <div
+            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
+          >
+            아직 친구가 없으시네요!
+          </div>
+        )}
+        {props.keyword && !props.data?.searchFriend.length && (
+          <div
+            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
+          >
+            검색 결과가 없습니다.
+          </div>
+        )}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
@@ -41,12 +53,29 @@ export default function SocialUI(props: ISocialUIProps) {
               <div key={uuidv4()}>
                 <ListItem
                   rightChildren={
-                    <div style={{width: "120px", display:"flex", alignItems: "center", justifyContent: "space-between"}}>
-                      <div style={{width: "1px"}}></div>
-                      {el.userActive === 1 && <div style={{color: "#C7C7C7"}}>오프라인</div>}
-                      {el.userActive === 2 && <div style={{color: "#00B8FF"}}>게임중</div>}
-                      {!el.userActive && <div style={{color: "#03FF49"}}>온라인</div>}
-                      <img onClick={props.onClickReplay(el.userId)} style={{width: "28px"}} src="/icon/replay.png" />
+                    <div
+                      style={{
+                        width: "120px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{ width: "1px" }}></div>
+                      {el.userActive === 1 && (
+                        <div style={{ color: "#C7C7C7" }}>오프라인</div>
+                      )}
+                      {el.userActive === 2 && (
+                        <div style={{ color: "#00B8FF" }}>게임중</div>
+                      )}
+                      {!el.userActive && (
+                        <div style={{ color: "#03FF49" }}>온라인</div>
+                      )}
+                      <img
+                        onClick={props.onClickReplay(el.userId)}
+                        style={{ width: "28px" }}
+                        src="/icon/replay.png"
+                      />
                     </div>
                   }
                 >

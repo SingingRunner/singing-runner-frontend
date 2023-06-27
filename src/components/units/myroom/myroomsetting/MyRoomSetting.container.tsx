@@ -82,7 +82,7 @@ export default function MyRoomSetting() {
   };
 
   const onClickExit = () => {
-    router.back();
+    router.push("/myroom");
   };
 
   const displayKeynote = keynoteDisplayNames[data?.fetchUser?.userKeynote];
