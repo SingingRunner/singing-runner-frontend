@@ -7,14 +7,15 @@ interface ILayoutProps {
   children: ReactNode;
 }
 
-const NO_LAYOUT = ["/game"];
+const NO_LAYOUT = ["/game", "/replay/ingame/[replayId]"];
 const NO_LONG_POLLING = ["/game", "/custom", "/signup", "/login"];
+
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
 
   return (
     <>
-      {NO_LAYOUT.includes(router.asPath) ? (
+      {NO_LAYOUT.includes(router.pathname) ? (
         <>{props.children}</>
       ) : (
         <S.Background>

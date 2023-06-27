@@ -10,6 +10,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { FETCH_USER, GET_USER_REPLAYS, UPDATE_PUBLIC } from "./Replay.queries";
 import {
   IQuery,
+  IQueryFetchUserArgs,
   IQueryGetUserReplaysArgs,
 } from "../../../commons/types/generated/types";
 
@@ -25,12 +26,15 @@ export default function Replay() {
   const [nickname, setNickname] = useState("");
   const [userId, setUserId] = useState("");
 
-  const fetchUserQuery = useQuery(FETCH_USER, {
-    variables: { userId },
+  const { data: userData } = useQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, {
+    variables: {
+      userId: router.query.userId as string,
+    },
     fetchPolicy: "network-only",
   });
-
-  const userData = fetchUserQuery.data;
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "getUserReplays">,
@@ -45,8 +49,7 @@ export default function Replay() {
   });
 
   useEffect(() => {
-    console.log(userData);
-    if (userData?.fetchUser?.length) {
+    if (userData?.fetchUser) {
       setCharacter(userData?.fetchUser.character);
       setNickname(userData?.fetchUser.nickname);
       console.log(userData);
