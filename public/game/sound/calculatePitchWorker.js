@@ -74,7 +74,6 @@ class AMDF {
     }
   }
 }
-let cnt = 0;
 const pitchDetector = new AMDF({
   sampleRate: 44100,
   minFrequency: 82,
@@ -84,10 +83,7 @@ const pitchDetector = new AMDF({
 });
 
 self.addEventListener("message", (event) => {
-  if (cnt % 3 === 0) {
-    const audioData = event.data.array;
-    const pitch = pitchDetector.AMDFDetector(audioData);
-    self.postMessage({ pitch, time: event.data.time });
-  }
-  cnt++;
+  const audioData = event.data.array;
+  const pitch = pitchDetector.AMDFDetector(audioData);
+  self.postMessage({ pitch, time: event.data.time });
 });

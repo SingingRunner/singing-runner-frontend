@@ -225,22 +225,45 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const dataArray = new Float32Array(bufferLength);
     const frequencyArray = new Uint8Array(bufferLength);
 
-    const processAudio = () => {
-      analyzer?.getFloatTimeDomainData(dataArray);
-      analyzer?.getByteFrequencyData(frequencyArray);
-      let sum = 0;
-      for (let i = 0; i < frequencyArray.length; i++) {
-        sum += frequencyArray[i];
-      }
-      const avg = sum / frequencyArray.length;
-      if (propsRef.current.isMute) {
-        const decibel = calculateDecibel(avg);
-        propsRef.current.setDecibel(decibel);
-      }
-      pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
-      requestAnimationFrame(processAudio);
+    const processAudio = (cb) => {
+      requestAnimationFrame(cb);
     };
-    processAudio();
+
+    const processAudioCb = (fps) => {
+      const fpsInterval = 1000 / fps;
+      let then;
+
+      const cb = (timestamp) => {
+        if (startTime === 0 && then === undefined) {
+          startTime = performance.now();
+          then = performance.now();
+        }
+        const elapsed = timestamp - then;
+
+        if (elapsed >= fpsInterval) {
+          analyzer?.getFloatTimeDomainData(dataArray);
+          analyzer?.getByteFrequencyData(frequencyArray);
+          let sum = 0;
+          for (let i = 0; i < frequencyArray.length; i++) {
+            sum += frequencyArray[i];
+          }
+          const avg = sum / frequencyArray.length;
+          if (propsRef.current.isMute) {
+            const decibel = calculateDecibel(avg);
+            propsRef.current.setDecibel(decibel);
+          }
+          pitchWorker.postMessage({
+            array: dataArray,
+            time: performance.now(),
+          });
+          then = timestamp - (elapsed % fpsInterval);
+        }
+        requestAnimationFrame(cb);
+      };
+      return cb;
+    };
+
+    processAudio(processAudioCb(15));
   };
 
   return null;
