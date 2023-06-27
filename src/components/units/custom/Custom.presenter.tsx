@@ -7,7 +7,7 @@ import * as S from "./Custom.styles";
 import { ICustomUIProps } from "./Custom.types";
 import Label from "../../commons/label/Label";
 import { v4 as uuidv4 } from "uuid";
-import VoiceChat from "./chat/Chat";
+// import VoiceChat from "./chat/Chat";
 
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
@@ -49,9 +49,9 @@ export default function CustomUI(props: ICustomUIProps) {
         text="커스텀 모드"
         onClickPrev={() => props.setIsPrevModalOpen(true)}
       />
-      {props.roomInfo.roomId && (
+      {/* {props.roomInfo.roomId && (
         <VoiceChat roomId={String(props.roomInfo.roomId)} />
-      )}
+      )} */}
       <S.PlayersWrapper>
         {props.roomInfo.players.map((el) => (
           <S.JoinedPlayer key={uuidv4()}>
