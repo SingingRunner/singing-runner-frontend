@@ -55,6 +55,15 @@ export default function Sound(props: ISoundProps) {
     : { data: null };
 
   useEffect(() => {
+    if (props.isUserExit || props.isTerminated) {
+      sources.current.forEach((source) => {
+        source.stop();
+      });
+      audioCtxRef.current?.close();
+    }
+  }, [props.isUserExit, props.isTerminated]);
+
+  useEffect(() => {
     // 현재 실행되고 있는 아이템
     if (props.appliedItems.includes("keyUp")) setKeyUp(true);
     else setKeyUp(false);
@@ -71,7 +80,7 @@ export default function Sound(props: ISoundProps) {
       if (props.isReplay) {
         socket.emit("load_replay", router.query.replayId);
       } else {
-        socket.emit("loading");
+        socket.emit("loading", { userId });
       }
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
@@ -155,7 +164,7 @@ export default function Sound(props: ISoundProps) {
             props.setPlayersInfo(() => {
               const newPlayersInfo = [
                 {
-                  userId,
+                  userId: replayUserId,
                   character: replayUserData?.fetchUser.character || "",
                   activeItem: "",
                   score: 0,
@@ -182,7 +191,7 @@ export default function Sound(props: ISoundProps) {
             props.setPlayersInfo(() => {
               const newPlayersInfo = [
                 {
-                  userId: replayUserId,
+                  userId,
                   character: userData?.fetchUser.character || "",
                   activeItem: "",
                   score: 0,
@@ -216,7 +225,7 @@ export default function Sound(props: ISoundProps) {
           if (props.isReplay) {
             socket.emit("start_replay", router.query.replayId, userId);
           } else {
-            socket?.emit("game_ready");
+            socket?.emit("game_ready", { userId });
           }
         } catch (err) {
           console.log(err);

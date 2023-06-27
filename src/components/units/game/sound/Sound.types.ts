@@ -13,15 +13,17 @@ export interface ISoundProps {
     }>
   >;
   mrKey: string;
-  setDecibel: Dispatch<SetStateAction<number>>;
-  isLoadComplete: boolean;
-  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   progress: number;
+  isUserExit: boolean;
+  isTerminated: boolean;
+  isLoadComplete: boolean;
+  setDecibel: Dispatch<SetStateAction<number>>;
   setProgress: Dispatch<SetStateAction<number>>;
   setStartTime: Dispatch<SetStateAction<number>>;
-  setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
-  setIsTerminated: Dispatch<SetStateAction<boolean>>;
   setBase64Data: Dispatch<SetStateAction<string>>;
+  setIsTerminated: Dispatch<SetStateAction<boolean>>;
+  setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
+  setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
   setLyrics: Dispatch<SetStateAction<ILyric[]>>;
 }
 
