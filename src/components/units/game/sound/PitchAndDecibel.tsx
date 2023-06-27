@@ -83,11 +83,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [socket]);
 
   const gameReady = () => {
+    const nowTime = performance.now();
+    props.setStartTime(nowTime);
     const sources = propsRef.current.sources;
     sources.current.forEach((source) => {
       source.start();
     });
-    props.setStartTime(new Date().getTime());
     if (!props.isReplay) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })

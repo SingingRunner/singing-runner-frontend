@@ -20,7 +20,7 @@ function Lyric(props: ILyricProps) {
       let cnt = 0;
       const changeLyric = () => {
         if (cnt++ % 3 === 0) {
-          const currentTime = new Date().getTime();
+          const currentTime = performance.now();
           const diff = Math.floor((currentTime - props.startTime) / 100) * 100;
           if (
             diff >= endLyric.current &&
