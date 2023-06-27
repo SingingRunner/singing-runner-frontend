@@ -7,8 +7,9 @@ import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 import ApolloSetting from "../src/components/commons/apollo";
 import { PollingProvider } from "../src/commons/contexts/PollingContext";
+import { useEffect } from "react";
 
-const assetFiles = [
+const nonModelFiles = [
   "/game/floor/neon.png",
   "/game/item/effect/frozen.png",
   "/game/item/effect/keyDown.png",
@@ -20,6 +21,9 @@ const assetFiles = [
   "/game/item/keyDown.png",
   "/game/item/keyUp.png",
   "/game/item/mute.png",
+];
+
+const modelFiles = [
   "/game/player/beluga.glb",
   "/game/player/husky.glb",
   "/game/player/puma.glb",
@@ -32,6 +36,19 @@ const assetFiles = [
   "/game/player/snowman.glb",
 ];
 
+function preloadModel(url: string) {
+  fetch(url)
+    .then((response) => {
+      return response.blob();
+    })
+    .then((blob) => {
+      console.log(`Preloaded model: ${url}`);
+    })
+    .catch((error) => {
+      console.error(`Failed to preload model: ${url}`, error);
+    });
+}
+
 function getAsAttribute(filePath: string) {
   const fileExtension = String(filePath.split(".").pop());
 
@@ -42,18 +59,20 @@ function getAsAttribute(filePath: string) {
     case "mp3":
     case "wav":
       return "audio";
-    case "glb":
-      return "model";
     case "js":
       return "script";
     default:
       console.error(`Unrecognized file extension: ${fileExtension}`);
-      return "fetch"; // return 'fetch' or any appropriate value as per your use case
+      return ""; // 목적에 따라 return 'fetch' 해도 됨.
   }
 }
 
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
-  const allFiles = [...assetFiles];
+  useEffect(() => {
+    modelFiles.forEach((modelUrl) => {
+      preloadModel(modelUrl);
+    });
+  }, []);
 
   return (
     <RecoilRoot>
@@ -62,7 +81,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
           <PollingProvider>
             <Global styles={globalStyles} />
             <Head>
-              {allFiles.map((file, index) => (
+              {nonModelFiles.map((file, index) => (
                 <link
                   key={index}
                   rel="preload"
