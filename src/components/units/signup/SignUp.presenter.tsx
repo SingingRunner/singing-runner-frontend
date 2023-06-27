@@ -22,7 +22,11 @@ export default function SignUpUI(props: ISignUpUIProps) {
                 onBlur={props.validateEmail}
                 onKeyDown={props.onKeyDown}
               />
-              <S.Error>{props.emailError}</S.Error>
+              {props.emailError ? (
+                <S.Error>{props.emailError}</S.Error>
+              ) : (
+                <S.Success>{props.emailMessage}</S.Success>
+              )}
             </S.InputErrorWrapper>
             <Button
               buttonType={buttonType.SHORT}
@@ -60,14 +64,19 @@ export default function SignUpUI(props: ISignUpUIProps) {
                 placeholder="닉네임"
                 value={props.nickname}
                 onChange={props.handleNicknameChange}
+                onBlur={props.validateNickname}
                 onKeyDown={props.onKeyDown}
               />
-              <S.ErrorNickname>{props.nicknameError}</S.ErrorNickname>
+              {props.nicknameError ? (
+                <S.ErrorNickname>{props.nicknameError}</S.ErrorNickname>
+              ) : (
+                <S.SuccessNickname>{props.nicknameMessage}</S.SuccessNickname>
+              )}
             </S.InputErrorWrapper>
             <Button
               buttonType={buttonType.SHORT}
               text="중복 확인"
-              onClick={props.dummyClick}
+              onClick={props.checkDuplicateNickname}
             />
           </S.InputButtonWrapper>
         </S.SignUpInputContainer>

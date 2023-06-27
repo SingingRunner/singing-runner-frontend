@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 import {
@@ -15,13 +15,13 @@ import { REMOVE_FRIEND, SEARCH_FRIEND } from "./SocialSetting.queries";
 
 export default function SocialSetting() {
   const router = useRouter();
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId] = useRecoilState(userIdState);
   const [keyword, setKeyword] = useState("");
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [friendId, setFriendId] = useState("");
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchFriend">,

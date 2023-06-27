@@ -59,7 +59,7 @@ export default function Sound(props: ISoundProps) {
       if (props.isReplay) {
         socket.emit("load_replay", router.query.replayId);
       } else {
-        socket.emit("loading");
+        socket.emit("loading", { userId });
       }
       audioCtxRef.current = new window.AudioContext();
       const audioCtx = audioCtxRef.current;
@@ -175,7 +175,7 @@ export default function Sound(props: ISoundProps) {
           if (props.isReplay) {
             socket.emit("start_replay", router.query.replayId, userId);
           } else {
-            socket?.emit("game_ready");
+            socket?.emit("game_ready", { userId });
           }
         } catch (err) {
           console.log(err);

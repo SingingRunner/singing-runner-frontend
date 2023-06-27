@@ -7,13 +7,14 @@ const VoiceChat = (props: { roomId: string }) => {
   const [client, setClient] = useState<IAgoraRTCClient | null>(null);
   const [microphoneTrack, setMicrophoneTrack] =
     useState<IMicrophoneAudioTrack | null>(null);
-  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(true);
 
   useEffect(() => {
     const loadAgora = async () => {
       const { initAgora } = await import("./initAgora"); // dynamic import
 
       const APP_ID = process.env.NEXT_PUBLIC_APPKEY || "";
+
       const { client, microphoneTrack } = await initAgora(
         APP_ID,
         String(props.roomId),
@@ -29,6 +30,7 @@ const VoiceChat = (props: { roomId: string }) => {
     return () => {
       microphoneTrack?.close();
       client?.leave();
+      setIsMuted(true);
     };
   }, []);
 

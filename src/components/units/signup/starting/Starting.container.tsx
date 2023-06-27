@@ -15,7 +15,7 @@ const characters = [
   "narwhal",
   "puffin",
   "puma",
-  "snowleopard",
+  "leopard",
   "moose",
 ];
 

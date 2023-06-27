@@ -155,9 +155,7 @@ export default function Game(props: IGameProps) {
           userId,
         },
       });
-      result.then(() => {
-        console.log(base64data);
-      });
+      result.then(() => {});
     }
   }, [base64data, isTerminated]);
 
@@ -199,9 +197,9 @@ export default function Game(props: IGameProps) {
 
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
-    // console.log("decibel", decibel);
     if (props.preventEvent) return;
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
+      console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
       setIsMuteActive(false);
       socket?.emit("escape_item", { item: "mute", userId });
     }

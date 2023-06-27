@@ -31,7 +31,7 @@ export default function LongPolling() {
   const [hostNickname, setHostNickname] = useState("");
   const [hostId, setHostId] = useState("");
 
-  const [longPolling, { data }] = useMutation<
+  const [longPolling] = useMutation<
     Pick<IMutation, "longPolling">,
     IMutationLongPollingArgs
   >(LONG_POLLING_MUTATION);
@@ -46,7 +46,22 @@ export default function LongPolling() {
           const response = await longPolling({ variables: { userId } });
           if (response) {
             // pollData(); // recursively call the polling function after response received
-            console.log(response);
+            if (response.data?.longPolling.userNotificationList.length) {
+              setIsNotification(true);
+            }
+            // 친구 요청이 없으면
+            else setIsNotification(false);
+
+            // 초대 요청이 있으면
+            if (
+              !hostNickname &&
+              response.data?.longPolling.hostUserDtoList[0]
+            ) {
+              setHostNickname(
+                response.data?.longPolling.hostUserDtoList[0].nickname
+              );
+              setHostId(response.data?.longPolling.hostUserDtoList[0].userId);
+            }
           }
         } catch (error) {
           console.error(error);
@@ -56,24 +71,6 @@ export default function LongPolling() {
 
     pollData();
   }, [longPolling, userId, isPolling]);
-
-  useEffect(() => {
-    console.log("롱폴링 데이터", data);
-    // 친구 요청이 있으면
-    if (data?.longPolling.userNotificationList[0]) {
-      setIsNotification(true);
-      console.log("친구 요청이 있다");
-    }
-    // 친구 요청이 없으면
-    else setIsNotification(false);
-
-    // 초대 요청이 있으면
-    if (!hostNickname && data?.longPolling.hostUserDtoList[0]) {
-      setHostNickname(data?.longPolling.hostUserDtoList[0].nickname);
-      setHostId(data?.longPolling.hostUserDtoList[0].userId);
-      console.log("초대 요청이 있다");
-    }
-  }, [data]);
 
   const onClickAcceptInvite = () => {
     setIsPolling(false);

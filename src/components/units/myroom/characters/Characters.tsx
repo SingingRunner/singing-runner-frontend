@@ -17,7 +17,7 @@ const CHARACTERS = [
   "narwhal",
   "puffin",
   "puma",
-  "snowleopard",
+  "leopard",
   "moose",
 ];
 

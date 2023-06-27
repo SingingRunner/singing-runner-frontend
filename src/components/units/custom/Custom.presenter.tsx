@@ -11,7 +11,6 @@ import VoiceChat from "./chat/Chat";
 
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
-  console.log(props.roomInfo);
   return (
     <>
       {props.isSongModalOpen && (
@@ -61,7 +60,7 @@ export default function CustomUI(props: ICustomUIProps) {
               nickname={el.nickname}
               tier={el.userTier}
               margin="0 0 0 20px"
-              add={!el.isFriend}
+              add={!el.isFriend && el.userId !== props.userId}
               friendId={el.userId}
             >
               {el.isHost && <S.Host>방장</S.Host>}

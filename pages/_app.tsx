@@ -28,7 +28,7 @@ const assetFiles = [
   "/game/player/moose.glb",
   "/game/player/narwhal.glb",
   "/game/player/puffin.glb",
-  "/game/player/snowLeopard.glb",
+  "/game/player/leopard.glb",
   "/game/player/snowman.glb",
 ];
 

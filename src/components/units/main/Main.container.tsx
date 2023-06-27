@@ -90,14 +90,14 @@ const Main = () => {
     if (socket && isAccepted) {
       // 수락 누른 경우
       console.log("accept true sended to server");
-      socket.emit("accept", true);
+      socket.emit("accept", { accept: true, userId });
       setIsAccepted(false);
       // => 대기 화면으로 이동
     }
     if (socket && isRejected) {
       // 거절 누른 경우
       console.log("accept false sended to server");
-      socket.emit("accept", false);
+      socket.emit("accept", { accept: false, userId });
       setIsRejected(false);
       // => 모드 선택 화면으로 이동
     }

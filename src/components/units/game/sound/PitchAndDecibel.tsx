@@ -83,11 +83,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   }, [socket]);
 
   const gameReady = () => {
+    const nowTime = performance.now();
+    props.setStartTime(nowTime);
     const sources = propsRef.current.sources;
     sources.current.forEach((source) => {
       source.start();
     });
-    props.setStartTime(new Date().getTime());
     if (!props.isReplay) {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
@@ -160,17 +161,25 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const handleAudioStream = (stream: MediaStream) => {
     const mediaRecorder = new MediaRecorder(stream);
     const chunks: Blob[] = [];
+    let isGameTerminated = false;
 
+    audioContext = new window.AudioContext();
+    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    analyzer = audioContext.createAnalyser();
+    analyzer.fftSize = 2048;
+    mediaStreamSource.connect(analyzer);
+    const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     mediaRecorder.ondataavailable = (e) => {
       chunks.push(e.data);
     };
     mediaRecorder.onstop = (e) => {
       const blob = new Blob(chunks, { type: "audio/ogg" });
       const reader = new FileReader();
+      pitchWorker.terminate();
       reader.readAsDataURL(blob);
+      isGameTerminated = true;
       reader.onloadend = () => {
         props.setBase64Data(reader.result as string);
-        console.log("result: ", reader.result);
         socket?.emit("game_terminated", {
           userId,
           score: currentScore,
@@ -185,12 +194,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       mediaRecorder.stop();
     };
 
-    audioContext = new window.AudioContext();
-    mediaStreamSource = audioContext.createMediaStreamSource(stream);
-    analyzer = audioContext.createAnalyser();
-    analyzer.fftSize = 2048;
-    mediaStreamSource.connect(analyzer);
-    const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
     pitchWorker.addEventListener("message", (event) => {
       const pitch: number = event.data.pitch;
       if (pitch != null && pitch > 0) {
@@ -224,22 +227,47 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     const dataArray = new Float32Array(bufferLength);
     const frequencyArray = new Uint8Array(bufferLength);
 
-    const processAudio = () => {
-      analyzer?.getFloatTimeDomainData(dataArray);
-      analyzer?.getByteFrequencyData(frequencyArray);
-      let sum = 0;
-      for (let i = 0; i < frequencyArray.length; i++) {
-        sum += frequencyArray[i];
-      }
-      const avg = sum / frequencyArray.length;
-      if (propsRef.current.isMute) {
-        const decibel = calculateDecibel(avg);
-        propsRef.current.setDecibel(decibel);
-      }
-      pitchWorker.postMessage({ array: dataArray, time: new Date().getTime() });
-      requestAnimationFrame(processAudio);
+    const processAudio = (cb) => {
+      requestAnimationFrame(cb);
     };
-    processAudio();
+
+    const processAudioCb = (fps) => {
+      const fpsInterval = 1000 / fps;
+      let then: number;
+      if (isGameTerminated) return;
+
+      const cb = (timestamp) => {
+        if (isGameTerminated) return;
+        if (startTime === 0 && then === undefined) {
+          startTime = performance.now();
+          then = performance.now();
+        }
+        const elapsed = timestamp - then;
+
+        if (elapsed >= fpsInterval) {
+          analyzer?.getFloatTimeDomainData(dataArray);
+          analyzer?.getByteFrequencyData(frequencyArray);
+          let sum = 0;
+          for (let i = 0; i < frequencyArray.length; i++) {
+            sum += frequencyArray[i];
+          }
+          const avg = sum / frequencyArray.length;
+          if (propsRef.current.isMute) {
+            const decibel = calculateDecibel(avg);
+            propsRef.current.setDecibel(decibel);
+          }
+          pitchWorker.postMessage({
+            array: dataArray,
+            time: performance.now(),
+          });
+          then = timestamp - (elapsed % fpsInterval);
+        }
+        requestAnimationFrame(cb);
+      };
+      return cb;
+    };
+
+    processAudio(processAudioCb(15));
   };
 
   return null;

@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface ICustomUIProps {
+  userId: string;
   isHost: boolean;
   playersData: IPlayersData[];
   roomInfo: IRoomInfoState;
@@ -24,6 +25,7 @@ export interface IRoomInfoState {
   songId: string;
   playerCount: number;
   players: any[];
+  hostId: string;
 }
 
 export interface IPlayersData {

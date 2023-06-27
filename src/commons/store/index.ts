@@ -33,6 +33,7 @@ export const roomInfoState = atom<IRoomInfoState>({
     songId: "",
     playerCount: 1,
     players: [],
+    hostId: "",
   },
 });
 
