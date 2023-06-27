@@ -119,7 +119,7 @@ export default function Replay() {
   };
 
   const playReplay = (replayId: number) => {
-    router.push(`/replay/ingame/${replayId}`);
+    router.push(`/replay/ingame/${userId}/${replayId}`);
   };
 
   const setPublic = async (replayId: number, isPublic: boolean) => {

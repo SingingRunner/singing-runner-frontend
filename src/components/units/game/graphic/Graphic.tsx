@@ -133,6 +133,7 @@ export default function Graphic(props: IGrapicProps) {
     ];
 
     const characters = props.playersInfo.map((player) => player.character);
+    console.log("playersInfo: ", props.playersInfo);
     for (let i = 0; i < props.playersInfo.length; i++) {
       gltfLoader.load(`/game/player/${characters[i]}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
