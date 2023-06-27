@@ -31,7 +31,7 @@ jobs:
       - name: Build Docker image
         run: |
           version=${{ steps.extract-version.outputs.version }}
-          docker build -t singing-runner-frontend:$version .
+          docker build --build-arg NEXT_PUBLIC_APPKEY=${{ secrets.NEXT_PUBLIC_APPKEY }} -t singing-runner-frontend:$version .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
