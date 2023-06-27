@@ -5,14 +5,21 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 75vh; /* Set the desired height of the container */
+  height: ${(props: { isMyReplay: boolean }) =>
+    props.isMyReplay ? `100%` : `calc(100% - 16px)`};
   position: relative;
 `;
 
 export const SongWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  // overflow: hidden;
+  width: calc(100vw - 140px);
+`;
+
+export const SingerDateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 export const Singer = styled.div`
   color: #dff45b;
@@ -20,16 +27,24 @@ export const Singer = styled.div`
   font-weight: 700;
 `;
 
+export const Date = styled.div`
+  color: #fff;
+  font-size: 10px;
+  font-weight: 300;
+`;
+
 export const SongTitle = styled.div`
-  width: 100%;
   color: #fff;
   font-size: 16px;
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 export const ReplayInfo = styled.div`
   display: flex;
-  alignitems: center;
+  align-items: center;
   justify-content: space-between;
   width: 100px;
 `;
@@ -39,11 +54,8 @@ export const InfiniteScrollWrapper = styled.div`
   height: 100%;
   width: 100%;
   overflow: auto;
-
   scrollbar-width: none; /* For Firefox */
   -ms-overflow-style: none; /* For Internet Explorer and Edge */
-
-  /* For Chrome, Safari, and Opera */
   &::-webkit-scrollbar {
     width: 0;
     height: 0;
@@ -61,25 +73,25 @@ export const HeaderWrapper = styled.div`
   }
 `;
 
+export const ProfileWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export const Profile = styled.img`
-  width: 46px;
+  width: 30px;
   border-radius: 50%;
+  margin-right: 12px;
 `;
 
 export const PlaceholderProfile = styled.div`
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background-color: #1a1128;
+  width: 30px;
+  height: 30px;
+  margin-right: 12px;
 `;
 
 export const Nickname = styled.div`
-  margin-left: 12px;
-  margin-top: 14px;
   font-size: 16px;
   color: white;
-`;
-
-export const ProfileWrapper = styled.div`
-  display: flex;
+  font-weight: 700;
 `;

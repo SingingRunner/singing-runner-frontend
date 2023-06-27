@@ -32,8 +32,18 @@ export default function ReplayUI(props: IReplayUIProps) {
           <></>
         )}
       </S.HeaderWrapper>
+      {!props.isMyReplay && (
+        <S.ProfileWrapper>
+          {props.character ? (
+            <S.Profile src={`/game/player/profile/${props.character}.png`} />
+          ) : (
+            <S.PlaceholderProfile />
+          )}
+          <S.Nickname>{props.nickname}</S.Nickname>
+        </S.ProfileWrapper>
+      )}
       <Label text="리플레이 목록" marginTop="12px" />
-      <S.Container>
+      <S.Container isMyReplay={props.isMyReplay}>
         {props.data?.getUserReplays.length === 0 && (
           <div
             style={{
@@ -45,18 +55,7 @@ export default function ReplayUI(props: IReplayUIProps) {
             리플레이가 없습니다.
           </div>
         )}
-        {props.isMyReplay ? (
-          <></>
-        ) : (
-          <S.ProfileWrapper>
-            {props.character ? (
-              <S.Profile src={`/game/player/profile/${props.character}.png`} />
-            ) : (
-              <S.PlaceholderProfile />
-            )}
-            <S.Nickname>{props.nickname}</S.Nickname>
-          </S.ProfileWrapper>
-        )}
+
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
@@ -70,44 +69,31 @@ export default function ReplayUI(props: IReplayUIProps) {
                   <ListItem
                     key={idx}
                     rightChildren={
-                      <div
-                        style={{
-                          width: "170px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "60px",
-                            fontSize: "12px",
-                            color: "gray",
-                            textAlign: "right",
-                          }}
-                        >
-                          {props.convertTimeToUnit(elem.createdAt)}
-                        </div>
-                        <Button
-                          buttonType={
-                            elem.isPublic
-                              ? buttonType.SHORT_SELECT
-                              : buttonType.SHORT_SELECT_EMPTY
-                          }
-                          text={elem.isPublic ? "공개" : "비공개"}
-                          height="30px"
-                          onClick={
-                            props.setPublic
-                              ? () =>
-                                  props.setPublic(elem.replayId, elem.isPublic)
-                              : () => {}
-                          }
-                        />
-                      </div>
+                      <Button
+                        buttonType={
+                          elem.isPublic
+                            ? buttonType.SHORT_SELECT
+                            : buttonType.SHORT_SELECT_EMPTY
+                        }
+                        text={elem.isPublic ? "공개" : "비공개"}
+                        height="30px"
+                        onClick={
+                          props.setPublic
+                            ? () =>
+                                props.setPublic(elem.replayId, elem.isPublic)
+                            : () => {}
+                        }
+                      />
                     }
                   >
                     <S.SongWrapper>
-                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.SingerDateWrapper>
+                        <S.Singer>{elem.singer}</S.Singer>
+                        <S.Date>
+                          {props.convertTimeToUnit(elem.createdAt)}
+                        </S.Date>
+                      </S.SingerDateWrapper>
+
                       <S.SongTitle>{elem.songTitle}</S.SongTitle>
                     </S.SongWrapper>
                   </ListItem>
@@ -115,65 +101,6 @@ export default function ReplayUI(props: IReplayUIProps) {
                   <ListItem
                     key={idx}
                     rightChildren={
-                      <div
-                        style={{
-                          width: "170px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "60px",
-                            fontSize: "12px",
-                            color: "gray",
-                            textAlign: "right",
-                          }}
-                        >
-                          {props.convertTimeToUnit(elem.createdAt)}
-                        </div>
-                        <Button
-                          buttonType={buttonType.SHORT_PINK}
-                          text={"보기"}
-                          height="30px"
-                          onClick={
-                            props.playReplay
-                              ? () => props.playReplay(elem.replayId)
-                              : () => {}
-                          }
-                        />
-                      </div>
-                    }
-                  >
-                    <S.SongWrapper>
-                      <S.Singer>{elem.singer}</S.Singer>
-                      <S.SongTitle>{elem.songTitle}</S.SongTitle>
-                    </S.SongWrapper>
-                  </ListItem>
-                )
-              ) : (
-                <ListItem
-                  key={idx}
-                  rightChildren={
-                    <div
-                      style={{
-                        width: "170px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "60px",
-                          fontSize: "12px",
-                          color: "gray",
-                          textAlign: "right",
-                        }}
-                      >
-                        {props.convertTimeToUnit(elem.createdAt)}
-                      </div>
                       <Button
                         buttonType={buttonType.SHORT_PINK}
                         text={"보기"}
@@ -184,12 +111,43 @@ export default function ReplayUI(props: IReplayUIProps) {
                             : () => {}
                         }
                       />
-                    </div>
+                    }
+                  >
+                    <S.SongWrapper>
+                      <S.SingerDateWrapper>
+                        <S.Singer>{elem.singer}</S.Singer>
+                        <S.Date>
+                          {props.convertTimeToUnit(elem.createdAt)}
+                        </S.Date>
+                      </S.SingerDateWrapper>
+
+                      <S.SongTitle>{elem.songTitle}</S.SongTitle>
+                    </S.SongWrapper>
+                  </ListItem>
+                )
+              ) : (
+                <ListItem
+                  key={idx}
+                  rightChildren={
+                    <Button
+                      buttonType={buttonType.SHORT_PINK}
+                      text={"보기"}
+                      height="30px"
+                      onClick={
+                        props.playReplay
+                          ? () => props.playReplay(elem.replayId)
+                          : () => {}
+                      }
+                    />
                   }
                 >
                   <S.SongWrapper>
-                    <S.Singer>{elem.singer}</S.Singer>
-                    <S.SongTitle>{elem.songTitle}</S.SongTitle>
+                    <S.SingerDateWrapper>
+                      <S.Singer>{elem.singer}</S.Singer>
+                      <S.Date>{props.convertTimeToUnit(elem.createdAt)}</S.Date>
+                    </S.SingerDateWrapper>
+
+                    <S.SongTitle>{elem.songTitle}asdfasfasasdf</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               )
@@ -202,6 +160,7 @@ export default function ReplayUI(props: IReplayUIProps) {
         buttonType={buttonType.EMPTY}
         text="나가기"
         onClick={props.goPrevPage}
+        isFixedAtBottom
       />
     </>
   );
