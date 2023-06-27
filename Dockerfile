@@ -7,6 +7,11 @@ COPY ./yarn.lock /my_frontend/
 RUN yarn install
 
 COPY . .
+
+ARG NEXT_PUBLIC_APPKEY
+
+ENV NEXT_PUBLIC_APPKEY=$NEXT_PUBLIC_APPKEY
+
 RUN yarn build
 
 # Use the smaller alpine-node image for deployment
