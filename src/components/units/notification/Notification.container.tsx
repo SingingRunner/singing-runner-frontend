@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { userIdState } from "../../../commons/store";
+import { isNotificationState, userIdState } from "../../../commons/store";
 import {
   IQuery,
   IQueryGetNotificationArgs,
@@ -14,14 +14,14 @@ import {
   DELETE_NOTIFICATION,
   GET_NOTIFICATION,
 } from "./Notification.queries";
-import moment from 'moment';
+import moment from "moment";
 
 export default function Notification() {
   const router = useRouter();
-  const [userId, setUserId] = useRecoilState(userIdState);
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [userId] = useRecoilState(userIdState);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
   const [isCheckClicked, setIsCheckClicked] = useState(false);
   const [addFriendMutation] = useMutation(ADD_FRIEND);
   const [deleteNotificationMutation] = useMutation(DELETE_NOTIFICATION);
@@ -38,9 +38,12 @@ export default function Notification() {
     fetchPolicy: "network-only",
   });
 
+  const [, setIsNotification] = useRecoilState(isNotificationState);
   useEffect(() => {
     // 페이지가 렌더링 될 때 마다 사용자 정보 새로 불러옴
     refetch();
+    // 메인 화면의 알림 빨간 불 제거
+    setIsNotification(false);
   }, []);
 
   const onLoadMore = (): void => {
