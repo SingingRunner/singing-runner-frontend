@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 import {
@@ -10,17 +10,17 @@ import {
 import _ from "lodash";
 import AddUI from "./Add.presenter";
 import { IAddUIProps } from "./Add.types";
-import { FRIEND_REQUEST, SEARCH_USER } from './Add.queries';
+import { FRIEND_REQUEST, SEARCH_USER } from "./Add.queries";
 
 export default function Add() {
   const router = useRouter();
   const [isRequestClicked, setIsRequestClicked] = useState(false);
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId] = useRecoilState(userIdState);
   const [keyword, setKeyword] = useState("");
   const [receiverNickname, setReceiverNickname] = useState("");
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchUser">,
@@ -36,15 +36,19 @@ export default function Add() {
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
-  
+
     void fetchMore({
       variables: {
         page: Math.ceil((data?.searchUser.length ?? 0) / 10) + 1,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        const prevSearchUser = Array.isArray(prev.searchUser) ? prev.searchUser : [];
-        const newSearchUser = Array.isArray(fetchMoreResult.searchUser) ? fetchMoreResult.searchUser : [];
-  
+        const prevSearchUser = Array.isArray(prev.searchUser)
+          ? prev.searchUser
+          : [];
+        const newSearchUser = Array.isArray(fetchMoreResult.searchUser)
+          ? fetchMoreResult.searchUser
+          : [];
+
         return {
           searchUser: [...prevSearchUser, ...newSearchUser],
         };

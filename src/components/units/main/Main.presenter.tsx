@@ -25,6 +25,9 @@ export default function MainUI(props: IMainUIProps) {
   const [isNotification] = useRecoilState(isNotificationState);
   return (
     <>
+      <S.LogoWrapper onClick={() => onClickMenu("/main")}>
+        <S.LogoText>Singing Runner</S.LogoText>
+      </S.LogoWrapper>
       <S.HeaderWrapper>
         <img
           src="/icon/header/manual.png"

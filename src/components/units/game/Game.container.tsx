@@ -199,6 +199,7 @@ export default function Game(props: IGameProps) {
   const checkDecibel = () => {
     if (props.preventEvent) return;
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
+      console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
       setIsMuteActive(false);
       socket?.emit("escape_item", { item: "mute", userId });
     }

@@ -11,18 +11,17 @@ import {
 import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 
-import { SEARCH_FRIEND } from './Social.queries';
-
+import { SEARCH_FRIEND } from "./Social.queries";
 
 export default function Social() {
   // const [keyword, setKeyword] = useState("");
 
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId] = useRecoilState(userIdState);
   const [keyword, setKeyword] = useState("");
-  const [debounceValue, setDebounceValue] = useState('');
-  useEffect(() => {
-    setUserId(localStorage.getItem("userId") || "");
-  }, []);
+  const [debounceValue, setDebounceValue] = useState("");
+  // useEffect(() => {
+  //   setUserId(localStorage.getItem("userId") || "");
+  // }, []);
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "searchFriend">,
@@ -32,7 +31,8 @@ export default function Social() {
       userId,
       nickname: "",
       page: 1,
-    }, fetchPolicy: "network-only",
+    },
+    fetchPolicy: "network-only",
   });
 
   const onClickReplay = (friendId: string) => () => {
@@ -48,15 +48,19 @@ export default function Social() {
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
-  
+
     void fetchMore({
       variables: {
         page: Math.ceil((data?.searchFriend.length ?? 0) / 10) + 1,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        const prevSearchFriend = Array.isArray(prev.searchFriend) ? prev.searchFriend : [];
-        const newSearchFriend = Array.isArray(fetchMoreResult.searchFriend) ? fetchMoreResult.searchFriend : [];
-  
+        const prevSearchFriend = Array.isArray(prev.searchFriend)
+          ? prev.searchFriend
+          : [];
+        const newSearchFriend = Array.isArray(fetchMoreResult.searchFriend)
+          ? fetchMoreResult.searchFriend
+          : [];
+
         return {
           searchFriend: [...prevSearchFriend, ...newSearchFriend],
         };
@@ -68,11 +72,11 @@ export default function Social() {
     const timer = setTimeout(() => {
       refetch({ nickname: debounceValue.trim() });
     }, 200);
-  
+
     if (!debounceValue.trim()) {
       refetch({ nickname: "" });
     }
-  
+
     return () => {
       clearTimeout(timer);
     };
