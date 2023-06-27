@@ -38,6 +38,7 @@ export default function GameResultUI(props: IGameResultUIProps) {
                   nickname={el.nickname}
                   tier={el.tier}
                   add={!el.isFriend && el.userId !== userId}
+                  friendId={el.userId}
                 />
               </div>
               <S.Mmr>{el.userScore}</S.Mmr>

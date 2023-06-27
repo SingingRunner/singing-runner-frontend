@@ -5,6 +5,12 @@ import { useRecoilState } from "recoil";
 import { roomInfoState, userIdState } from "../../../commons/store";
 import { IPlayersData } from "./Custom.types";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
+import { useLazyQuery } from "@apollo/client";
+import {
+  IQuery,
+  IQueryFetchUserArgs,
+} from "../../../commons/types/generated/types";
+import { FETCH_USER } from "./Custom.queries";
 
 export default function Custom() {
   const router = useRouter();
@@ -14,13 +20,30 @@ export default function Custom() {
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
+
+  const [fetchUser] = useLazyQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, {
+    onCompleted: (userData) => {
+      setRoomInfo((prev) => ({
+        ...prev,
+        players: [
+          {
+            userId,
+            userTier: userData?.fetchUser.userTier,
+            nickname: userData?.fetchUser.nickname,
+            character: userData?.fetchUser.character,
+            isHost: true,
+            isFriend: false,
+          },
+        ],
+      }));
+    },
+  });
+
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
-  console.log("방정보", roomInfo);
-  // 🚨 방장 정보 받고 수정하기
-  const [isHost, setIsHost] = useState(true);
+  const [isHost, setIsHost] = useState(roomInfo.hostId === userId);
 
   const [isSongModalOpen, setIsSongModalOpen] = useState(false);
   const [isPrevModalOpen, setIsPrevModalOpen] = useState(false);
@@ -36,6 +59,7 @@ export default function Custom() {
       setIsNotHostModalOpen(true);
       return;
     }
+    // 🚨 서버에 보내기
     if (roomInfo.mode === "아이템")
       setRoomInfo((prev) => ({ ...prev, mode: "일반" }));
     else setRoomInfo((prev) => ({ ...prev, mode: "아이템" }));
@@ -58,18 +82,21 @@ export default function Custom() {
   ]);
 
   useEffect(() => {
+    // 방장인 경우, 방 생성 이후에 처음 받는 메세지
     socket?.on("create_custom", (roomId) => {
-      setRoomInfo((prev) => ({ ...prev, roomId: String(roomId) }));
+      fetchUser({ variables: { userId } });
+      setRoomInfo((prev) => ({
+        ...prev,
+        roomId: String(roomId),
+        hostId: userId,
+      }));
     });
 
     socket?.on("invite", (data) => {
-      console.log("INVITE", data);
-
       setRoomInfo((prev) => ({ ...prev, roomId: String(data[0].roomId) }));
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {
-        console.log(data);
         data.forEach((playerGameDto) => {
           // 이미 들어와있는 유저인지 확인
           let isDuplicate = false;
@@ -91,16 +118,8 @@ export default function Custom() {
               isFriend:
                 playerGameDto.isFriend && userId !== playerGameDto.userId,
             });
-            console.log(
-              "🚨방장 정보",
-              playerGameDto.userId,
-              playerGameDto.isHost,
-              userId,
-              playerGameDto.hostId
-            );
             if (
               // 현재 유저가 방장이면
-
               playerGameDto.hostId === userId
             )
               setIsHost(true);
@@ -146,8 +165,22 @@ export default function Custom() {
     }));
   }, [playersData]);
 
+  useEffect(() => {
+    // 노래가 변경된 경우
+    socket?.on("set_song", (data) => {
+      setRoomInfo((prev) => ({
+        ...prev,
+        players: [...prev.players],
+        songTitle: data.songTitle,
+        singer: data.singer,
+        songId: data.songId,
+      }));
+    });
+  }, [socket]);
+
   return (
     <CustomUI
+      userId={userId}
       isHost={isHost}
       roomInfo={roomInfo}
       playersData={playersData}
