@@ -5,40 +5,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { buttonType } from "../../commons/button/Button";
 import Modal from "../../commons/modal/Modal";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import moment from "moment";
+import { useMutation, useQuery } from "@apollo/client";
+import { FETCH_USER, GET_USER_REPLAYS, UPDATE_PUBLIC } from "./Replay.queries";
 import {
   IQuery,
   IQueryGetUserReplaysArgs,
 } from "../../../commons/types/generated/types";
-
-const GET_USER_REPLAYS = gql`
-  query GetUserReplays(
-    $userId: String!
-    $pageNumber: Int!
-    $isMyReplay: Boolean!
-  ) {
-    getUserReplays(
-      userId: $userId
-      pageNumber: $pageNumber
-      isMyReplay: $isMyReplay
-    ) {
-      replayId
-      songTitle
-      singer
-      createdAt
-      isPublic
-    }
-  }
-`;
-
-const UPDATE_PUBLIC = gql`
-  mutation UpdateReplayIsPublic($replayId: Int!, $isPublic: Int!) {
-    updateReplayIsPublic(replayId: $replayId, isPublic: $isPublic) {
-      replayId
-      isPublic
-    }
-  }
-`;
 
 export default function Replay() {
   const router = useRouter();
@@ -48,6 +21,17 @@ export default function Replay() {
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentReplay, setCurrentReplay] = useState(0);
+  const [character, setCharacter] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const fetchUserQuery = useQuery(FETCH_USER, {
+    variables: { userId },
+    fetchPolicy: "network-only",
+  });
+
+  const userData = fetchUserQuery.data;
+
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "getUserReplays">,
     IQueryGetUserReplaysArgs
@@ -61,9 +45,57 @@ export default function Replay() {
   });
 
   useEffect(() => {
+    console.log(userData);
+    if (userData?.fetchUser?.length) {
+      setCharacter(userData?.fetchUser.character);
+      setNickname(userData?.fetchUser.nickname);
+      console.log(userData);
+    }
+  }, [userData, isMyReplay]);
+
+  useEffect(() => {
     setCurrentUserId(localStorage.getItem("userId") || "");
-    setIsMyReplay(currentUserId === router.query.userId);
+    console.log(router.query.userId);
+    setUserId(router.query.userId as string);
   }, []);
+
+  useEffect(() => {
+    setIsMyReplay(currentUserId === router.query.userId);
+    console.log("userId: ", userId, "current: ", currentUserId);
+    console.log("character: ", character);
+    console.log(character);
+  }, [userId]);
+
+  const convertTimeToUnit = (receivedAt: string) => {
+    if (!receivedAt) {
+      return "알 수 없음";
+    }
+
+    const receivedAtDate = moment(receivedAt).toDate();
+    const now = new Date();
+    const diffInSeconds = Math.floor(
+      (now.valueOf() - receivedAtDate.valueOf()) / 1000
+    ); // 초 단위 차이 계산
+
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}초 전`;
+    } else if (diffInSeconds < 60 * 60) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes}분 전`;
+    } else if (diffInSeconds < 60 * 60 * 24) {
+      const hours = Math.floor(diffInSeconds / (60 * 60));
+      return `${hours}시간 전`;
+    } else if (diffInSeconds < 60 * 60 * 24 * 30) {
+      const days = Math.floor(diffInSeconds / (60 * 60 * 24));
+      return `${days}일 전`;
+    } else if (diffInSeconds < 60 * 60 * 24 * 365) {
+      const months = Math.floor(diffInSeconds / (60 * 60 * 24 * 30));
+      return `${months}달 전`;
+    } else {
+      const years = Math.floor(diffInSeconds / (60 * 60 * 24 * 365));
+      return `${years}년 전`;
+    }
+  };
 
   const onLoadMore = (): void => {
     if (data === undefined) return;
@@ -133,6 +165,9 @@ export default function Replay() {
         onLoadMore={onLoadMore}
         data={data}
         goPrevPage={goPrevPage}
+        convertTimeToUnit={convertTimeToUnit}
+        character={character}
+        nickname={nickname}
       />
       {isModalOpen ? (
         <Modal

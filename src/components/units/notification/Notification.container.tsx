@@ -14,7 +14,7 @@ import {
   DELETE_NOTIFICATION,
   GET_NOTIFICATION,
 } from "./Notification.queries";
-import moment from 'moment';
+import moment from "moment";
 
 export default function Notification() {
   const router = useRouter();

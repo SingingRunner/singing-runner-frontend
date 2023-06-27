@@ -9,5 +9,8 @@ export interface IReplayUIProps {
   setPublic: (replayId: number, isPublic: boolean) => void;
   onLoadMore: () => void;
   goPrevPage: () => void;
+  convertTimeToUnit: (time: string) => string;
+  character: string;
+  nickname: string;
   data: any;
 }
