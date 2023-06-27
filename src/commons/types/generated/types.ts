@@ -328,7 +328,7 @@ export enum ICharacterEnum {
   Narwhal = 'NARWHAL',
   Puffin = 'PUFFIN',
   Puma = 'PUMA',
-  Snowleopard = 'SNOWLEOPARD'
+  Leopard = 'LEOPARD'
 }
 
 export enum IUserKeynoteStatus {
