@@ -2,17 +2,17 @@ import styled from "@emotion/styled";
 
 export const Add = styled.img`
   position: absolute;
-  height: 45px;
+  height: 40px;
   width: auto;
   top: 8px;
-  right: 48px;
+  right: 44px;
 `;
 
 export const Setting = styled.img`
   position: absolute;
-  height: 45px;
+  height: 40px;
   width: auto;
-  top: 10px;
+  top: 8px;
   right: 8px;
 `;
 
@@ -63,5 +63,5 @@ export const Mmr = styled.div`
 
 export const Label = styled.div`
   color: white;
-  margintop: 16px;
+  margin-top: 16px;
 `;
