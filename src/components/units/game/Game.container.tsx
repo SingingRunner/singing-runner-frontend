@@ -4,7 +4,11 @@ import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useRecoilState } from "recoil";
-import { gameResultState, userIdState } from "../../../commons/store";
+import {
+  gameResultState,
+  roomInfoState,
+  userIdState,
+} from "../../../commons/store";
 import { IGameProps, IPlayersInfo, ISocketItem } from "./Game.types";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo.styles";
 import { IGameResult } from "./result/GameResult.types";
@@ -86,6 +90,7 @@ export default function Game(props: IGameProps) {
     right: false,
     left: false,
   });
+  const [, setRoomInfo] = useRecoilState(roomInfoState);
 
   useEffect(() => {
     // 다른 유저로부터 공격이 들어옴
@@ -149,6 +154,10 @@ export default function Game(props: IGameProps) {
     socket?.on("game_terminated", (data: IGameResult[]) => {
       setGameResult(data);
       setIsTerminated(true);
+      setRoomInfo((prev) => ({
+        ...prev,
+        players: [],
+      }));
     });
   }, [socket]);
 
