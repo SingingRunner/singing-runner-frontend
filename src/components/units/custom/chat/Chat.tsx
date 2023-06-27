@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IAgoraRTCClient, IMicrophoneAudioTrack } from "agora-rtc-sdk-ng";
 import styled from "@emotion/styled";
 import Bgm from "../bgm/Bgm";
 
 const VoiceChat = (props: { roomId: string }) => {
-  const [client, setClient] = useState<IAgoraRTCClient | null>(null);
-  const [microphoneTrack, setMicrophoneTrack] =
-    useState<IMicrophoneAudioTrack | null>(null);
-  const [isMuted, setIsMuted] = useState<boolean>(true);
+  const clientRef = useRef<IAgoraRTCClient | null>(null);
+  const microphoneTrackRef = useRef<IMicrophoneAudioTrack | null>(null);
+
+  const [isMuted, setIsMuted] = useState<boolean>(false);
 
   useEffect(() => {
     const loadAgora = async () => {
@@ -20,23 +20,23 @@ const VoiceChat = (props: { roomId: string }) => {
         String(props.roomId),
         null
       );
-
-      setClient(client);
-      setMicrophoneTrack(microphoneTrack);
+      clientRef.current = client;
+      microphoneTrackRef.current = microphoneTrack;
+      if (microphoneTrackRef.current)
+        microphoneTrackRef.current.setEnabled(false);
     };
-
     loadAgora();
 
     return () => {
-      microphoneTrack?.close();
-      client?.leave();
-      setIsMuted(true);
+      microphoneTrackRef.current?.close();
+      clientRef.current?.leave();
+      setIsMuted(false);
     };
   }, []);
 
   const toggleMute = () => {
-    if (microphoneTrack) {
-      microphoneTrack.setEnabled(!isMuted);
+    if (microphoneTrackRef.current) {
+      microphoneTrackRef.current.setEnabled(!isMuted);
       setIsMuted(!isMuted);
     }
   };
