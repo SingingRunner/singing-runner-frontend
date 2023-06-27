@@ -16,11 +16,10 @@ function Lyric(props: ILyricProps) {
 
   useEffect(() => {
     if (props.startTime !== 0) {
-      console.log(props.startTime);
       let cnt = 0;
       const changeLyric = () => {
         if (cnt++ % 3 === 0) {
-          const currentTime = new Date().getTime();
+          const currentTime = performance.now();
           const diff = Math.floor((currentTime - props.startTime) / 100) * 100;
           if (
             diff >= endLyric.current &&
