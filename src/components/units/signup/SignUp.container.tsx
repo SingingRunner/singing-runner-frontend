@@ -49,6 +49,9 @@ export default function SignUp() {
   // 이메일과 닉네임 중복확인 버튼이 각각 눌릴 때 useEffect에서 간섭이 안되게 관리하는 플래그
   const [checkEmail, setCheckEmail] = useState(false);
   const [checkNickname, setCheckNickname] = useState(false);
+  // 이메일, 닉네임 중복확인이 눌렸는지 확인
+  const [isEmailCheckClicked, setIsEmailCheckClicked] = useState(false);
+  const [isNicknameCheckClicked, setIsNicknameCheckClicked] = useState(false);
 
   const onClickSignUp = async (): Promise<void> => {
     // 메인 화면으로 전환
@@ -88,7 +91,9 @@ export default function SignUp() {
       passwordCheck !== "" &&
       nickname !== "" &&
       emailVerified &&
-      nicknameVerified
+      nicknameVerified &&
+      isEmailCheckClicked &&
+      isNicknameCheckClicked
     ) {
       setSignUpButtonEnabled(true);
     } else {
@@ -105,14 +110,16 @@ export default function SignUp() {
     nickname,
     emailVerified,
     nicknameVerified,
+    isEmailCheckClicked,
+    isNicknameCheckClicked,
   ]);
 
-  
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setEmailError("");
     setEmailMessage("");
     setCheckEmail(false);
+    setIsEmailCheckClicked(false);
   };
 
   const handleNicknameChange = (e) => {
@@ -120,6 +127,7 @@ export default function SignUp() {
     setNicknameError("");
     setNicknameMessage("");
     setCheckNickname(false);
+    setIsNicknameCheckClicked(false);
   };
 
   const handlePasswordChange = (e) => {
@@ -134,8 +142,8 @@ export default function SignUp() {
     } else if (!passwordRegex.test(enteredPassword)) {
       setPasswordError(
         "* 영문자, 숫자, 특수문자를 최소 하나씩 포함해야 합니다."
-        );
-      } else {
+      );
+    } else {
       setPasswordError("");
     }
 
@@ -151,7 +159,7 @@ export default function SignUp() {
       setEmailError("* 올바른 이메일 형식으로 입력해주세요.");
     }
   };
-  
+
   const validateNickname = () => {
     const koreanContainsOnlyConsonantsRegex = /[ㄱ-ㅎ]+/;
     const koreanContainsOnlyVowelsRegex = /[ㅏ-ㅣ]+/;
@@ -181,6 +189,7 @@ export default function SignUp() {
     emailCheck({ variables: { userEmail: email } });
     setEmailVerified(false);
     setCheckEmail(true);
+    setIsEmailCheckClicked(true);
   };
 
   const checkDuplicateNickname = async () => {
@@ -188,6 +197,7 @@ export default function SignUp() {
     nicknameCheck({ variables: { nickname } });
     setNicknameVerified(false);
     setCheckNickname(true);
+    setIsNicknameCheckClicked(true);
   };
 
   useEffect(() => {
