@@ -48,14 +48,35 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
                   )}
                 {props.keyword && !props.data?.searchFriend.length && (
                   <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <p
+                    style={{
+                      color: "#fe259b",
+                      fontSize: "24px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {`"${props.keyword}"`}
+                  </p>
+                  <div style={{ color: "white", fontSize: "24px", marginBottom: "4px" }}>
+                    해당 키워드와 일치하는
+                  </div>
+                  <div
                     style={{
                       color: "white",
                       marginBottom: "150px",
                       fontSize: "24px",
                     }}
                   >
-                    {`${props.keyword}에 해당하는 친구가 없습니다.`}
+                    검색 결과가 없습니다.
                   </div>
+                </div>
                 )}
               </>
             )}

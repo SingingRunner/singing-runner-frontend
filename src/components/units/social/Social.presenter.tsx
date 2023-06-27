@@ -37,7 +37,6 @@ export default function SocialUI(props: ISocialUIProps) {
                 {!props.keyword &&
                   !props.data?.searchFriend.length &&
                   props.isLoadingAfterSearch && (
-                    // 결과 상태 일 때, 친구 없음 메시지 표시
                     <div
                       style={{
                         color: "white",
@@ -51,12 +50,33 @@ export default function SocialUI(props: ISocialUIProps) {
                 {props.keyword && !props.data?.searchFriend.length && (
                   <div
                     style={{
-                      color: "white",
-                      marginBottom: "150px",
-                      fontSize: "24px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    {`${props.keyword}에 해당하는 친구가 없습니다.`}
+                    <p
+                      style={{
+                        color: "#fe259b",
+                        fontSize: "24px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      {`"${props.keyword}"`}
+                    </p>
+                    <div style={{ color: "white", fontSize: "24px", marginBottom: "4px" }}>
+                      해당 키워드와 일치하는
+                    </div>
+                    <div
+                      style={{
+                        color: "white",
+                        marginBottom: "150px",
+                        fontSize: "24px",
+                      }}
+                    >
+                      검색 결과가 없습니다.
+                    </div>
                   </div>
                 )}
               </>
