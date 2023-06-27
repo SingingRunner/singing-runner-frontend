@@ -25,7 +25,7 @@ export default function CustomSong() {
   const [filter, setFilter] = useState("createdAt");
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch, fetchMore } = useQuery<
+  const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchSong">,
     IQuerySearchSongArgs
   >(SEARCH_SONG_QUERY, {
@@ -96,6 +96,7 @@ export default function CustomSong() {
       filter={filter}
       onClickFilter={onClickFilter}
       onChangeSong={onChangeSong}
+      loading={loading}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}

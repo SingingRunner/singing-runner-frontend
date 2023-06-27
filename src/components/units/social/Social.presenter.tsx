@@ -12,9 +12,9 @@ import Header from "../../commons/layout/header/Header";
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
-      <Header onClickPrev={props.onClickExit} />
+      <Header onClickPrev={props.onClickExit} text="친구 목록" />
       <S.Add src="/icon/friends.png" onClick={props.onClickAdd} />
-      <S.Setting src="/icon/setting.png" onClick={props.onClickSetting} />
+      <S.Setting src="/icon/delete-friend.png" onClick={props.onClickSetting} />
 
       <S.Container>
         <S.InputWrapper>

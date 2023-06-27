@@ -30,7 +30,7 @@ export default function CustomInvite() {
 
   const [keyword, setKeyword] = useState("");
 
-  const { data, refetch, fetchMore } = useQuery<
+  const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
     IQuerySearchFriendArgs
   >(SEARCH_FRIEND, {
@@ -93,6 +93,7 @@ export default function CustomInvite() {
   return (
     <CustomInviteUI
       onClickInvite={onClickInvite}
+      loading={loading}
       data={data}
       keyword={keyword}
       onChangeKeyword={onChangeKeyword}

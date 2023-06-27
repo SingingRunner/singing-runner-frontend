@@ -1,8 +1,11 @@
 import styled from "@emotion/styled";
 
 export const ListWrapper = styled.div`
-  height: calc(100vh - 256px);
+  height: calc(100vh - 264px);
   overflow: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const SongWrapper = styled.div`

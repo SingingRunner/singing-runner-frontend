@@ -2,17 +2,17 @@ import styled from "@emotion/styled";
 
 export const Add = styled.img`
   position: absolute;
-  height: 40px;
+  height: 45px;
   width: auto;
   top: 8px;
-  right: 44px;
+  right: 48px;
 `;
 
 export const Setting = styled.img`
   position: absolute;
-  height: 40px;
+  height: 45px;
   width: auto;
-  top: 8px;
+  top: 10px;
   right: 8px;
 `;
 
