@@ -8,7 +8,7 @@ import {
   IQuery,
   IQuerySearchSongArgs,
 } from "../../../../commons/types/generated/types";
-import _ from "lodash";
+import debounce from "lodash/debounce";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRouter } from "next/router";
 
@@ -64,7 +64,7 @@ export default function CustomSong() {
   };
 
   const getDebounce = useCallback(
-    _.debounce((data) => {
+    debounce((data) => {
       refetch({ keyword: data.trim() });
     }, 200),
     [refetch]

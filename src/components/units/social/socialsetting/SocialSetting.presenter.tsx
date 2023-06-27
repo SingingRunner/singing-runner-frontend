@@ -26,25 +26,46 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
           />
           <Label text="친구 목록" marginTop="16px" />
         </S.InputWrapper>
-        {!props.keyword && !props.data?.searchFriend.length && (
-          <div
-            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
-          >
-            표시할 친구가 없습니다.
-          </div>
-        )}
-        {props.keyword && !props.data?.searchFriend.length && (
-          <div
-            style={{ color: "white", marginBottom: "150px", fontSize: "24px" }}
-          >
-            검색 결과가 없습니다.
-          </div>
+        {!props.hasFetched && <></>}
+        {props.hasFetched && (
+          <>
+            {props.loading && <div>loading...</div>}
+            {!props.loading && (
+              <>
+                {!props.keyword &&
+                  !props.data?.searchFriend.length &&
+                  props.isLoadingAfterSearch && (
+                    // 결과 상태 일 때, 친구 없음 메시지 표시
+                    <div
+                      style={{
+                        color: "white",
+                        marginBottom: "150px",
+                        fontSize: "24px",
+                      }}
+                    >
+                      아직 친구가 없습니다.
+                    </div>
+                  )}
+                {props.keyword && !props.data?.searchFriend.length && (
+                  <div
+                    style={{
+                      color: "white",
+                      marginBottom: "150px",
+                      fontSize: "24px",
+                    }}
+                  >
+                    {`${props.keyword}에 해당하는 친구가 없습니다.`}
+                  </div>
+                )}
+              </>
+            )}
+          </>
         )}
         <S.InfiniteScrollWrapper>
           <InfiniteScroll
             pageStart={0}
             loadMore={props.onLoadMore}
-            hasMore={true}
+            hasMore={props.hasMore}
             useWindow={false}
           >
             {props.data?.searchFriend.map((el) => (

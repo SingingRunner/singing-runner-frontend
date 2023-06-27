@@ -1,4 +1,8 @@
 export interface ISocialSettingUIProps {
+  hasMore: boolean
+  loading: boolean
+  isLoadingAfterSearch: boolean
+  hasFetched: boolean
   onClickExit: () => void
   onLoadMore: () => void
   data: any
