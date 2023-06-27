@@ -22,38 +22,17 @@ export default function Custom() {
   const [isPrevModalOpen, setIsPrevModalOpen] = useState(false);
   const [isNotHostModalOpen, setIsNotHostModalOpen] = useState(false);
 
-  // "leave_room" 이벤트 처리 완료 플래그
-  const [leaveRoomDone, setLeaveRoomDone] = useState(false);
-
   const onClickExit = () => {
-    socket?.emit("leave_room", userId, (acknowledgement) => {
-      if (acknowledgement.success) {
-        setRoomInfo((prev) => ({
-          ...prev,
-          players: [
-            {
-              roomId: "",
-              mode: "아이템",
-              singer: "",
-              songTitle: "",
-              songId: "",
-              playerCount: 1,
-              players: [],
-              hostId: "",
-            },
-          ],
-        }));
-        setLeaveRoomDone(true); // "leave_room" 이벤트 처리 완료를 표시
-      }
-    });
-  };
+    socket?.emit("leave_room", userId);
 
-  // leaveRoomDone 상태가 변경되었을 때만 이 훅이 실행됩니다.
-  useEffect(() => {
-    if (leaveRoomDone) {
+    setTimeout(() => {
+      setRoomInfo((prev) => ({
+        ...prev,
+        players: [],
+      }));
       router.push("/main");
-    }
-  }, [leaveRoomDone]);
+    }, 1000);
+  };
 
   const onClickMode = () => {
     if (!isHost) {
