@@ -124,15 +124,15 @@ export const LetterTier = styled.div`
   color: #dcdcdc;
   font-family: Pretendard-bold;
   ${(props: ITierProps) => {
-    if (props.tier === "DIAMOND") {
+    if (props.tier === "diamond") {
       return `color: #99d4ff;`;
-    } else if (props.tier === "PLATINUM") {
+    } else if (props.tier === "platinum") {
       return `color: #b6f9d9;`;
-    } else if (props.tier === "GOLD") {
+    } else if (props.tier === "gold") {
       return `color: #e5ae5b;`;
-    } else if (props.tier === "SILVER") {
+    } else if (props.tier === "silver") {
       return `color: #d3d3d3;`;
-    } else if (props.tier === "BRONZE") {
+    } else if (props.tier === "bronze") {
       return `color: #b56a2b;`;
     }
   }};
