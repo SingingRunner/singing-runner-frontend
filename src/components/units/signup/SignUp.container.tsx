@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { ISignUpUIProps } from "./SignUp.types";
 import SignUpUI from "./SignUp.presenter";
@@ -232,9 +232,17 @@ export default function SignUp() {
     console.log("dummy");
   };
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/button.mp3");
+  }, []);
+
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+
     if (event.key === "Enter") {
       if (isSignUpButtonEnabled) {
+        audioRef.current?.play();
         onClickSignUp();
       }
     }

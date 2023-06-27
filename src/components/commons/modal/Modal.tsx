@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import * as S from "./Modal.styles";
 import { useRouter } from "next/router";
 
@@ -25,10 +24,24 @@ export default function Modal(props: IModalProps) {
 
   if (NO_MODAL_PAGES.includes(router.asPath)) return <></>;
 
-  useEffect(() => {
-    const audio = new Audio("/sound/effect/popup.mp3");
+  // 소리 재생 함수
+  const playSound = () => {
+    const audio = new Audio("/sound/effect/disabled_button.mp3");
     audio.play();
-  }, []);
+  };
+
+  // 오른쪽 버튼 클릭 시 실행되는 함수
+  const handleRightClick = () => {
+    playSound(); // 소리 재생
+    props.onClickRight?.(); // 원래의 onClickRight 함수 실행 (optional chaining 사용)
+  };
+
+  // 왼쪽 버튼 클릭 시 실행되는 함수
+  const handleLeftClick = () => {
+    playSound(); // 소리 재생
+    props.onClickLeft?.(); // 원래의 onClickLeft 함수 실행 (optional chaining 사용)
+  };
+
   return (
     <>
       <S.Background>
@@ -72,17 +85,17 @@ export default function Modal(props: IModalProps) {
             (!props.leftButtonText ? (
               // 버튼이 한 개인 경우
               <S.ButtonWrapper>
-                <S.SingleButton onClick={props.onClickRight}>
+                <S.SingleButton onClick={handleRightClick}>
                   {props.buttonText}
                 </S.SingleButton>
               </S.ButtonWrapper>
             ) : (
               // 버튼이 두 개인 경우
               <S.ButtonWrapper>
-                <S.DoubleButton onClick={props.onClickLeft} isLeft>
+                <S.DoubleButton onClick={handleLeftClick} isLeft>
                   {props.leftButtonText}
                 </S.DoubleButton>
-                <S.DoubleButton onClick={props.onClickRight}>
+                <S.DoubleButton onClick={handleRightClick}>
                   {props.buttonText}
                 </S.DoubleButton>
               </S.ButtonWrapper>
