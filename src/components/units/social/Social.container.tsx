@@ -73,11 +73,7 @@ export default function Social() {
     });
 
     // fetchmore가 끝나고 hasmore state 업데이트
-    if (keyword) {
-      setHasMore(result?.data?.searchFriend.length % 10 === 0);
-    } else {
-      setHasMore(result?.data?.searchFriend.length % 10 === 0);
-    }
+    setHasMore(result?.data?.searchFriend.length % 10 === 0);
   };
 
   // 컴포넌트 마운트와 keyword 변경 이벤트에 대응할 콜백 함수
