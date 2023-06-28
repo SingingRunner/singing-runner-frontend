@@ -15,7 +15,7 @@ const keynoteNames = ["ORIGINAL_KEY", "FEMALE_KEY", "MALE_KEY"];
 const keynoteDisplayNames = ["원키", "여키", "남키"];
 
 export default function MyRoomSetting() {
-  const [userId] = useRecoilState(userIdState);
+  const [userId, setUserId] = useRecoilState(userIdState);
   const { data, refetch } = useQuery(FETCH_USER, {
     variables: { userId },
   });
@@ -72,6 +72,8 @@ export default function MyRoomSetting() {
     try {
       // 액세스 토큰 제거
       setAccessToken("");
+      setUserId("");
+      localStorage.setItem("userId", "");
       await logoutUser({ variables: { userId } });
       // 로그아웃 후 초기화면으로 이동
       router.push("/");

@@ -156,6 +156,7 @@ export default function Game(props: IGameProps) {
       setIsTerminated(true);
       setRoomInfo((prev) => ({
         ...prev,
+        playerCount: 0,
         players: [],
       }));
     });
