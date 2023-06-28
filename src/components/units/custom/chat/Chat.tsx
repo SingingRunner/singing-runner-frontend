@@ -44,12 +44,12 @@ const VoiceChat = (props: { roomId: string }) => {
   return (
     <Wrapper>
       <Bgm />
-      <div>
+      <BtnWrapper>
         <Label>음성채팅</Label>
         <Btn isMuted={isMuted} onClick={toggleMute}>
           {isMuted ? "ON" : "OFF"}
         </Btn>
-      </div>
+      </BtnWrapper>
     </Wrapper>
   );
 };
@@ -63,6 +63,10 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
 `;
+const BtnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const Label = styled.span`
   font-size: 14px;
   color: #fff;
@@ -70,6 +74,9 @@ const Label = styled.span`
   margin: 0 8px 0 24px;
 `;
 const Btn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   height: 24px;
   width: 44px;
