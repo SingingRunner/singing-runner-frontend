@@ -54,20 +54,30 @@ export default function CustomUI(props: ICustomUIProps) {
       )}
 
       <S.PlayersWrapper>
-        {props.roomInfo.players.map((el) => (
-          <S.JoinedPlayer key={uuidv4()}>
-            <ProfileCard
-              character={el.character}
-              nickname={el.nickname}
-              tier={el.userTier}
-              margin="0 0 0 20px"
-              add={!el.isFriend && el.userId !== props.userId}
-              friendId={el.userId}
-            >
-              {el.isHost && <S.Host>방장</S.Host>}
-            </ProfileCard>
-          </S.JoinedPlayer>
-        ))}
+        {props.roomInfo.players.map((el, index) => {
+          if (index < 3) {
+            return (
+              <S.JoinedPlayer key={uuidv4()}>
+                <ProfileCard
+                  character={el.character}
+                  nickname={el.nickname}
+                  tier={el.userTier}
+                  margin="0 0 0 20px"
+                  add={!el.isFriend && el.userId !== props.userId}
+                  friendId={el.userId}
+                >
+                  {el.isHost && <S.Host>방장</S.Host>}
+                </ProfileCard>
+              </S.JoinedPlayer>
+            );
+          } else {
+            console.log(
+              "🚨에러!! 유저 정보가 3명보다 많음, 플레이어 정보: ",
+              props.roomInfo.players
+            );
+            return <></>;
+          }
+        })}
         {3 - props.playersData.length > 0 && (
           <S.EmptyPlayer
             key={uuidv4()}
