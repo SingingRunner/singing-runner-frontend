@@ -71,16 +71,16 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
   });
 
   // userId 정보 갱신
-  // const [userId, setUserId] = useRecoilState(userIdState);
-  // const router = useRouter();
-  // console.log("⭐️ 현재 유저 아이디: " + userId, "경로:" + router.asPath);
-  // // On mount, set the recoil state to the value in local storage
-  // useEffect(() => {
-  //   const storedUserId = localStorage.getItem("userId");
-  //   if (storedUserId) {
-  //     setUserId(storedUserId);
-  //   }
-  // }, []);
+  const [userId, setUserId] = useRecoilState(userIdState);
+  const router = useRouter();
+  console.log("⭐️ 현재 유저 아이디: " + userId, "경로:" + router.asPath);
+  // On mount, set the recoil state to the value in local storage
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
 
   return <ApolloProvider client={client}>{props.children}</ApolloProvider>;
 }
