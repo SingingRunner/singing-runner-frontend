@@ -3,14 +3,14 @@ import styled from "@emotion/styled";
 export const SignUpContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px);
+  height: calc((var(--vh, 1vh) * 100) - 100px);
   justify-content: space-between;
-`
+`;
 
 export const SignUpInputContainer = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;
 
 export const InputButtonWrapper = styled.div`
   display: flex;

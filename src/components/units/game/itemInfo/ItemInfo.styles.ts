@@ -26,8 +26,8 @@ export const ItemInfoWrapper = styled.div`
 export const Msg = styled.div`
   padding: 20px;
   color: #dff45b;
-  font-weight: 900;
-  font-size: 18px;
+  font-weight: 500;
+  font-size: 20px;
 `;
 
 export const ItemInfoIcon = styled.img`

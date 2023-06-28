@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
 `;
 const fullScreenFlash = keyframes`
     0% { border-color: transparent; }
@@ -20,7 +20,7 @@ export const ItemEffectWrapper = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   border: 10px solid transparent;
   /* box-shadow: 0 0 10px 10px transparent inset; */
   animation: ${fullScreenFlash} 1s infinite;
