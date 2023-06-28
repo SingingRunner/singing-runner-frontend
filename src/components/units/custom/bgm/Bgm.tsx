@@ -32,15 +32,18 @@ export default function Bgm() {
   };
 
   return (
-    <div>
+    <BtnWrapper>
       <Label>BGM</Label>
       <Btn isMuted={!isPlaying} onClick={togglePlay}>
         {isPlaying ? "ON" : "OFF"}
       </Btn>
-    </div>
+    </BtnWrapper>
   );
 }
-
+const BtnWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const Label = styled.span`
   font-size: 14px;
   color: #fff;
@@ -48,6 +51,9 @@ const Label = styled.span`
   margin-right: 8px;
 `;
 const Btn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   height: 24px;
   width: 44px;

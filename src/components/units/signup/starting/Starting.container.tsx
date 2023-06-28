@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
 import StartingUI from "./Starting.presenter";
@@ -53,12 +53,20 @@ export default function Starting() {
     router.push("/main");
   };
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/sound/effect/pop.mp3");
+  }, []);
+
   const handleNextImage = () => {
+    audioRef.current?.play();
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
     console.log(characters[currentImageIndex]);
   };
 
   const handlePreviousImage = () => {
+    audioRef.current?.play();
     setCurrentImageIndex(
       (prevIndex) => (prevIndex - 1 + characters.length) % characters.length
     );
