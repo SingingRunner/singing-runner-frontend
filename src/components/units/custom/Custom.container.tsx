@@ -28,6 +28,7 @@ export default function Custom() {
     setTimeout(() => {
       setRoomInfo((prev) => ({
         ...prev,
+        playerCount: 0,
         players: [],
       }));
       router.push("/main");
@@ -63,11 +64,13 @@ export default function Custom() {
 
   useEffect(() => {
     socket?.on("invite", (data) => {
+      console.log("🚨 INVITE 정보", data);
       setRoomInfo((prev) => ({ ...prev, roomId: String(data[0].roomId) }));
       const newPlayersInfo: IPlayersData[] = [];
 
       setPlayersData((prevPlayers) => {
         data.forEach((playerGameDto) => {
+          if (!playerGameDto.userId) return;
           // 이미 들어와있는 유저인지 확인
           let isDuplicate = false;
           newPlayersInfo.forEach((newPlayer) => {
