@@ -142,7 +142,7 @@ export default function Sound(props: ISoundProps) {
             if (i === 0) {
               gainNode.gain.value = 1;
               if (props.isReplay) {
-                gainNode.gain.value = 0.15;
+                gainNode.gain.value = 0.4;
               }
             }
             return gainNode;
@@ -313,7 +313,7 @@ export default function Sound(props: ISoundProps) {
       if (i === 3) return;
       gainNode.gain.value = i === index ? 1 : 0;
       if (props.isReplay) {
-        gainNode.gain.value = i === index ? 0.15 : 0;
+        gainNode.gain.value = i === index ? 0.4 : 0;
       }
     });
   };

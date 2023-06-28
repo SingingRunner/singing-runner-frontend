@@ -98,6 +98,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         });
       props.setIsLoadComplete(true);
     } else {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {});
       props.setIsLoadComplete(true);
     }
   };
