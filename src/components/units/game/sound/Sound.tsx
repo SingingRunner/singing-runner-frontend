@@ -141,6 +141,9 @@ export default function Sound(props: ISoundProps) {
             sources.current.push(source);
             if (i === 0) {
               gainNode.gain.value = 1;
+              if (props.isReplay) {
+                gainNode.gain.value = 0.15;
+              }
             }
             return gainNode;
           });
@@ -152,10 +155,13 @@ export default function Sound(props: ISoundProps) {
             const base64Data = userVocal.split(",")[1];
             const decodedData = Buffer.from(base64Data, "base64");
             const buffer = await audioCtx.decodeAudioData(decodedData.buffer);
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 1;
             const source = audioCtx.createBufferSource();
             source.buffer = buffer;
-            source.connect(audioCtx.destination);
+            source.connect(gainNode).connect(audioCtx.destination);
             sources.current.push(source);
+            gainNodes.current.push(gainNode);
           }
 
           // 유저 정보
@@ -304,7 +310,11 @@ export default function Sound(props: ISoundProps) {
 
   const changeMRKey = (index: number) => {
     gainNodes.current.forEach((gainNode, i) => {
+      if (i === 3) return;
       gainNode.gain.value = i === index ? 1 : 0;
+      if (props.isReplay) {
+        gainNode.gain.value = i === index ? 0.15 : 0;
+      }
     });
   };
 
