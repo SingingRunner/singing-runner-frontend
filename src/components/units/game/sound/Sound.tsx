@@ -116,7 +116,7 @@ export default function Sound(props: ISoundProps) {
             songFiles.map(async (file, idx) => {
               const result = await fetch(file);
               props.setProgress((prev) => {
-                if (idx === 2) return 100;
+                if (idx === 2 || prev + 30 >= 100) return 100;
                 return prev + 30;
               });
               return result;
