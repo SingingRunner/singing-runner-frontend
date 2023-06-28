@@ -72,9 +72,9 @@ export default function MyRoomSetting() {
     try {
       // 액세스 토큰 제거
       setAccessToken("");
+      await logoutUser({ variables: { userId } });
       setUserId("");
       localStorage.setItem("userId", "");
-      await logoutUser({ variables: { userId } });
       // 로그아웃 후 초기화면으로 이동
       router.push("/");
     } catch (error) {
