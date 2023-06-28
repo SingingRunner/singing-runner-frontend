@@ -28,6 +28,7 @@ export default function Custom() {
     setTimeout(() => {
       setRoomInfo((prev) => ({
         ...prev,
+        songTitle: "",
         playerCount: 0,
         players: [],
       }));
