@@ -43,7 +43,9 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
           {props.mmr ? <S.Mmr>{props.mmr}</S.Mmr> : <S.PlaceholderMmr />}
           {/* <S.Mmr>{props.mmr}</S.Mmr> */}
           <S.Tier>
-            <S.LetterTier tier={props.tier}>{props.tier}</S.LetterTier>
+            <S.LetterTier tier={props.tier}>
+              {props.tier.toUpperCase()}
+            </S.LetterTier>
             {props.tier ? (
               <S.IconTier src={`/tier/${props.tier}.png`} />
             ) : (

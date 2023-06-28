@@ -5,7 +5,7 @@ export const Background = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   padding-top: 52px;
 `;
 export const Body = styled.div`

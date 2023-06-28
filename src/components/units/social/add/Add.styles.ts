@@ -9,7 +9,7 @@ export const SettingIcon = styled.img`
 `;
 
 export const Container = styled.div`
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   background-color: #1a1128;
   position: relative;
   display: flex;
@@ -56,5 +56,5 @@ export const Mmr = styled.div`
 
 export const Label = styled.div`
   color: white;
-  margintop: 16px;
+  margin-top: 16px;
 `;

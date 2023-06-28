@@ -5,7 +5,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Set the desired height of the container */
+  height: calc(var(--vh, 1vh) * 100);
 `;
 
 export const ImageWrapper = styled.div`

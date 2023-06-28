@@ -6,7 +6,7 @@ export const Background = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
