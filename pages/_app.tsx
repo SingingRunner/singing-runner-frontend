@@ -72,6 +72,16 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
     modelFiles.forEach((modelUrl) => {
       preloadModel(modelUrl);
     });
+
+    // 자바스크립트
+    window.addEventListener("resize", () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+
+    // 초기 로드시에도 실행
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
 export const ListWrapper = styled.div`
-  height: calc(100vh - 264px);
+  height: calc((var(--vh, 1vh) * 100) - 264px);
   overflow: scroll;
   ::-webkit-scrollbar {
     display: none;

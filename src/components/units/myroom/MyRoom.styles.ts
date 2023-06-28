@@ -6,7 +6,7 @@ interface ITierProps {
 
 export const Container = styled.div`
   display: flex;
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
 `;
 
 export const ImageWrapper = styled.div`
@@ -122,7 +122,7 @@ export const LetterTier = styled.div`
   margin-right: 8px;
   font-size: 24px;
   color: #dcdcdc;
-  font-family: Pretendard-bold;
+  font-weight: 900;
   ${(props: ITierProps) => {
     if (props.tier === "diamond") {
       return `color: #99d4ff;`;

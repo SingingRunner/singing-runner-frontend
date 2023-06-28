@@ -135,5 +135,5 @@ const Text = styled.p`
 
 const Cloud = styled.img`
   position: absolute;
-  height: 80px;
+  height: 160px;
 `;
