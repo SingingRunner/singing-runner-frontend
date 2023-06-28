@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../commons/store";
@@ -143,11 +143,20 @@ export default function Social() {
 
   const router = useRouter();
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio("/sound/effect/popup.mp3");
+    audioRef.current = audio;
+  }, []);
+
   const onClickAdd = () => {
+    audioRef.current?.play();
     router.push("/social/add");
   };
 
   const onClickSetting = () => {
+    audioRef.current?.play();
     router.push("/social/setting");
   };
 

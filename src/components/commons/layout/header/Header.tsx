@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 import * as S from "./Header.styles";
 
 interface IHeaderProps {
@@ -12,15 +12,17 @@ export default function Header(props: IHeaderProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/disabled_button.mp3");
+    const audio = new Audio("/sound/effect/pop.mp3");
+    audioRef.current = audio;
   }, []);
 
   const onClickPrevBtn = () => {
-    audioRef.current?.play();
     if (props.onClickPrev) {
       props.onClickPrev();
+      audioRef.current?.play();
       return;
     }
+    audioRef.current?.play();
     router.back();
   };
 
