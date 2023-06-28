@@ -23,7 +23,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
     // ITEM_GET_INTERVAL 간격으로 아이템 획득 요청
     const interval = setInterval(() => {
       if (props.preventEvent) return;
-      socket?.emit("get_item");
+      socket?.emit("get_item", userId);
     }, ITEM_GET_INTERVAL);
 
     socket?.on("get_item", (item: string) => {

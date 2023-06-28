@@ -22,7 +22,7 @@ import {
 import { FETCH_USER, UPLOAD_FILE } from "./Game.queries";
 import { ILyric } from "./lyric/Lyric.types";
 
-const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
+const UNMUTE_DECIBEL = -75; // mute 아이템을 해제시키는 데시벨 크기
 
 export default function Game(props: IGameProps) {
   const [userId] = useRecoilState(userIdState);
