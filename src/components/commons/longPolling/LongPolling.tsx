@@ -24,27 +24,27 @@ export default function LongPolling() {
   if (!socketContext) return <div>Loading...</div>;
   const { socketConnect } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
+  const [userId, setUserId] = useRecoilState(userIdState);
 
   // 친구 요청이 있으면 true
   const [, setIsNotification] = useRecoilState(isNotificationState);
   const [hostNickname, setHostNickname] = useState("");
   const [hostId, setHostId] = useState("");
 
-  const [longPolling] = useMutation<
+  const [longPolling, { error }] = useMutation<
     Pick<IMutation, "longPolling">,
     IMutationLongPollingArgs
   >(LONG_POLLING_MUTATION);
 
   useEffect(() => {
-    console.log(userId);
-    console.log(pollingRef.current);
     const pollData = async () => {
       while (pollingRef.current) {
-        console.log(pollingRef.current);
         try {
+          console.log("🙂 롱폴링 유저아이디: ", userId);
           const response = await longPolling({ variables: { userId } });
+
           if (response) {
+            console.log("롱폴링 응답", response);
             // pollData(); // recursively call the polling function after response received
             if (response.data?.longPolling.userNotificationList.length) {
               setIsNotification(true);
@@ -69,8 +69,12 @@ export default function LongPolling() {
       }
     };
 
-    pollData();
-  }, [longPolling, userId, isPolling]);
+    if (error?.message === "Empty userID") {
+      console.log("롱폴링 에러 메세지", error?.message);
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) setUserId(storedUserId);
+    } else pollData();
+  }, [longPolling, userId, isPolling, error]);
 
   const onClickAcceptInvite = () => {
     setIsPolling(false);
