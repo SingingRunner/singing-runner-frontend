@@ -41,6 +41,11 @@ export default function LongPolling() {
       while (pollingRef.current) {
         try {
           console.log("🙂 롱폴링 유저아이디: ", userId);
+          if (!userId) {
+            const storedUserId = localStorage.getItem("userId");
+            if (storedUserId) setUserId(storedUserId);
+            else return;
+          }
           const response = await longPolling({ variables: { userId } });
 
           if (response) {
@@ -64,13 +69,17 @@ export default function LongPolling() {
             }
           }
         } catch (error) {
-          console.error(error);
+          console.error("에러!", error);
         }
       }
     };
 
     if (error?.message === "Empty userID") {
-      console.log("롱폴링 에러 메세지", error?.message);
+      console.log(
+        "롱폴링 에러 메세지",
+        error?.message,
+        error?.message === "Empty userID"
+      );
       const storedUserId = localStorage.getItem("userId");
       if (storedUserId) setUserId(storedUserId);
     } else pollData();
