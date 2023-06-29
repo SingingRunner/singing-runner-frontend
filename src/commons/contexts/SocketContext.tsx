@@ -27,6 +27,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     /* 로컬 테스트 시 사용 */
     // const newSocket = io("http://localhost:3000", { query: { userId } });
     setSocket(newSocket);
+    console.log("⭐️ 소켓 연결");
     return newSocket;
   };
 
@@ -34,6 +35,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     if (socket) {
       socket.disconnect();
       setSocket(null);
+      console.log("🍕 소켓 종료");
     }
   };
 

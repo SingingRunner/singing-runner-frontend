@@ -11,7 +11,7 @@ export default function Custom() {
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
-  const { socket } = socketContext;
+  const { socket, socketDisconnect } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
 
@@ -24,7 +24,7 @@ export default function Custom() {
 
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
-
+    socketDisconnect();
     setTimeout(() => {
       setRoomInfo((prev) => ({
         ...prev,

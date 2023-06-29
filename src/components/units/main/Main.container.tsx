@@ -17,7 +17,7 @@ const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
-  const { socket, socketConnect } = socketContext;
+  const { socket, socketConnect, socketDisconnect } = socketContext;
 
   const pollingContext = useContext(PollingContext);
   if (!pollingContext) return <div>Loading...</div>;
@@ -102,6 +102,7 @@ const Main = () => {
       // 거절 누른 경우
       console.log("accept false sended to server");
       socket.emit("accept", { accept: false, userId });
+      socketDisconnect();
       setIsRejected(false);
       // => 모드 선택 화면으로 이동
     }
@@ -183,6 +184,7 @@ const Main = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
+    socketDisconnect();
   };
 
   const handleMatchAccept = () => {
@@ -200,6 +202,7 @@ const Main = () => {
     setTimer(0); // 타이머 0으로 초기화
     setIsAccepted(false);
     setIsRejected(true);
+    socketDisconnect();
   };
 
   useEffect(() => {
