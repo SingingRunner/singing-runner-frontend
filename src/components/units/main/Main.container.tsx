@@ -101,9 +101,9 @@ const Main = () => {
     if (socket && isRejected) {
       // 거절 누른 경우
       console.log("accept false sended to server");
-      socket.emit("accept", { accept: false, userId });
       socketDisconnect();
       setIsRejected(false);
+      setIsPolling(true);
       // => 모드 선택 화면으로 이동
     }
   }, [isAccepted, isRejected, showWaiting, socket]);
@@ -197,12 +197,13 @@ const Main = () => {
 
   const handleMatchDecline = () => {
     // 매칭 거절 버튼 눌렀을 때 작동
+    socket?.emit("accept", { accept: false, userId });
     setShowModal(false); // 모달 끄기
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
     setIsAccepted(false);
     setIsRejected(true);
-    socketDisconnect();
+    // socketDisconnect();
   };
 
   useEffect(() => {
