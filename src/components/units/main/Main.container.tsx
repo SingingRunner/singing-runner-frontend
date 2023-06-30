@@ -180,11 +180,13 @@ const Main = () => {
       router.push("/custom");
     });
   }, [socket]);
+
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
+    socketDisconnect();
+    setIsPolling(true);
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
-    socketDisconnect();
   };
 
   const handleMatchAccept = () => {
