@@ -1,7 +1,6 @@
 import { ILyric } from "./lyric/Lyric.types";
 
 export interface IGameProps {
-  preventEvent?: boolean;
   isReplay?: boolean;
 }
 export interface IGameUIProps {

@@ -1,7 +1,7 @@
 import * as S from "./Modal.styles";
 import { useRouter } from "next/router";
 
-interface IModalProps {
+export interface IModalProps {
   /* 아이콘 */
   isCheck?: boolean; // 체크 표시 아이콘인 경우 true
   /* 텍스트 */

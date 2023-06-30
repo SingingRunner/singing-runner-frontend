@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import {
   gameResultState,
   roomInfoState,
@@ -21,14 +21,14 @@ import {
 } from "../../../commons/types/generated/types";
 import { FETCH_USER, UPLOAD_FILE } from "./Game.queries";
 import { ILyric } from "./lyric/Lyric.types";
+import { PollingContext } from "../../../commons/contexts/PollingContext";
 
-const UNMUTE_DECIBEL = -70; // mute 아이템을 해제시키는 데시벨 크기
+/** mute 아이템을 해제시키는 데시벨 크기 */
+const UNMUTE_DECIBEL = -68;
 
 export default function Game(props: IGameProps) {
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
+
   const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
     FETCH_USER,
     { variables: { userId } }
@@ -42,6 +42,18 @@ export default function Game(props: IGameProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketDisconnect } = socketContext;
+
+  const pollingContext = useContext(PollingContext);
+  if (!pollingContext) return <div>Loading...</div>;
+  const { setIsPolling } = pollingContext;
+
+  const [roomInfo] = useRecoilState(roomInfoState);
+  const resetRoomInfoState = useResetRecoilState(roomInfoState);
+
+  const [preventEvent, setPreventEvent] = useState(false);
+  useEffect(() => {
+    if (roomInfo.mode === "일반") setPreventEvent(true);
+  }, [roomInfo]);
 
   // 로딩 화면을 관리하는 상태
   const [isLoadComplete, setIsLoadComplete] = useState(false);
@@ -90,7 +102,6 @@ export default function Game(props: IGameProps) {
     right: false,
     left: false,
   });
-  const [, setRoomInfo] = useRecoilState(roomInfoState);
 
   useEffect(() => {
     // 다른 유저로부터 공격이 들어옴
@@ -154,12 +165,7 @@ export default function Game(props: IGameProps) {
     socket?.on("game_terminated", (data: IGameResult[]) => {
       setGameResult(data);
       setIsTerminated(true);
-      setRoomInfo((prev) => ({
-        ...prev,
-        songTitle: "",
-        playerCount: 0,
-        players: [],
-      }));
+      resetRoomInfoState();
     });
   }, [socket]);
 
@@ -191,7 +197,7 @@ export default function Game(props: IGameProps) {
     if (item === "frozen") return;
     // 나머지 아이템은 ITEM_DURATION 뒤에 자동 종료
     setTimeout(() => {
-      if (props.preventEvent) return;
+      if (preventEvent) return;
       socket?.emit("escape_item", { item, userId });
     }, ITEM_DURATION);
   };
@@ -213,7 +219,7 @@ export default function Game(props: IGameProps) {
 
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
-    if (props.preventEvent) return;
+    if (preventEvent) return;
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
       setIsMuteActive(false);
@@ -228,7 +234,7 @@ export default function Game(props: IGameProps) {
   return (
     <>
       <GameUI
-        preventEvent={props.preventEvent}
+        preventEvent={preventEvent}
         songInfo={songInfo}
         playersInfo={playersInfo}
         decibel={decibel}
@@ -245,7 +251,7 @@ export default function Game(props: IGameProps) {
         lyrics={lyrics}
       />
       <Sound
-        preventEvent={props.preventEvent}
+        preventEvent={preventEvent}
         setSongInfo={setSongInfo}
         mrKey={mrKey}
         setDecibel={setDecibel}
@@ -280,6 +286,7 @@ export default function Game(props: IGameProps) {
               // 🚨 인게임 퇴장 시 이벤트 추가
               setIsUserExit(true);
               socketDisconnect();
+              setIsPolling(true);
               router.back();
             }}
           />
