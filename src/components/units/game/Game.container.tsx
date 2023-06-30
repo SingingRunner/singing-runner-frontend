@@ -25,12 +25,6 @@ const UNMUTE_DECIBEL = -68;
 export default function Game(props: IGameProps) {
   const [userId] = useRecoilState(userIdState);
 
-  const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
-    FETCH_USER,
-    { variables: { userId } }
-  );
-
-
   const router = useRouter();
 
   const [uploadFile] = useMutation(UPLOAD_FILE);
@@ -49,7 +43,7 @@ export default function Game(props: IGameProps) {
 
   const [preventEvent, setPreventEvent] = useState(false);
   useEffect(() => {
-    if (roomInfo.mode === "일반") setPreventEvent(true);
+    if (roomInfo.mode === "일반" || props.isReplay) setPreventEvent(true);
   }, [roomInfo]);
 
   // 로딩 화면을 관리하는 상태

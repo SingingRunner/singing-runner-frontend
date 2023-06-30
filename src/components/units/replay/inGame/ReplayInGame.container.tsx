@@ -19,5 +19,5 @@ export default function ReplayInGame() {
     socketConnect(userId);
   }, []);
 
-  return <Game preventEvent={true} isReplay={true} />;
+  return <Game isReplay={true} />;
 }
