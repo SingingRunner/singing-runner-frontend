@@ -5,11 +5,7 @@ import { useRecoilState } from "recoil";
 import { useRouter } from "next/router";
 import { userIdState } from "../../../../commons/store";
 
-import {
-  ISocketGameSongData,
-  ISocketLoadingData,
-  ISoundProps,
-} from "./Sound.types";
+import { ISocketLoadingData, ISoundProps } from "./Sound.types";
 import { FETCH_USER } from "../Game.queries";
 import { useQuery } from "@apollo/client";
 import {
@@ -95,7 +91,7 @@ export default function Sound(props: ISoundProps) {
               return { endTime: el.endTime, lyric: el.lyric };
             })
           );
-          const answers = getAnswerData(data.gameSong); // 🚨 정답 데이터 받을 때 쓰세요
+          const answers = getAnswerData(data); // 🚨 정답 데이터 받을 때 쓰세요
           const ans1 = await fetch(answers[0]);
           const ans2 = await fetch(answers[1]);
           const ans3 = await fetch(answers[2]);
@@ -110,7 +106,7 @@ export default function Sound(props: ISoundProps) {
           setKeyDownAnswer(ans3Array);
 
           // MR 파일
-          const songFiles = getMR(data.gameSong);
+          const songFiles = getMR(data);
 
           const response = await Promise.all(
             songFiles.map(async (file, idx) => {
@@ -246,11 +242,15 @@ export default function Sound(props: ISoundProps) {
     }
   }, [socket]);
 
-  const getMR = (gameSong: ISocketGameSongData) => {
+  const getMR = (data: ISocketLoadingData) => {
     let keyOrigin: string;
     let keyUp: string;
     let keyDown: string;
-    switch (userData?.fetchUser.userKeynote) {
+    const gameSong = data.gameSong;
+    const userKeynote = props.isReplay
+      ? data.replayKeynote
+      : userData?.fetchUser.userKeynote;
+    switch (userKeynote) {
       case 1:
         keyOrigin = gameSong.songFemale;
         keyUp = gameSong.songFemaleUp;
@@ -277,11 +277,15 @@ export default function Sound(props: ISoundProps) {
     return [keyOrigin, keyUp, keyDown];
   };
 
-  const getAnswerData = (gameSong: ISocketGameSongData) => {
+  const getAnswerData = (data: ISocketLoadingData) => {
     let answerOrigin: string;
     let answerUp: string;
     let answerDown: string;
-    switch (userData?.fetchUser.userKeynote) {
+    const gameSong = data.gameSong;
+    const userKeynote = props.isReplay
+      ? data.replayKeynote
+      : userData?.fetchUser.userKeynote;
+    switch (userKeynote) {
       case 1:
         answerOrigin = gameSong.vocalFemale;
         answerUp = gameSong.vocalFemaleUp;
