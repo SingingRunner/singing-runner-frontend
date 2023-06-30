@@ -29,8 +29,8 @@ export default function Starting() {
 
   const router = useRouter();
 
-  const onClickComplete = () => {
-    updateCharacterMutation({
+  const onClickComplete = async () => {
+    await updateCharacterMutation({
       variables: {
         userId,
         character: characters[currentImageIndex],
