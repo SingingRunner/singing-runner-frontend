@@ -16,7 +16,6 @@ export default function ReplayInGame() {
   const [userId] = useRecoilState(userIdState);
   useEffect(() => {
     setIsPolling(false);
-    // 🚨 친구 아이디? 내 아이디?
     socketConnect(userId);
   }, []);
 

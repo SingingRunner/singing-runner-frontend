@@ -8,7 +8,6 @@ interface ILayoutProps {
 }
 
 const NO_LAYOUT = ["/game", "/replay/ingame/[userId]/[replayId]"];
-const NO_LONG_POLLING = ["/game", "/custom", "/signup", "/login", "/"];
 
 export default function Layout(props: ILayoutProps) {
   const router = useRouter();
@@ -20,7 +19,7 @@ export default function Layout(props: ILayoutProps) {
       ) : (
         <S.Background>
           <S.Body>
-            {NO_LONG_POLLING.includes(router.asPath) || <LongPolling />}
+            <LongPolling />
             <S.Wrapper>{props.children}</S.Wrapper>
           </S.Body>
         </S.Background>
