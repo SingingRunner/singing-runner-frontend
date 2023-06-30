@@ -139,6 +139,8 @@ const Main = () => {
     onCompleted: (userData) => {
       setRoomInfo((prev) => ({
         ...prev,
+        hostId: userId,
+        hostNickname: userData?.fetchUser.nickname,
         players: [
           {
             userId,
@@ -173,7 +175,6 @@ const Main = () => {
       setRoomInfo((prev) => ({
         ...prev,
         roomId: String(roomId),
-        hostId: userId,
       }));
 
       // 커스텀 모드 화면으로 전환

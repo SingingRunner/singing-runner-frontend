@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction } from "react";
 export interface ICustomUIProps {
   userId: string;
   isHost: boolean;
-  playersData: IPlayersData[];
   roomInfo: IRoomInfoState;
   onClickExit: () => void;
   onClickMode: () => void;
@@ -19,20 +18,42 @@ export interface ICustomUIProps {
 
 export interface IRoomInfoState {
   roomId: string;
-  mode: string;
-  singer: string;
-  songTitle: string;
-  songId: string;
-  playerCount: number;
-  players: any[];
   hostId: string;
+  hostNickname: string;
+  songId: string;
+  songTitle: string;
+  singer: string;
+  mode: string;
+  isHost: boolean;
+  players: IPlayers[];
 }
 
-export interface IPlayersData {
+export interface IPlayers {
   userId: string;
-  userTier: string;
   nickname: string;
-  isHost: boolean;
-  isFriend: boolean;
   character: string;
+  userTier: string;
+  isFriend: boolean;
+  isHost: boolean;
+}
+
+export interface IOnInviteHandlerData {
+  roomId: number;
+  hostId: string;
+  hostNickname: string;
+  // 🚨 소켓메시지 완료되면 추가하기
+  // songId: string;
+  // songTitle: string;
+  // singer: string;
+  // gameMode: string;
+  userId: string;
+  nickname: string;
+  character: string;
+  userTier: string;
+  isFriend: true;
+}
+export interface IOnSetSongHandlerData {
+  songId: string;
+  songTitle: string;
+  singer: string;
 }
