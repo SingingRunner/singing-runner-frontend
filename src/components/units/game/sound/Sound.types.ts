@@ -52,6 +52,7 @@ export interface ISocketLoadingData {
     { userId: string; character: string }
   ];
   userVocal?: string;
+  replayKeynote?: number;
 }
 
 export interface ISocketGameSongData {
