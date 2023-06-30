@@ -11,19 +11,21 @@ import {
 import debounce from "lodash/debounce";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRouter } from "next/router";
+import { useCustomRoomInfo } from "../../../../commons/hooks/useCustomRoomInfo";
 
 export default function CustomSong() {
   const router = useRouter();
-  // 소켓 가져오기
+
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-
   const [roomInfo] = useRecoilState(roomInfoState);
   const [filter, setFilter] = useState("createdAt");
   const [keyword, setKeyword] = useState("");
+
+  useCustomRoomInfo();
 
   const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchSong">,
@@ -34,7 +36,6 @@ export default function CustomSong() {
       page: 1,
       filter,
     },
-    fetchPolicy: "network-only",
   });
 
   const onClickFilter = () => {
@@ -53,7 +54,7 @@ export default function CustomSong() {
         newFilter = "createdAt";
         break;
     }
-    refetch({ filter: newFilter });
+    refetch({ filter: newFilter, page: 1, keyword });
   };
 
   const onChangeSong = (songId: string) => {
@@ -93,14 +94,14 @@ export default function CustomSong() {
 
   return (
     <CustomSongUI
-      filter={filter}
-      onClickFilter={onClickFilter}
-      onChangeSong={onChangeSong}
       loading={loading}
       data={data}
       keyword={keyword}
+      filter={filter}
+      onClickFilter={onClickFilter}
       onChangeKeyword={onChangeKeyword}
       onLoadMore={onLoadMore}
+      onChangeSong={onChangeSong}
     />
   );
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import CustomInviteUI from "./CustomInvite.presenter";
 import {
   INVITE_FRIEND,
@@ -6,7 +6,11 @@ import {
   FETCH_USER,
 } from "./CustomInvite.queries";
 import { useRecoilState } from "recoil";
-import { roomInfoState, userIdState } from "../../../../commons/store";
+import {
+  globalModalState,
+  roomInfoState,
+  userIdState,
+} from "../../../../commons/store";
 import { ChangeEvent, useCallback, useState } from "react";
 import {
   IQuery,
@@ -14,21 +18,19 @@ import {
   IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
 import debounce from "lodash/debounce";
+import { useCustomRoomInfo } from "../../../../commons/hooks/useCustomRoomInfo";
 
 export default function CustomInvite() {
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
-
   const [roomInfo] = useRecoilState(roomInfoState);
+  const [keyword, setKeyword] = useState("");
+  const [isLimitCountModalOpen, setIsLimitCountModalOpen] = useState(false);
+  const [, setGlobalModal] = useRecoilState(globalModalState);
 
   const { data: userData } = useQuery<
     Pick<IQuery, "fetchUser">,
     IQueryFetchUserArgs
   >(FETCH_USER, { variables: { userId } });
-
-  const [keyword, setKeyword] = useState("");
 
   const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
@@ -42,6 +44,28 @@ export default function CustomInvite() {
     fetchPolicy: "network-only",
   });
 
+  // 친구 초대 시 fetch 후 초대 완료 모달 생성
+  const [fetchFriend] = useLazyQuery<
+    Pick<IQuery, "fetchUser">,
+    IQueryFetchUserArgs
+  >(FETCH_USER, {
+    onCompleted: (friendData) => {
+      setGlobalModal((prev) => ({
+        ...prev,
+        isOpen: true,
+        isCheck: true,
+        hilightText: friendData?.fetchUser.nickname,
+        firstText: "님에게",
+        secondText: "초대를 보냈어요!",
+        buttonText: "확인",
+      }));
+    },
+  });
+
+  useCustomRoomInfo();
+
+  const [inviteFriend] = useMutation(INVITE_FRIEND);
+
   const getDebounce = useCallback(
     debounce((data) => {
       refetch({ nickname: data.trim() });
@@ -54,12 +78,9 @@ export default function CustomInvite() {
     getDebounce(e.target.value);
   };
 
-  const [inviteFriend] = useMutation(INVITE_FRIEND);
-
-  const [isLimitCountModalOpen, setIsLimitCountModalOpen] = useState(false);
   const onClickInvite = (friendId: string) => {
     if (!userData?.fetchUser.nickname) return;
-    if (roomInfo.playerCount >= 3) {
+    if (roomInfo.players.length >= 3) {
       setIsLimitCountModalOpen(true);
       return;
     }
@@ -69,6 +90,7 @@ export default function CustomInvite() {
         hostUserDto: { userId, nickname: userData.fetchUser.nickname },
       },
     });
+    fetchFriend({ variables: { userId: friendId } });
   };
 
   const onLoadMore = () => {
@@ -92,14 +114,14 @@ export default function CustomInvite() {
 
   return (
     <CustomInviteUI
-      onClickInvite={onClickInvite}
-      loading={loading}
       data={data}
+      loading={loading}
       keyword={keyword}
-      onChangeKeyword={onChangeKeyword}
       isLimitCountModalOpen={isLimitCountModalOpen}
-      setIsLimitCountModalOpen={setIsLimitCountModalOpen}
+      onChangeKeyword={onChangeKeyword}
       onLoadMore={onLoadMore}
+      onClickInvite={onClickInvite}
+      setIsLimitCountModalOpen={setIsLimitCountModalOpen}
     />
   );
 }

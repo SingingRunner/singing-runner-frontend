@@ -78,7 +78,7 @@ export default function CustomUI(props: ICustomUIProps) {
             return <></>;
           }
         })}
-        {3 - props.playersData.length > 0 && (
+        {3 - props.roomInfo.players.length > 0 && (
           <S.EmptyPlayer
             key={uuidv4()}
             onClick={() => router.push("/custom/invite")}

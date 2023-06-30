@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getAccessToken } from "../libraries/getAccessToken";
 import { IRoomInfoState } from "../../components/units/custom/Custom.types";
 import { IGameResult } from "../../components/units/game/result/GameResult.types";
+import { IModalProps } from "../../components/commons/modal/Modal";
 
 export const accessTokenState = atom({
   key: `accessTokenState${uuidv4()}`,
@@ -31,9 +32,10 @@ export const roomInfoState = atom<IRoomInfoState>({
     singer: "",
     songTitle: "",
     songId: "",
-    playerCount: 1,
     players: [],
     hostId: "",
+    hostNickname: "",
+    isHost: false, // 현재 유저가 방장인지
   },
 });
 
@@ -66,3 +68,28 @@ export const customInviteInfoState = atom<{ hostId: string; nickname: string }>(
     },
   }
 );
+
+type IGlobalModalProps = IModalProps & {
+  isOpen: boolean;
+};
+export const globalModalState = atom<IGlobalModalProps>({
+  key: `globalModalState${uuidv4()}`,
+  default: {
+    /* 모달 노출 여부 */
+    isOpen: false,
+    /* 아이콘 */
+    isCheck: false, // 체크 표시 아이콘인 경우 true
+    /* 텍스트 */
+    hilightText: "", // 강조 표시해야하는 닉네임
+    firstText: "", // 모달 알림 내용
+    secondText: "", // 알림이 두 줄인 경우 두번째 텍스트
+    /* 버튼 */
+    buttonText: "", // 버튼이 두개인 경우, 오른쪽 버튼의 텍스트
+    leftButtonText: "", // 버튼이 두개인 경우, 왼쪽 버튼의 텍스트
+    /* 노래 정보 */
+    songTitle: "",
+    singer: "",
+    onClickRight: () => {},
+    onClickLeft: () => {},
+  },
+});
