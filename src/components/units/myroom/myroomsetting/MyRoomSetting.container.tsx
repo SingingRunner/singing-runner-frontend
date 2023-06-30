@@ -71,6 +71,7 @@ export default function MyRoomSetting() {
       setUserId("");
       localStorage.setItem("userId", "");
       // 로그아웃 후 초기화면으로 이동
+      setIsPolling(false);
       router.push("/");
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력
