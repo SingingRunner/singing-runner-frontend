@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { accessTokenState, userIdState } from "../../../../commons/store";
+import { PollingContext } from "../../../../commons/contexts/PollingContext";
 import MyRoomSettingUI from "./MyRoomSetting.presenter";
 import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
 import {
@@ -24,6 +25,7 @@ export default function MyRoomSetting() {
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
   const [, setAccessToken] = useRecoilState(accessTokenState);
   const [updateUserKeynote] = useMutation(UPDATE_USER_KEYNOTE);
+  const { setIsPolling } = useContext(PollingContext);
 
   const onClickKeySetting = async () => {
     const totalKeynotes = 3; // 원키, 여키, 남키 총 3가지
