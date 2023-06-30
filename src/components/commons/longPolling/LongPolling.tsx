@@ -49,7 +49,8 @@ export default function LongPolling() {
           const response = await longPolling({ variables: { userId } });
 
           if (response) {
-            console.log("롱폴링 응답", response);
+            console.log("🙂 롱폴링 응답: ", response);
+
             // pollData(); // recursively call the polling function after response received
             if (response.data?.longPolling.userNotificationList.length) {
               setIsNotification(true);
@@ -58,10 +59,7 @@ export default function LongPolling() {
             else setIsNotification(false);
 
             // 초대 요청이 있으면
-            if (
-              !hostNickname &&
-              response.data?.longPolling.hostUserDtoList[0]
-            ) {
+            if (response.data?.longPolling.hostUserDtoList[0]) {
               setHostNickname(
                 response.data?.longPolling.hostUserDtoList[0].nickname
               );
@@ -69,7 +67,7 @@ export default function LongPolling() {
             }
           }
         } catch (error) {
-          console.error("에러!", error);
+          console.error("롱폴링 에러!", error);
         }
       }
     };
