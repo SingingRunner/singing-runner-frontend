@@ -12,14 +12,10 @@ import {
 import { IGameProps, IPlayersInfo, ISocketItem } from "./Game.types";
 import { ITEM_DURATION } from "./itemInfo/ItemInfo.styles";
 import { IGameResult } from "./result/GameResult.types";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import Button, { buttonType } from "../../commons/button/Button";
-import {
-  IQuery,
-  IQueryFetchUserArgs,
-} from "../../../commons/types/generated/types";
-import { FETCH_USER, UPLOAD_FILE } from "./Game.queries";
+import { UPLOAD_FILE } from "./Game.queries";
 import { ILyric } from "./lyric/Lyric.types";
 import { PollingContext } from "../../../commons/contexts/PollingContext";
 
@@ -33,6 +29,7 @@ export default function Game(props: IGameProps) {
     FETCH_USER,
     { variables: { userId } }
   );
+
 
   const router = useRouter();
 
@@ -74,15 +71,6 @@ export default function Game(props: IGameProps) {
 
   // ⭐️ 현재의 mrKey를 저장하는 상태 -> 현재 유저의 기본 설정값으로 초기화
   const [mrKey, setMrKey] = useState("origin");
-  useEffect(() => {
-    setMrKey(
-      data?.fetchUser.userKeynote === 0
-        ? "origin"
-        : data?.fetchUser.userKeynote === 2
-        ? "male"
-        : "female"
-    );
-  }, [data]);
 
   // mute 아이템 발동 시 측정한 데시벨의 상태
   const [decibel, setDecibel] = useState(0);
