@@ -2,8 +2,10 @@ import { ILyric } from "./lyric/Lyric.types";
 
 export interface IGameProps {
   isReplay?: boolean;
+  playerId?: string;
 }
 export interface IGameUIProps {
+  playerId?: string;
   preventEvent?: boolean;
   appliedItems: string[];
   songInfo: {

@@ -20,10 +20,12 @@ import { ILyric } from "./lyric/Lyric.types";
 import { PollingContext } from "../../../commons/contexts/PollingContext";
 
 /** mute 아이템을 해제시키는 데시벨 크기 */
-const UNMUTE_DECIBEL = -68;
+export const UNMUTE_DECIBEL = -68;
 
 export default function Game(props: IGameProps) {
   const [userId] = useRecoilState(userIdState);
+  /** 플레이어: 인게임인 경우 현재 유저, 리플레이인 경우 해당 리플레이의 유저 */
+  const [playerId] = useState(props.playerId || userId);
 
   const router = useRouter();
 
@@ -88,9 +90,9 @@ export default function Game(props: IGameProps) {
   useEffect(() => {
     // 다른 유저로부터 공격이 들어옴
     socket?.on("use_item", (data: ISocketItem) => {
-      if (data.userId !== userId) onItem(data.item);
+      if (data.userId !== playerId) onItem(data.item);
       else if (
-        data.userId === userId &&
+        data.userId === playerId &&
         ["keyUp", "keyDown"].includes(data.item)
       )
         onItem(data.item);
@@ -123,7 +125,7 @@ export default function Game(props: IGameProps) {
     // 아이템에서 탈출
     socket?.on("escape_item", (data: ISocketItem) => {
       // 탈출한 유저가 현재 유저인 경우
-      if (data.userId === userId) {
+      if (data.userId === playerId) {
         offItem(data.item);
       }
       setPlayersInfo((prev) => {
@@ -153,13 +155,12 @@ export default function Game(props: IGameProps) {
 
   useEffect(() => {
     if (isTerminated && base64data) {
-      const result = uploadFile({
+      uploadFile({
         variables: {
           userVocal: base64data,
           userId,
         },
       });
-      result.then(() => {});
     }
   }, [base64data, isTerminated]);
 
@@ -201,10 +202,11 @@ export default function Game(props: IGameProps) {
 
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
+    console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
     if (preventEvent) return;
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
-      console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
       setIsMuteActive(false);
+      setDecibel(0);
       socket?.emit("escape_item", { item: "mute", userId });
     }
   };
@@ -216,6 +218,7 @@ export default function Game(props: IGameProps) {
   return (
     <>
       <GameUI
+        playerId={props.playerId}
         preventEvent={preventEvent}
         songInfo={songInfo}
         playersInfo={playersInfo}
@@ -265,7 +268,6 @@ export default function Game(props: IGameProps) {
             text="나가기"
             isFixedAtBottom
             onClick={() => {
-              // 🚨 인게임 퇴장 시 이벤트 추가
               setIsUserExit(true);
               socketDisconnect();
               setIsPolling(true);
