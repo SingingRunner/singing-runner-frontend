@@ -91,6 +91,11 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
           <PollingProvider>
             <Global styles={globalStyles} />
             <Head>
+              {/* 확대 방지 */}
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+              />
               {nonModelFiles.map((file, index) => (
                 <link
                   key={index}
