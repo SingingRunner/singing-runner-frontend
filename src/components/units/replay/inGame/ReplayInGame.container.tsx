@@ -4,6 +4,7 @@ import Game from "../../game/Game.container";
 import { PollingContext } from "../../../../commons/contexts/PollingContext";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
+import { useRouter } from "next/router";
 
 export default function ReplayInGame() {
   const pollingContext = useContext(PollingContext);
@@ -19,5 +20,7 @@ export default function ReplayInGame() {
     socketConnect(userId);
   }, []);
 
-  return <Game isReplay={true} />;
+  const router = useRouter();
+
+  return <Game isReplay={true} playerId={String(router.query.userId)} />;
 }
