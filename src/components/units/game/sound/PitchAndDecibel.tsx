@@ -50,9 +50,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const pitchAveragesRef = useRef<number[]>([]);
 
@@ -138,7 +135,9 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       answer = originAnswer;
     }
 
-    if (propsRef.current.isFrozen) {
+    if (propsRef.current.isSuper) {
+      score = Math.floor(currentScore * 1.2);
+    } else if (propsRef.current.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (propsRef.current.isMute) {
       score = Math.floor((currentScore * 2) / 3);
@@ -158,7 +157,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     // 서버에 현재 유저의 점수 전송
     setPrevScore((prev) => {
       if (prev !== currentScore) {
-        socket?.emit("score", { userId, score: currentScore });
+        socket?.emit("score", { userId, score: Math.min(currentScore, 100) });
       }
       return currentScore;
     });

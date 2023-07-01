@@ -44,6 +44,7 @@ export default function GameUI(props: IGameUIProps) {
             offItem={props.offItem}
             decibel={props.decibel}
             muteAttack={props.muteAttack}
+            superTime={props.superTime}
             isFrozenActive={props.isFrozenActive}
             isFrozenActiveRight={props.isFrozenActiveRight}
             isFrozenActiveLeft={props.isFrozenActiveLeft}
@@ -57,7 +58,10 @@ export default function GameUI(props: IGameUIProps) {
             {!props.isTerminated && (
               <Lyric
                 startTime={props.startTime}
-                isCloud={props.appliedItems.includes("cloud")}
+                // 슈퍼 타임이 아닌 경우만 cloud 적용
+                isCloud={
+                  props.appliedItems.includes("cloud") && !props.superTime.mid
+                }
                 lyrics={props.lyrics}
               />
             )}

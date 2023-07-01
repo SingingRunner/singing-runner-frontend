@@ -9,6 +9,7 @@ import { userIdState } from "../../../../commons/store";
 import { gsap } from "gsap";
 import { useRouter } from "next/router";
 import Button, { buttonType } from "../../../commons/button/Button";
+import { IPlayersInfo } from "../Game.types";
 
 declare global {
   interface Window {
@@ -25,9 +26,6 @@ export default function Graphic(props: IGrapicProps) {
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const [players, setPlayers] = useState<{
     mid: THREE.Object3D | undefined;
@@ -57,8 +55,7 @@ export default function Graphic(props: IGrapicProps) {
 
   /* 그래픽 초기화 */
   useEffect(() => {
-    if (!canvasRef.current) return;
-    if (!props.playersInfo[0].character) return;
+    if (!canvasRef.current || !props.playersInfo[0].character) return;
 
     /* scene */
     scene = new THREE.Scene();
@@ -133,7 +130,6 @@ export default function Graphic(props: IGrapicProps) {
     ];
 
     const characters = props.playersInfo.map((player) => player.character);
-    console.log("playersInfo: ", props.playersInfo);
     for (let i = 0; i < props.playersInfo.length; i++) {
       gltfLoader.load(`/game/player/${characters[i]}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
@@ -147,13 +143,17 @@ export default function Graphic(props: IGrapicProps) {
         if (gltf.animations && gltf.animations.length > 0) {
           const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
           const action = mixer.clipAction(gltf.animations[13]); // 애니메이션을 재생할 action 생성
-          const bounceAction = mixer.clipAction(gltf.animations[1]);
-          const spinAction = mixer.clipAction(gltf.animations[15]);
           action.play(); // 애니메이션 재생
           mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
           // 아이템 효과로 애니메이션을 정지/재생 시키기 위해서 action을 저장해둠
           setActions((actions) => {
-            const arr = [action, bounceAction, spinAction];
+            const arr = [
+              action,
+              mixer.clipAction(gltf.animations[1]), // bounce
+              mixer.clipAction(gltf.animations[15]), // spin
+              mixer.clipAction(gltf.animations[12]), // roll
+              mixer.clipAction(gltf.animations[2]), // winner
+            ];
             const newActions =
               i === 0
                 ? { mid: arr, right: actions?.right, left: actions?.left }
@@ -217,21 +217,135 @@ export default function Graphic(props: IGrapicProps) {
           camera.lookAt(new THREE.Vector3(0, 1, -5.5));
         },
       });
-
-      const clock = new THREE.Clock();
-      const animate = () => {
-        requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        for (const mixer of mixers) {
-          mixer.update(delta);
-        }
-        if (renderer) renderer.render(scene, camera);
-      };
-      animate();
     }
 
     terminateAudioRef.current?.play();
-    onBounceAction("mid");
+
+    const { topScorerPositions, otherPlayerPositions } = dividePlayersByScore(
+      props.playersInfo
+    );
+    topScorerPositions.forEach((position) => {
+      onWinnerAction(position);
+    });
+    otherPlayerPositions.forEach((position) => {
+      onBounceAction(position);
+    });
+  };
+  /** 가장 높은 점수를 가진 플레이어(들)를 반환 */
+  const getTopScorers = (playersInfo: IPlayersInfo[]) => {
+    const sortedPlayers = [...playersInfo].sort((a, b) => b.score - a.score);
+
+    const topScore = sortedPlayers[0].score;
+
+    return sortedPlayers.filter((player) => player.score === topScore);
+  };
+
+  const dividePlayersByScore = (playersInfo: IPlayersInfo[]) => {
+    const topScorers = getTopScorers(playersInfo);
+    const topScorerPositions = topScorers.map((player) => player.position);
+    const otherPlayers = playersInfo.filter(
+      (player) => !topScorerPositions.includes(player.position)
+    );
+    const otherPlayerPositions = otherPlayers.map((player) => player.position);
+    return { topScorerPositions, otherPlayerPositions };
+  };
+
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  const onSuperMode = async (position: string) => {
+    // 기본 액션으로 변경
+    onRunAction(position);
+    // 캐릭터 얼굴로 카메라 이동
+    if (position === "mid") moveCameraToPlayerForSuperMode();
+    await sleep(1000); // 1초 대기
+
+    // 크기 확대
+    enlargePlayer(position);
+    await sleep(1000); // 1초 대기
+
+    // 기존 시점으로 카메라 이동
+    if (position === "mid") moveCameraToOriginForSuperMode();
+    await sleep(500); // 0.5초 대기
+
+    // roll 액션으로 변경
+    onRollAction(position);
+    await sleep(4000); // 4초 대기
+
+    // 크기 축소
+    shrinkPlayer(position);
+    // 기본 액션으로 변경
+    onRunAction(position);
+  };
+
+  const moveCameraToPlayerForSuperMode = () => {
+    const camera = cameraRef.current;
+    if (camera) {
+      gsap.to(camera.position, {
+        duration: 1,
+        x: 0,
+        y: playerLength + 1.3,
+        z: -2.5,
+        onUpdate: () => {
+          camera.updateProjectionMatrix();
+          camera.lookAt(new THREE.Vector3(0, playerLength + 1.5, -5.5));
+        },
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    cameraRef.current = camera;
+  };
+
+  const moveCameraToOriginForSuperMode = () => {
+    const camera = cameraRef.current;
+    if (camera) {
+      gsap.to(camera.position, {
+        duration: 1,
+        x: 0,
+        y: 5,
+        z: -10,
+        onUpdate: () => {
+          camera.updateProjectionMatrix();
+          camera.lookAt(new THREE.Vector3(0, 0, 0));
+        },
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    cameraRef.current = camera;
+  };
+
+  const enlargePlayer = (position: string) => {
+    if (!players?.[position]) return;
+    const player = players[position];
+
+    if (player) {
+      gsap.to(player.scale, {
+        duration: 1,
+        x: 1.2,
+        y: 1.2,
+        z: 1.2,
+        ease: "power1.out",
+      });
+    }
+  };
+
+  const shrinkPlayer = (position: string) => {
+    if (!players?.[position]) return;
+
+    const player = players[position];
+
+    if (player) {
+      gsap.to(player.scale, {
+        duration: 1,
+        x: 0.7,
+        y: 0.7,
+        z: 0.7,
+        ease: "power1.out",
+      });
+    }
   };
 
   /* animation */
@@ -263,35 +377,66 @@ export default function Graphic(props: IGrapicProps) {
     else switchSnowmanToPlayer("left");
   }, [props.isFrozenActiveLeft]);
 
-  const onSpinAction = (position: string) => {
+  const playAction = (position: string, actionIndex: number, timeScale = 1) => {
     if (actions?.[position]) {
-      actions[position][0].stop();
-      actions[position][1].stop();
-      actions[position][2].play();
-    }
-  };
-  const onBounceAction = (position: string) => {
-    if (actions?.[position]) {
-      actions[position][0].stop();
-      actions[position][2].stop();
-      actions[position][1].play();
-    }
-  };
-  const onRunAction = (position: string) => {
-    if (actions?.[position]) {
-      actions[position][0].play();
-      actions[position][1].stop();
-      actions[position][2].stop();
+      actions[position].forEach((action: THREE.AnimationAction, i: number) => {
+        if (i === actionIndex) {
+          action.timeScale = timeScale;
+          action.play();
+        } else {
+          if (action.timeScale !== 1) action.timeScale = 1;
+          action.stop();
+        }
+      });
     }
   };
 
+  const onSpinAction = (position: string) => playAction(position, 2);
+  const onBounceAction = (position: string) => playAction(position, 1, 0.5);
+  const onRunAction = (position: string) => playAction(position, 0);
+  const onRollAction = (position: string) => playAction(position, 3);
+  const onWinnerAction = (position: string) => playAction(position, 4, 0.5);
+
   useEffect(() => {
-    if (props.muteAttack.mid) onSpinAction("mid");
-    else onRunAction("mid");
-    if (props.muteAttack.right) onSpinAction("right");
-    else onRunAction("right");
-    if (props.muteAttack.left) onSpinAction("left");
-    else onRunAction("left");
+    if (props.superTime.mid) {
+      onSuperMode("mid");
+    } else {
+      if (props.muteAttack.mid) onSpinAction("mid");
+      else onRunAction("mid");
+    }
+  }, [props.superTime.mid]);
+  useEffect(() => {
+    if (props.superTime.right) {
+      onSuperMode("right");
+    } else {
+      if (props.muteAttack.right) onSpinAction("right");
+      else onRunAction("right");
+    }
+  }, [props.superTime.right]);
+  useEffect(() => {
+    if (props.superTime.left) {
+      onSuperMode("left");
+    } else {
+      if (props.muteAttack.left) onSpinAction("left");
+      else onRunAction("left");
+    }
+  }, [props.superTime.left]);
+
+  useEffect(() => {
+    if (!props.superTime.mid) {
+      if (props.muteAttack.mid) onSpinAction("mid");
+      else onRunAction("mid");
+    }
+
+    if (!props.superTime.right) {
+      if (props.muteAttack.right) onSpinAction("right");
+      else onRunAction("right");
+    }
+
+    if (!props.superTime.left) {
+      if (props.muteAttack.left) onSpinAction("left");
+      else onRunAction("left");
+    }
   }, [props.muteAttack]);
 
   useEffect(() => {

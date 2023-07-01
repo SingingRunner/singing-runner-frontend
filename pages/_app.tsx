@@ -15,12 +15,14 @@ const nonModelFiles = [
   "/game/item/effect/keyDown.png",
   "/game/item/effect/keyUp.png",
   "/game/item/effect/mute.png",
+  "/game/item/effect/super.png",
   "/game/item/effect/small_crash.mp3",
   "/game/item/cloud.png",
   "/game/item/frozen.png",
   "/game/item/keyDown.png",
   "/game/item/keyUp.png",
   "/game/item/mute.png",
+  "/game/item/super.png",
 ];
 
 const modelFiles = [
