@@ -47,8 +47,8 @@ export const DecibelBar = styled.div`
 
   .bar {
     width: 20px;
-    height: ${(props: { decibel: number }) => props.decibel}%;
-    background-color: #6400ff;
+    height: ${(props: { decibelPercent: number }) => props.decibelPercent}%;
+    background-color: #dff45b;
     animation: blink 1s infinite;
   }
 

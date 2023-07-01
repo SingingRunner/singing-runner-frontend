@@ -47,7 +47,7 @@ function ItemInfo(props: IItemInfoProps) {
                 <S.Msg>{el.msg}</S.Msg>
                 <S.ItemInfoIcon src={el.imgSrc} />
                 {el.showDecibelBar && (
-                  <S.DecibelBar decibel={props.decibel + 100}>
+                  <S.DecibelBar decibelPercent={(props.decibel + 92) * 5}>
                     <div className="meter">
                       <div className="bar" id="bar1"></div>
                       <div className="bar" id="bar2"></div>

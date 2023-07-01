@@ -5,6 +5,7 @@ import { userIdState } from "../../../../commons/store";
 import { useRecoilState } from "recoil";
 
 interface IRankListProps {
+  playerId?: string;
   playersInfo: IPlayersInfo[];
   isTerminated: boolean;
 }
@@ -12,9 +13,8 @@ interface IRankListProps {
 export default function RankList(props: IRankListProps) {
   // 현재 플레이어의 정보
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
+  /** 플레이어: 인게임인 경우 현재 유저, 리플레이인 경우 해당 리플레이의 유저 */
+  const [playerId] = useState(props.playerId || userId);
 
   const [sortedData, setSortedData] = useState<IPlayersInfo[]>();
   useEffect(() => {
@@ -28,12 +28,12 @@ export default function RankList(props: IRankListProps) {
         return (
           <Rank
             key={i}
-            isCurrentUser={el.userId === userId}
+            isCurrentUser={el.userId === playerId}
             isTerminated={props.isTerminated}
           >
             <span>{i + 1}</span>
             <ProfileCard
-              isCurrentUser={el.userId === userId}
+              isCurrentUser={el.userId === playerId}
               src={`/game/player/profile/${el.character}.png`}
             />
             {el.activeItem && !props.isTerminated && (
