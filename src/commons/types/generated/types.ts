@@ -83,6 +83,15 @@ export type IHostUserOutput = {
   userId: Scalars['String']['output'];
 };
 
+export type IKakaoAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IKakaoUserResponseDto = {
+  id: Scalars['String']['input'];
+  kakao_account: IKakaoAccount;
+};
+
 export type IMutation = {
   __typename?: 'Mutation';
   addFriend: Scalars['String']['output'];
@@ -90,10 +99,12 @@ export type IMutation = {
   friendRequest: Scalars['String']['output'];
   inviteFriend: Scalars['String']['output'];
   loginUser: IAuthDto;
+  loginUserWithKakao: IAuthDto;
   logout: Scalars['String']['output'];
   longPolling: IPollingDto;
   refreshAccessToken: IAuthTokenDto;
   registerUser: IAuthDto;
+  registerUserWithKakao: IAuthDto;
   removeFriend: Scalars['String']['output'];
   saveReplay: IReply;
   updateCharacter: IUserCharacterResponseDto;
@@ -124,7 +135,12 @@ export type IMutationInviteFriendArgs = {
 
 
 export type IMutationLoginUserArgs = {
-  userLoginDto: IUserLoginDto;
+  userAuthDto: IUserAuthDto;
+};
+
+
+export type IMutationLoginUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
 };
 
 
@@ -140,6 +156,12 @@ export type IMutationLongPollingArgs = {
 
 export type IMutationRegisterUserArgs = {
   newUser: IUserRegisterDto;
+};
+
+
+export type IMutationRegisterUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
+  nickname: Scalars['String']['input'];
 };
 
 
@@ -297,6 +319,11 @@ export type IUser = {
   userPoint: Scalars['Int']['output'];
 };
 
+export type IUserAuthDto = {
+  password: Scalars['String']['input'];
+  userEmail: Scalars['String']['input'];
+};
+
 export type IUserCharacterResponseDto = {
   __typename?: 'UserCharacterResponseDto';
   character: ICharacterEnum;
@@ -307,11 +334,6 @@ export type IUserKeynoteResponseDto = {
   __typename?: 'UserKeynoteResponseDto';
   userId: Scalars['String']['output'];
   userKeynote: Scalars['Int']['output'];
-};
-
-export type IUserLoginDto = {
-  password: Scalars['String']['input'];
-  userEmail: Scalars['String']['input'];
 };
 
 export type IUserNotification = {
@@ -327,7 +349,7 @@ export type IUserNotification = {
 
 export type IUserRegisterDto = {
   nickname: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
   userEmail: Scalars['String']['input'];
 };
 

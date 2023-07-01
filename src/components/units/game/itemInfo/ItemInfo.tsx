@@ -4,6 +4,11 @@ import { IItemInfoProps } from "./ItemInfo.types";
 
 const itemInfos = [
   {
+    name: "super",
+    msg: "강력해집니다!",
+    imgSrc: "/game/item/effect/super.png",
+  },
+  {
     name: "cloud",
     msg: "먹구름을 움직여서 가사를 확인하세요!",
     imgSrc: "/game/item/effect/cloud.png",
@@ -46,6 +51,7 @@ function ItemInfo(props: IItemInfoProps) {
               <S.ItemInfoWrapper key={i}>
                 <S.Msg>{el.msg}</S.Msg>
                 <S.ItemInfoIcon src={el.imgSrc} />
+                {/* 음소거 공격을 당한 경우 */}
                 {el.showDecibelBar && (
                   <S.DecibelBar decibelPercent={(props.decibel + 92) * 5}>
                     <div className="meter">

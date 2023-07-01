@@ -25,9 +25,7 @@ export default function Character() {
   let camera: THREE.PerspectiveCamera;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
+
   const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
     FETCH_USER,
     { variables: { userId }, fetchPolicy: "network-only" }

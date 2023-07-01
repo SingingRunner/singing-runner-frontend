@@ -23,6 +23,11 @@ export interface IGameUIProps {
     right: boolean;
     left: boolean;
   };
+  superTime: {
+    mid: boolean;
+    right: boolean;
+    left: boolean;
+  };
   isFrozenActive: boolean;
   isFrozenActiveRight: boolean;
   isFrozenActiveLeft: boolean;

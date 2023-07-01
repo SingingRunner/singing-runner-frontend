@@ -76,6 +76,7 @@ export default function Game(props: IGameProps) {
   const [isFrozenActive, setIsFrozenActive] = useState(false);
   const [isFrozenActiveRight, setIsFrozenActiveRight] = useState(false);
   const [isFrozenActiveLeft, setIsFrozenActiveLeft] = useState(false);
+
   // 현재 유저에게 활성화된 아이템을 관리하는 상태
   const [appliedItems, setAppliedItems] = useState<string[]>([]);
 
@@ -87,33 +88,84 @@ export default function Game(props: IGameProps) {
     left: false,
   });
 
+  const [superTime, setSuperTime] = useState({
+    mid: false,
+    right: false,
+    left: false,
+  });
+
   useEffect(() => {
-    // 다른 유저로부터 공격이 들어옴
+    // 다른 유저가 아이템을 시전
     socket?.on("use_item", (data: ISocketItem) => {
-      if (data.userId !== playerId) onItem(data.item);
+      // 내가 시전한 게 아니고, super가 아닌 경우 -> 나에게 적용
+      if (data.userId !== playerId && data.item !== "super") {
+        // 슈퍼 타임에 cloud | frozen | mute를 당한 경우 -> 무시
+        setSuperTime((superPrev) => {
+          if (
+            !(superPrev.mid && ["cloud", "frozen", "mute"].includes(data.item))
+          )
+            onItem(data.item);
+          return superPrev;
+        });
+      }
+
+      // 내가 시전한 경우 -> keyUp, keyDown, super만 적용
       else if (
         data.userId === playerId &&
-        ["keyUp", "keyDown"].includes(data.item)
+        ["keyUp", "keyDown", "super"].includes(data.item)
       )
         onItem(data.item);
 
       setPlayersInfo((prev) => {
         const temp = [...prev];
         temp.forEach((user, i) => {
-          // frozen | mute | cloud -> 공격자 빼고 적용
+          /* frozen | mute | cloud */
           if (["mute", "cloud", "frozen"].includes(data.item)) {
-            if (user.userId !== data.userId) {
+            setSuperTime((superPrev) => {
+              // 시전자가 아니고 && 슈퍼타임이 아닌 유저에게만 적용
+              if (user.userId !== data.userId && !superPrev[user.position]) {
+                temp[i].activeItem = data.item;
+                if (data.item === "mute") {
+                  setMuteAttack((prev) => ({ ...prev, [user.position]: true }));
+                } else if (data.item === "frozen") {
+                  if (user.position === "right") setIsFrozenActiveRight(true);
+                  else if (user.position === "left")
+                    setIsFrozenActiveLeft(true);
+                }
+              }
+              return superPrev;
+            });
+
+            /* super */
+          } else if (data.item === "super") {
+            // 시전자만 적용
+            if (user.userId === data.userId) {
               temp[i].activeItem = data.item;
-              if (data.item === "mute")
-                setMuteAttack((prev) => ({ ...prev, [user.position]: true }));
-              if (data.item === "frozen") {
-                if (user.position === "right") setIsFrozenActiveRight(true);
-                else if (user.position === "left") setIsFrozenActiveLeft(true);
+              if (user.position === "right") {
+                setSuperTime((prev) => ({
+                  ...prev,
+                  [user.position]: true,
+                }));
+                setIsFrozenActiveRight(false);
+                setMuteAttack((prev) => ({
+                  ...prev,
+                  [user.position]: false,
+                }));
+              } else if (user.position === "left") {
+                setSuperTime((prev) => ({
+                  ...prev,
+                  [user.position]: true,
+                }));
+                setIsFrozenActiveLeft(false);
+                setMuteAttack((prev) => ({
+                  ...prev,
+                  [user.position]: false,
+                }));
               }
             }
-            // 공격자가 현재 유저가 아닌 경우 화면에 적용
           }
-          // keyUp | keyDown -> 모두 적용
+          /* keyUp | keyDown */
+          // 모두 적용
           else {
             temp[i].activeItem = data.item;
           }
@@ -133,11 +185,14 @@ export default function Game(props: IGameProps) {
         temp.forEach((user, i) => {
           if (user.userId === data.userId) {
             temp[i].activeItem = "";
+            if (data.item === "super")
+              setSuperTime((prev) => ({ ...prev, [user.position]: false }));
             if (data.item === "mute")
               setMuteAttack((prev) => ({ ...prev, [user.position]: false }));
             if (data.item === "frozen") {
               if (user.position === "right") setIsFrozenActiveRight(false);
               else if (user.position === "left") setIsFrozenActiveLeft(false);
+              else setIsFrozenActive(false);
             }
           }
         });
@@ -168,12 +223,30 @@ export default function Game(props: IGameProps) {
   const onItem = (item: string) => {
     setAppliedItems((prev) => [...prev, item]);
 
-    // 키 변경 | 음소거
-    // frozen은 별도 함수에서 적용
     if (item === "keyUp") setMrKey("keyUp");
     else if (item === "keyDown") setMrKey("keyDown");
     else if (item === "mute") setIsMuteActive(true);
     else if (item === "frozen") setIsFrozenActive(true);
+    else if (item === "super") {
+      setAppliedItems(["super"]); // super 이외의 모든 아이템 해제
+      setSuperTime((prev) => ({
+        ...prev,
+        mid: true,
+      }));
+      setIsFrozenActive(false);
+      setMuteAttack((prev) => ({
+        ...prev,
+        mid: false,
+      }));
+      // 슈퍼 타임에는 음소거/눈사람 종료
+      appliedItems.forEach((el) => {
+        if (["mute", "frozen"].includes(el)) {
+          offItem(el);
+          socket?.emit("escape_item", { item: el, userId });
+          if (el === "mute") setDecibel(0);
+        }
+      });
+    }
 
     // 아이템 효과 종료 처리
     // frozen 아이템은 유저가 직접 종료
@@ -181,6 +254,7 @@ export default function Game(props: IGameProps) {
     // 나머지 아이템은 ITEM_DURATION 뒤에 자동 종료
     setTimeout(() => {
       if (preventEvent) return;
+      if (superTime.mid && item !== "super") return;
       socket?.emit("escape_item", { item, userId });
     }, ITEM_DURATION);
   };
@@ -198,6 +272,10 @@ export default function Game(props: IGameProps) {
     });
     if (item === "keyUp" || item === "keyDown") setMrKey("origin");
     else if (item === "frozen") setIsFrozenActive(false);
+    else if (item === "mute") {
+      setIsMuteActive(false);
+      setDecibel(0);
+    }
   };
 
   /** 데시벨을 측정하는 함수 */
@@ -229,6 +307,7 @@ export default function Game(props: IGameProps) {
         progress={progress}
         startTime={startTime}
         muteAttack={muteAttack}
+        superTime={superTime}
         isFrozenActive={isFrozenActive}
         isFrozenActiveRight={isFrozenActiveRight}
         isFrozenActiveLeft={isFrozenActiveLeft}

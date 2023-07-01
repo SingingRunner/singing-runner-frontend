@@ -11,6 +11,7 @@ export interface IPitchAndDecibelProps {
   isKeyDown: boolean;
   isFrozen: boolean;
   isMute: boolean;
+  isSuper: boolean;
   setDecibel: Dispatch<SetStateAction<number>>;
   sources: React.MutableRefObject<AudioBufferSourceNode[]>;
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
