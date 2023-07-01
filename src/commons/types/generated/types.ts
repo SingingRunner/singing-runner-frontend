@@ -61,7 +61,7 @@ export type IGameSongDto = {
   songFemaleDown: Scalars['String']['output'];
   songFemaleUp: Scalars['String']['output'];
   songGender: Scalars['Boolean']['output'];
-  songId: Scalars['Float']['output'];
+  songId: Scalars['Int']['output'];
   songLyrics: Scalars['String']['output'];
   songMale: Scalars['String']['output'];
   songMaleDown: Scalars['String']['output'];
@@ -188,6 +188,8 @@ export type IQuery = {
   fetchUserGuard: IAuthUserDto;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
+  isEmailTaken: Scalars['Boolean']['output'];
+  isNicknameTaken: Scalars['Boolean']['output'];
   searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
@@ -209,6 +211,16 @@ export type IQueryGetUserReplaysArgs = {
   isMyReplay: Scalars['Boolean']['input'];
   pageNumber: Scalars['Int']['input'];
   userId: Scalars['String']['input'];
+};
+
+
+export type IQueryIsEmailTakenArgs = {
+  userEmail: Scalars['String']['input'];
+};
+
+
+export type IQueryIsNicknameTakenArgs = {
+  nickname: Scalars['String']['input'];
 };
 
 
@@ -323,12 +335,12 @@ export enum ICharacterEnum {
   Beluga = 'BELUGA',
   Hare = 'HARE',
   Husky = 'HUSKY',
+  Leopard = 'LEOPARD',
   Lynx = 'LYNX',
   Moose = 'MOOSE',
   Narwhal = 'NARWHAL',
   Puffin = 'PUFFIN',
-  Puma = 'PUMA',
-  Leopard = 'LEOPARD'
+  Puma = 'PUMA'
 }
 
 export enum IUserKeynoteStatus {
