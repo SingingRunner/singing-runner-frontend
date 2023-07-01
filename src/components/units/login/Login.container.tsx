@@ -45,7 +45,7 @@ export default function Login() {
       // 1. 로그인 뮤테이션으로 accessToken 받아오기
       const result = await loginUser({
         variables: {
-          userLoginDto: {
+          userAuthDto: {
             userEmail: email,
             password,
           },
