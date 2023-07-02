@@ -67,6 +67,9 @@ export default function CustomUI(props: ICustomUIProps) {
                   friendId={el.userId}
                 >
                   {el.isHost && <S.Host>방장</S.Host>}
+                  {el.userId === props.userId && (
+                    <S.CurrentUser>나</S.CurrentUser>
+                  )}
                 </ProfileCard>
               </S.JoinedPlayer>
             );
