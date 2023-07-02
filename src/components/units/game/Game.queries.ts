@@ -1,8 +1,17 @@
 import { gql } from "@apollo/client";
 
 export const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
+  query FetchUser {
+    fetchUser {
+      userKeynote
+      character
+    }
+  }
+`;
+
+export const FETCH_USER_BY_USER_ID = gql`
+  query FetchUserByUserId($userId: String!) {
+    fetchUserByUserId(userId: $userId) {
       userKeynote
       character
     }
