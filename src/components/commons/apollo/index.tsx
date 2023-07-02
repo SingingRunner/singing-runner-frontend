@@ -11,11 +11,9 @@ import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import {
   accessTokenState,
   refreshAccessTokenLoadable,
-  userIdState,
 } from "../../../commons/store";
 import { onError } from "@apollo/client/link/error";
 import { getAccessToken } from "../../../commons/libraries/getAccessToken";
-import { useRouter } from "next/router";
 
 const GLOBAL_STATE = new InMemoryCache();
 
@@ -63,24 +61,13 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
     uri: "https://injungle.shop/api/graphql", // 배포용
     headers: { Authorization: `Bearer ${accessToken}` },
     credentials: "include",
+    withCredentials: true,
   });
 
   const client = new ApolloClient({
     link: ApolloLink.from([errorLink, uploadLink]),
     cache: GLOBAL_STATE, // 컴퓨터의 메모리에 백엔드에서 받아온 데이터 임시로 저장해 놓기 => 나중에 더 자세히 알아보기
   });
-
-  // userId 정보 갱신
-  const [userId, setUserId] = useRecoilState(userIdState);
-  const router = useRouter();
-  console.log("⭐️ 현재 유저 아이디: " + userId, "경로:" + router.asPath);
-  // On mount, set the recoil state to the value in local storage
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
-  }, []);
 
   return <ApolloProvider client={client}>{props.children}</ApolloProvider>;
 }

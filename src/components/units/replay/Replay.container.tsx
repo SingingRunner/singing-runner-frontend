@@ -20,7 +20,7 @@ import {
 export default function Replay() {
   const router = useRouter();
   const [isMyReplay, setIsMyReplay] = useState(true);
-  const [currentUserId, setCurrentUserId] = useRecoilState(userIdState);
+  const [currentUserId] = useRecoilState(userIdState);
   const [updatePublic] = useMutation(UPDATE_PUBLIC);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,8 +60,6 @@ export default function Replay() {
   }, [userData, isMyReplay]);
 
   useEffect(() => {
-    setCurrentUserId(localStorage.getItem("userId") || "");
-    console.log(router.query.userId);
     setUserId(router.query.userId as string);
   }, []);
 

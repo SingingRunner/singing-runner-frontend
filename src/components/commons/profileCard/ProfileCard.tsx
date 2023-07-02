@@ -10,9 +10,6 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function ProfileCard(props: IProfileCardProps) {
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const [friendRequest] = useMutation(FRIEND_REQUEST);
   const [frienedRequestModalIsOpen, setFriendRequestModalIsOpen] =

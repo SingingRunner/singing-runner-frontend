@@ -13,9 +13,6 @@ export default function ItemList(props: { preventEvent?: boolean }) {
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const [itemList, setItemList] = useState<string[]>([]);
 
