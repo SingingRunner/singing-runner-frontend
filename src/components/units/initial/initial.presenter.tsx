@@ -1,27 +1,16 @@
 import Button, { buttonType } from "../../commons/button/Button";
-import * as S from "../main/Main.styles";
+import * as S from "./initial.styles";
 import { IInitialUIProps } from "./initial.types";
 
 export default function InitialUI(props: IInitialUIProps) {
   return (
     <>
-      <div
-        style={{
-          height: "88vh",
-          backgroundColor: "#1A1128",
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ marginTop: "20vh" }}>
-          <S.ImageWrapper>
-            <S.ImageLogo src="/images/game_logo.png" alt="logo" />
-          </S.ImageWrapper>
-        </div>
-        <div style={{display: "flex", marginBottom: "124px"}}>
+      <S.container>
+        <S.LogoWrapper>
+          <S.ImageLogo src="/images/game_logo.png" alt="logo" />
+        </S.LogoWrapper>
+
+        <div style={{ display: "flex", position: "fixed", bottom: "124px" }}>
           <img
             src="/button/kakao_login.png"
             style={{
@@ -42,7 +31,7 @@ export default function InitialUI(props: IInitialUIProps) {
             onClick={props.handleGoogleLogin}
           ></img>
         </div>
-      </div>
+      </S.container>
 
       <Button
         buttonType={buttonType.GRADATION}
