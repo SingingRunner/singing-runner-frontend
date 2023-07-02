@@ -63,11 +63,10 @@ export const useCustomRoomInfo = () => {
         roomId: String(data[0].roomId),
         hostId: data[0].hostId,
         hostNickname: data[0].hostNickname,
-        // 🚨 소켓메시지 완료되면 추가하기
-        // songId: data[0].songId,
-        // songTitle: data[0].songTitle,
-        // singer: data[0].singer,
-        // mode: data[0].gameMode,
+        songId: data[0].songId,
+        songTitle: data[0].songTitle,
+        singer: data[0].singer,
+        mode: data[0].gameMode,
         isHost: data[0].hostId === userId,
         players,
       };

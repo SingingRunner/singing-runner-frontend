@@ -24,29 +24,35 @@ export default function RankList(props: IRankListProps) {
 
   return (
     <RankWrapper isTerminated={props.isTerminated}>
-      {sortedData?.map((el, i) => {
-        return (
-          <Rank
-            key={i}
-            isCurrentUser={el.userId === playerId}
-            isTerminated={props.isTerminated}
-            isDamaged={["mute", "frozen"].includes(el.activeItem)}
-          >
-            <span>{i + 1}</span>
-            <ProfileCard
+      {(() => {
+        let rank = 1;
+        let prevScore = -1;
+        return sortedData?.map((el, i) => {
+          if (i !== 0 && el.score !== prevScore) rank++;
+          prevScore = el.score;
+          return (
+            <Rank
+              key={i}
               isCurrentUser={el.userId === playerId}
-              src={`/game/player/profile/${el.character}.png`}
-            />
-            {el.activeItem && !props.isTerminated && (
-              <ItemEffect
+              isTerminated={props.isTerminated}
+              isDamaged={["mute", "frozen"].includes(el.activeItem)}
+            >
+              <span>{rank}</span>
+              <ProfileCard
                 isCurrentUser={el.userId === playerId}
-                src={`/game/item/effect/${el.activeItem}.png`}
+                src={`/game/player/profile/${el.character}.png`}
               />
-            )}
-            <span>{el.score}</span>
-          </Rank>
-        );
-      })}
+              {el.activeItem && !props.isTerminated && (
+                <ItemEffect
+                  isCurrentUser={el.userId === playerId}
+                  src={`/game/item/effect/${el.activeItem}.png`}
+                />
+              )}
+              <span>{el.score}</span>
+            </Rank>
+          );
+        });
+      })()}
     </RankWrapper>
   );
 }
