@@ -21,7 +21,31 @@ export default function InitialUI(props: IInitialUIProps) {
             <S.ImageLogo src="/images/game_logo.png" alt="logo" />
           </S.ImageWrapper>
         </div>
+        <div>
+
+        <img
+          src="/button/kakao_login_large.png"
+          style={{
+            width: "120px",
+            height: "auto",
+            marginRight: "20px",
+          }}
+          onClick={props.handleKakaoLogin}
+        >
+        </img>
+        <button
+          style={{
+            height: "40px",
+            width: "120px",
+            backgroundColor: "white",
+            marginBottom: "20vh",
+          }}
+          >
+          구글 로그인
+        </button>
+          </div>
       </div>
+
       <Button
         buttonType={buttonType.GRADATION}
         text="로그인"
@@ -32,7 +56,7 @@ export default function InitialUI(props: IInitialUIProps) {
         buttonType={buttonType.EMPTY}
         text="회원가입"
         isFixedAtBottom
-        onClick={props.handleSignupClick}
+        onClick={props.handleSignUpClick}
       />
     </>
   );

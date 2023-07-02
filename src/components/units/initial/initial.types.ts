@@ -1,4 +1,5 @@
 export interface IInitialUIProps {
-  handleSignupClick: () => void;
+  handleSignUpClick: () => void;
   handleLoginClick: () => void;
+  handleKakaoLogin: () => void;
 }

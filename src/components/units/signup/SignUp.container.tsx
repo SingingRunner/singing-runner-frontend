@@ -63,13 +63,10 @@ export default function SignUp() {
       };
 
       const { data } = await registerUser({ variables: { newUser } });
-      const registeredUser = data?.registerUser.user;
+      const registeredUserId = data?.registerUser.user.userId;
 
-      // 회원가입 성공 시 로컬 스토리지에 userId 저장
-      localStorage.setItem("userId", registeredUser?.userId || "");
-      setUserId(registeredUser?.userId || "");
-
-      console.log("registeredUser: ", registeredUser);
+      setUserId(registeredUserId || "");
+      console.log("registeredUser: ", registeredUserId);
 
       router.push("/signup/starting");
     } catch (error) {

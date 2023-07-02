@@ -9,7 +9,7 @@ import {
   IMutation,
   IMutationLoginUserArgs,
 } from "../../../commons/types/generated/types";
-import { LOGIN_USER } from './Login.queries';
+import { LOGIN_USER } from "./Login.queries";
 
 export default function Login() {
   const router = useRouter();
@@ -56,12 +56,6 @@ export default function Login() {
 
       console.log("userInfo: ", loginUserInfo);
       console.log("accessToken: ", accessToken);
-      // 2-1. 로그인 유저 정보를 global state에 저장
-      // setUserInfo({
-      //   userId: loginUserInfo?.userId || "",
-      //   character: loginUserInfo?.character || "",
-      //   userKeynote: "origin", // TODO: 추후 수정
-      // });
 
       if (accessToken === undefined) {
         return;
@@ -69,7 +63,6 @@ export default function Login() {
 
       // 2-2. accessToken을 global state에 저장
       setAccessToken(accessToken);
-      localStorage.setItem("userId", loginUserInfo?.userId || "");
       setUserId(loginUserInfo?.userId || "");
 
       // 3. 로그인 성공 후 메인 페이지로 이동
@@ -88,7 +81,6 @@ export default function Login() {
   }, []);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-
     if (event.key === "Enter") {
       if (isLoginButtonEnabled) {
         audioRef.current?.play();
@@ -146,7 +138,7 @@ export default function Login() {
     dummyClick,
     onClickLogin,
     isLoginButtonEnabled,
-    onKeyDown
+    onKeyDown,
   };
 
   return <LoginUI {...props} />;
