@@ -67,12 +67,12 @@ export default function MyRoomSetting() {
       setAccessToken("");
       await logoutUser({ variables: { userId } });
       setUserId("");
-      localStorage.setItem("userId", "");
       // 로그아웃 후 초기화면으로 이동
+      console.log("로그아웃 성공");
       router.push("/");
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력
-      console.log(error.message);
+      console.log("로그아웃 실패: ", error.message);
       router.push("/");
     }
   };

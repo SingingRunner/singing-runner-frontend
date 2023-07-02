@@ -72,15 +72,27 @@ export type IGameSongDto = {
   vocalMaleUp: Scalars['String']['output'];
 };
 
+export type IGoogleAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IGoogleUserResponseDto = {
+  googleId: Scalars['String']['input'];
+  google_account: IGoogleAccount;
+};
+
 export type IHostUserInput = {
   nickname: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
-export type IHostUserOutput = {
-  __typename?: 'HostUserOutput';
-  nickname: Scalars['String']['output'];
-  userId: Scalars['String']['output'];
+export type IKakaoAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IKakaoUserResponseDto = {
+  id: Scalars['String']['input'];
+  kakao_account: IKakaoAccount;
 };
 
 export type IKakaoAccount = {
@@ -99,11 +111,12 @@ export type IMutation = {
   friendRequest: Scalars['String']['output'];
   inviteFriend: Scalars['String']['output'];
   loginUser: IAuthDto;
+  loginUserWithGoogle: IAuthDto;
   loginUserWithKakao: IAuthDto;
   logout: Scalars['String']['output'];
-  longPolling: IPollingDto;
   refreshAccessToken: IAuthTokenDto;
   registerUser: IAuthDto;
+  registerUserWithGoogle: IAuthDto;
   registerUserWithKakao: IAuthDto;
   removeFriend: Scalars['String']['output'];
   saveReplay: IReply;
@@ -144,18 +157,29 @@ export type IMutationLoginUserWithKakaoArgs = {
 };
 
 
-export type IMutationLogoutArgs = {
-  userId: Scalars['String']['input'];
+export type IMutationLoginUserWithGoogleArgs = {
+  googleUserResponse: IGoogleUserResponseDto;
 };
 
 
-export type IMutationLongPollingArgs = {
+export type IMutationLoginUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
+};
+
+
+export type IMutationLogoutArgs = {
   userId: Scalars['String']['input'];
 };
 
 
 export type IMutationRegisterUserArgs = {
   newUser: IUserRegisterDto;
+};
+
+
+export type IMutationRegisterUserWithGoogleArgs = {
+  googleUserDto: IGoogleUserResponseDto;
+  nickname: Scalars['String']['input'];
 };
 
 
@@ -198,16 +222,10 @@ export type INotificationDto = {
   userId: Scalars['String']['input'];
 };
 
-export type IPollingDto = {
-  __typename?: 'PollingDto';
-  hostUserDtoList: Array<IHostUserOutput>;
-  userNotificationList: Array<IUserNotification>;
-};
-
 export type IQuery = {
   __typename?: 'Query';
   fetchUser: IAuthUserDto;
-  fetchUserGuard: IAuthUserDto;
+  fetchUserByUserId: IAuthUserDto;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
   isEmailTaken: Scalars['Boolean']['output'];
@@ -218,7 +236,7 @@ export type IQuery = {
 };
 
 
-export type IQueryFetchUserArgs = {
+export type IQueryFetchUserByUserIdArgs = {
   userId: Scalars['String']['input'];
 };
 

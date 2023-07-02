@@ -28,9 +28,6 @@ export default function MyRoom() {
   const [tier, setTier] = useState("");
   const [mmr, setMmr] = useState(0);
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const { data } = useQuery(FETCH_USER, {
     fetchPolicy: "network-only",
@@ -39,9 +36,7 @@ export default function MyRoom() {
   useEffect(() => {
     if (data?.fetchUser) {
       setNickname(data.fetchUser.nickname);
-      localStorage.setItem("nickname", data.fetchUser.nickname);
       setCharacter(data.fetchUser.character);
-      localStorage.setItem("character", data.fetchUser.character);
       setTier(data.fetchUser.userTier);
       setMmr(data.fetchUser.userMmr);
       const characterIndex = characters.findIndex(
