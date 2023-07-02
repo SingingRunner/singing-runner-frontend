@@ -10,6 +10,11 @@ export const kakaoUserResponseState = atom({
   default: null,
 });
 
+export const googleUserResponseState = atom({
+  key: `googleUserResponseState${uuidv4()}`,
+  default: null,
+});
+
 export const accessTokenState = atom({
   key: `accessTokenState${uuidv4()}`,
   default: "",

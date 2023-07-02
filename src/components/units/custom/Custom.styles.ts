@@ -19,6 +19,19 @@ export const Host = styled.div`
   justify-content: center;
   width: 30px;
   height: 16px;
+  background: #dff45b;
+  color: #000;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+  line-height: 16px;
+`;
+export const CurrentUser = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 16px;
   background: #fe259b;
   color: #fff;
   font-size: 12px;

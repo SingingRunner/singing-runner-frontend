@@ -1,33 +1,39 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useRecoilState } from 'recoil';
-import { accessTokenState, userIdState } from '../../../commons/store';
 import InitialUI from "./initial.presenter";
 import { IInitialUIProps } from "./initial.types";
 
 export default function Initial() {
-  const [authURL, setAuthURL] = useState<string>("");
-  const [token] = useRecoilState(accessTokenState);
-  const [userId] = useRecoilState(userIdState);
+  const router = useRouter();
 
+  const createAuthEndpoint = (provider: string) => {
+    const redirectUri = encodeURIComponent(
+      // `http://localhost:3001/callback/${provider}` // 로컬용
+      `https://injungle.shop/callback/${provider}` // 배포용
+    );
+    const apiKey =
+      provider === "kakao"
+        ? process.env.NEXT_PUBLIC_KAKAO_API_KEY || ""
+        : process.env.NEXT_PUBLIC_GOOGLE_API_KEY || "";
+    console.log("API Key:", apiKey); // 추가된 디버깅 로그
 
-  useEffect(() => {
-    const REDIRECT_URI = encodeURIComponent("https://injungle.shop/callback/kakao"); // 배포용
-    // const REDIRECT_URI = encodeURIComponent("http://localhost:3001/callback/kakao"); // 로컬용
-    const apiKey = process.env.NEXT_PUBLIC_KAKAO_API_KEY || "";
-    const AUTH_ENDPOINT = `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    if (provider === "kakao") {
+      return `https://kauth.kakao.com/oauth/authorize?client_id=${apiKey}&redirect_uri=${redirectUri}&response_type=code`;
+    }
 
-    setAuthURL(AUTH_ENDPOINT);
+    if (provider === "google") {
+      return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${apiKey}&redirect_uri=${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email`;
+    }
 
-    console.log("액세스토큰 상태: ", token)
-    console.log("유저ID: ", userId)
-  }, []);
-
-  // 카카오 로그인 버튼 클릭 시 실행되는 함수
-  const handleKakaoLogin = async () => {
-    window.location.href = authURL;
+    return "";
   };
-  
+
+  const handleOAuthLogin = (provider: string) => {
+    const oauthURL = createAuthEndpoint(provider);
+    console.log("oauthURL:", oauthURL); // 임시 디버깅용
+    console.log("Kakao API Key:", process.env.NEXT_PUBLIC_KAKAO_API_KEY);
+    console.log("GOOGLE API Key:", process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
+    window.location.href = oauthURL;
+  };
 
   const handleSignUpClick = () => {
     router.push("/signup");
@@ -37,12 +43,11 @@ export default function Initial() {
     router.push("/login");
   };
 
-  const router = useRouter();
-
   const props: IInitialUIProps = {
     handleSignUpClick,
     handleLoginClick,
-    handleKakaoLogin,
+    handleKakaoLogin: () => handleOAuthLogin("kakao"),
+    handleGoogleLogin: () => handleOAuthLogin("google"),
   };
 
   return <InitialUI {...props} />;

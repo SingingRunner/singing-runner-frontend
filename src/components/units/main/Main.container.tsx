@@ -51,29 +51,33 @@ const Main = () => {
     router.push("/game");
   };
   useEffect(() => {
-    if (socket) {
-      socket.on("accept", (isMatched: boolean) => {
-        if (isMatched) {
-          console.log("accept true received");
-          handleChangeAddress(); // 인게임 화면으로 전환
-        } else {
-          // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
-          console.log("accept false received");
-          setShowWaiting(false);
-          setShowModal(false);
-        }
-      });
-      socket.on("match_making", (data) => {
-        // 매칭 완료되면, 매칭된 유저 정보 받아오기
-        const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
-        setSongTitle(songTitle);
-        setSinger(singer);
+    if (!socket) return;
+    socket.on("accept", (isMatched: boolean) => {
+      if (isMatched) {
+        console.log("accept true received");
+        handleChangeAddress(); // 인게임 화면으로 전환
+      } else {
+        // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
+        console.log("accept false received");
+        setShowWaiting(false);
+        setShowModal(false);
+      }
+    });
+    socket.on("match_making", (data) => {
+      // 매칭 완료되면, 매칭된 유저 정보 받아오기
+      const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
+      setSongTitle(songTitle);
+      setSinger(singer);
 
-        if (songTitle && singer) {
-          setShowModal(true); // 수락 화면 띄우기
-        }
-      });
-    }
+      if (songTitle && singer) {
+        setShowModal(true); // 수락 화면 띄우기
+      }
+    });
+
+    return () => {
+      socket.off("accept");
+      socket.off("match_making");
+    };
   }, [socket]);
 
   useEffect(() => {
@@ -160,6 +164,10 @@ const Main = () => {
       // 커스텀 모드 화면으로 전환
       router.push("/custom");
     });
+
+    return () => {
+      socket?.off("create_custom");
+    };
   }, [socket]);
 
   const handleMatchCancel = () => {

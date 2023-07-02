@@ -1,22 +1,32 @@
 import { useContext, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { isNotificationState, userIdState } from "../../../commons/store";
+import {
+  globalModalState,
+  isNotificationState,
+  roomInfoState,
+  userIdState,
+} from "../../../commons/store";
 
 import Modal from "../modal/Modal";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useRouter } from "next/router";
+import {
+  IOnInviteHandlerData,
+  IPlayers,
+} from "../../units/custom/Custom.types";
 
 export default function ServerSentEvents() {
-  console.log("롱폴링");
+  console.log("서버 센트 이벤트");
   const router = useRouter();
 
   // 소켓 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
-  // const { socketConnect, socketDisconnect } = socketContext;
-  const { socketConnect } = socketContext;
+  const { socketConnect, socketDisconnect } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
+  const [, setRoomInfo] = useRecoilState(roomInfoState);
+  const [, setGlobalModal] = useRecoilState(globalModalState);
 
   // 친구 요청이 있으면 true
   const [, setIsNotification] = useRecoilState(isNotificationState);
@@ -24,18 +34,20 @@ export default function ServerSentEvents() {
   const [hostId, setHostId] = useState("");
 
   useEffect(() => {
-    console.log("롱폴링 유저 아이디", userId);
+    console.log("서버 센트 이벤트 유저 아이디", userId);
     if (!userId) return;
     const eventSourceInvite = new EventSource(
-      `http://localhost:3000/social/invite/${userId}`
+      // `http://localhost:3000/social/invite/${userId}`
+      `https://injungle.shop/api/social/invite/${userId}`
     );
     const eventSourceNoti = new EventSource(
-      `http://localhost:3000/social/notification/${userId}`
+      // `http://localhost:3000/social/notification/${userId}`
+      `https://injungle.shop/api/social/notification/${userId}`
     );
 
     eventSourceInvite.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log("🙂 롱폴링 응답 (초대): ", parsedData);
+      console.log("🙂 서버 센트 이벤트 응답 (초대): ", parsedData);
       if (parsedData.host.userId) {
         setHostId(parsedData.host.userId);
         setHostNickname(parsedData.host.nickname);
@@ -46,7 +58,7 @@ export default function ServerSentEvents() {
     };
     eventSourceNoti.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log("🙂 롱폴링 (초대 왔다): ", parsedData);
+      console.log("🙂 서버 센트 이벤트 (초대 왔다): ", parsedData);
       if (parsedData.alarm) setIsNotification(true);
       else setIsNotification(false);
     };
@@ -61,7 +73,7 @@ export default function ServerSentEvents() {
     };
   }, [userId]);
 
-  const onClickAcceptInvite = () => {
+  const onClickAcceptInvite = async () => {
     const newSocket = socketConnect(userId);
     newSocket?.emit(
       "invite",
@@ -71,23 +83,68 @@ export default function ServerSentEvents() {
           userId: hostId,
           nickname: hostNickname,
         },
+      },
+      async (response: { message: string; data: IOnInviteHandlerData[] }) => {
+        console.log("invite 응답", response);
+        if (response.message === "full") {
+          setGlobalModal((prev) => ({
+            ...prev,
+            isOpen: true,
+            firstText: "방이 꽉 찼어요 😥",
+            buttonText: "확인",
+            onClickRight: () => {
+              setHostNickname("");
+            },
+          }));
+          socketDisconnect();
+        } else if (response.message === "inGame") {
+          setGlobalModal((prev) => ({
+            ...prev,
+            isOpen: true,
+            firstText: "게임이 이미 시작되었어요 😥",
+            buttonText: "확인",
+            onClickRight: () => {
+              setHostNickname("");
+            },
+          }));
+          socketDisconnect();
+        } else {
+          setHostNickname("");
+          onInviteHandler(response.data);
+          router.push("/custom");
+        }
       }
-      // (response: string) => {
-      //   console.log("invite 응답", response);
-      //   if (response === "full") {
-      //     alert("꽉참");
-      //     socketDisconnect();
-      //   } else if (response === "inGame") {
-      //     alert("이미 시작함");
-      //     socketDisconnect();
-      //   } else {
-      //     setHostNickname("");
-      //     router.push("/custom");
-      //   }
-      // }
     );
-    setHostNickname("");
-    router.push("/custom");
+  };
+
+  const onInviteHandler = (data: IOnInviteHandlerData[]) => {
+    setRoomInfo((prev) => {
+      // 플레이어 정보
+      const players: IPlayers[] = [];
+      data.forEach((el) => {
+        players.push({
+          userId: el.userId,
+          nickname: el.nickname,
+          character: el.character,
+          userTier: el.userTier,
+          isFriend: el.isFriend && userId !== el.userId,
+          isHost: el.userId === el.hostId,
+        });
+      });
+
+      return {
+        ...prev,
+        roomId: String(data[0].roomId),
+        hostId: data[0].hostId,
+        hostNickname: data[0].hostNickname,
+        songId: data[0].songId,
+        songTitle: data[0].songTitle,
+        singer: data[0].singer,
+        mode: data[0].gameMode,
+        isHost: data[0].hostId === userId,
+        players,
+      };
+    });
   };
 
   const onClickDenyInvite = () => {

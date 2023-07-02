@@ -3,29 +3,25 @@ import { useRouter } from "next/router";
 import { INicknameUIProps } from "./Nickname.types";
 import NicknameUI from "./Nickname.presenter";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import {
-  IMutation,
-  IMutationRegisterUserWithKakaoArgs,
-} from "../../../commons/types/generated/types";
-
 import { useRecoilState } from "recoil";
-import { userIdState, kakaoUserResponseState } from "../../../commons/store";
+import {
+  userIdState,
+  kakaoUserResponseState,
+  googleUserResponseState,
+} from "../../../commons/store";
 import {
   IS_NICKNAME_TAKEN,
+  REGISTER_USER_WITH_GOOGLE,
   REGISTER_USER_WITH_KAKAO,
 } from "./Nickname.queries";
-
 
 export default function Nickname() {
   const [nickname, setNickname] = useState("");
   const [nicknameError, setNicknameError] = useState("");
   // 가입 완료 버튼 활성화 여부를 상태로 관리
   const [isNicknameButtonEnabled, setNicknameButtonEnabled] = useState(false);
-  const [registerUserWithKakao] = useMutation<
-    Pick<IMutation, "registerUserWithKakao">,
-    IMutationRegisterUserWithKakaoArgs
-  >(REGISTER_USER_WITH_KAKAO);
-
+  const [registerUserWithKakao] = useMutation(REGISTER_USER_WITH_KAKAO);
+  const [registerUserWithGoogle] = useMutation(REGISTER_USER_WITH_GOOGLE);
   const [userId, setUserId] = useRecoilState(userIdState);
   const [nicknameCheck, { data: nicknameCheckData }] = useLazyQuery(
     IS_NICKNAME_TAKEN,
@@ -39,27 +35,49 @@ export default function Nickname() {
   // 회원가입 눌렀을 때, "이미 사용중입니다."라는 문구가 안 뜨게 방지하는 플래그
   const [isCompleteClicked, setIsCompleteClicked] = useState(false);
   const [kakaoUserResponse] = useRecoilState(kakaoUserResponseState);
+  const [googleUserResponse] = useRecoilState(googleUserResponseState);
 
   const router = useRouter();
 
   const onClickComplete = async (): Promise<void> => {
     setIsCompleteClicked(true);
 
-    if (!kakaoUserResponse) {
+    if (!kakaoUserResponse && !googleUserResponse) {
       // 자세한 처리 방법은 여기에 구현하세요.
-      console.error("kakaoUserResponse is not available.");
+      console.error(
+        "Both kakaoUserResponse and googleUserResponse are not available."
+      );
     } else {
-      // 메인 화면으로 전환
       try {
         const newUser = {
-          kakaoUserResponse,
+          kakaoUserResponse: kakaoUserResponse || null,
+          googleUserResponse: googleUserResponse || null,
           nickname,
         };
 
-        const { data } = await registerUserWithKakao({
-          variables: { ...newUser },
-        });
-        const registeredUser = data?.registerUserWithKakao.user;
+        let data;
+
+        if (googleUserResponse) {
+          // 구글 로그인 처리
+          data = await registerUserWithGoogle({
+            variables: {
+              googleUserDto: newUser.googleUserResponse,
+              nickname: newUser.nickname,
+            },
+          });
+        } else if (kakaoUserResponse) {
+          // 카카오 로그인 처리
+          data = await registerUserWithKakao({
+            variables: {
+              kakaoUserResponse: newUser.kakaoUserResponse,
+              nickname: newUser.nickname,
+            },
+          });
+        }
+
+        const registeredUser =
+          data?.data?.registerUserWithGoogle?.user ||
+          data?.data?.registerUserWithKakao?.user;
 
         setUserId(registeredUser?.userId || "");
 

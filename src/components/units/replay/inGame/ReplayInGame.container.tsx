@@ -8,11 +8,11 @@ import { useRouter } from "next/router";
 export default function ReplayInGame() {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
-  const { socketConnect } = socketContext;
+  const { socket, socketConnect } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
   useEffect(() => {
-    socketConnect(userId);
+    if (!socket) socketConnect(userId);
   }, []);
 
   const router = useRouter();

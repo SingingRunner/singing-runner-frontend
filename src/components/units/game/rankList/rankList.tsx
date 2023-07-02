@@ -24,26 +24,35 @@ export default function RankList(props: IRankListProps) {
 
   return (
     <RankWrapper isTerminated={props.isTerminated}>
-      {sortedData?.map((el, i) => {
-        return (
-          <Rank
-            key={i}
-            isCurrentUser={el.userId === playerId}
-            isTerminated={props.isTerminated}
-            isDamaged={["mute", "frozen"].includes(el.activeItem)}
-          >
-            <span>{i + 1}</span>
-            <ProfileCard
+      {(() => {
+        let rank = 1;
+        let prevScore = -1;
+        return sortedData?.map((el, i) => {
+          if (i !== 0 && el.score !== prevScore) rank++;
+          prevScore = el.score;
+          return (
+            <Rank
+              key={i}
               isCurrentUser={el.userId === playerId}
-              src={`/game/player/profile/${el.character}.png`}
-            />
-            {el.activeItem && !props.isTerminated && (
-              <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
-            )}
-            <span>{el.score}</span>
-          </Rank>
-        );
-      })}
+              isTerminated={props.isTerminated}
+              isDamaged={["mute", "frozen"].includes(el.activeItem)}
+            >
+              <span>{rank}</span>
+              <ProfileCard
+                isCurrentUser={el.userId === playerId}
+                src={`/game/player/profile/${el.character}.png`}
+              />
+              {el.activeItem && !props.isTerminated && (
+                <ItemEffect
+                  isCurrentUser={el.userId === playerId}
+                  src={`/game/item/effect/${el.activeItem}.png`}
+                />
+              )}
+              <span>{el.score}</span>
+            </Rank>
+          );
+        });
+      })()}
     </RankWrapper>
   );
 }
@@ -118,10 +127,10 @@ const ProfileCard = styled.img<CardProps>`
   height: ${(props) => (props.isCurrentUser ? `80px` : `60px`)};
 `;
 
-const ItemEffect = styled.img`
+const ItemEffect = styled.img<CardProps>`
   position: absolute;
   top: 0;
-  right: 0;
+  right: ${(props) => (props.isCurrentUser ? `0` : `20px`)};
   width: 28px;
   height: 28px;
 `;

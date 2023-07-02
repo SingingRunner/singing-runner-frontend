@@ -28,23 +28,30 @@ export default function GameResultUI(props: IGameResultUIProps) {
     <>
       <Header text="게임 결과" noPrev />
       <S.RankWrapper>
-        {props.gameResult.map((el, i: number) => {
-          return (
-            <S.Rank key={i}>
-              <div>
-                <S.Ranking>{i + 1}</S.Ranking>
-                <ProfileCard
-                  character={el.charcter}
-                  nickname={el.nickname}
-                  tier={el.tier}
-                  add={!el.isFriend && el.userId !== userId}
-                  friendId={el.userId}
-                />
-              </div>
-              <S.Mmr>{el.userScore}</S.Mmr>
-            </S.Rank>
-          );
-        })}
+        {(() => {
+          let rank = 1;
+          let prevScore = -1;
+          return props.gameResult.map((el, i: number) => {
+            if (i !== 0 && el.userScore !== prevScore) rank++;
+            prevScore = el.userScore;
+            return (
+              <S.Rank key={i}>
+                <div>
+                  <S.Ranking>{rank}</S.Ranking>
+                  <ProfileCard
+                    character={el.charcter}
+                    nickname={el.nickname}
+                    tier={el.tier}
+                    add={!el.isFriend && el.userId !== userId}
+                    friendId={el.userId}
+                  />
+                  {el.userId === userId && <S.CurrentUser>나</S.CurrentUser>}
+                </div>
+                <S.Mmr>{el.userScore}</S.Mmr>
+              </S.Rank>
+            );
+          });
+        })()}
       </S.RankWrapper>
       <S.TierWrapper>
         <S.OutCircle tier={props.currentUserResult.tier}>

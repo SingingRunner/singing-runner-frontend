@@ -18,6 +18,17 @@ export const REGISTER_USER_WITH_KAKAO = gql`
   }
 `;
 
+export const REGISTER_USER_WITH_GOOGLE = gql`
+  mutation registerUserWithGoogle($googleUserDto: GoogleUserResponseDto!, $nickname: String!) {
+    registerUserWithGoogle(googleUserDto: $googleUserDto, nickname: $nickname) {
+      accessToken
+      user {
+        userId
+      }
+    }
+  }
+`;
+
 // 중복이면 true, 아니면 false
 
 // 이메일 중복 확인

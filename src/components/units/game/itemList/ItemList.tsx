@@ -29,6 +29,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
 
     return () => {
       clearInterval(interval); // 컴포넌트가 언마운트될 때 interval을 정리합니다.
+      socket?.off("get_item");
     };
   }, [socket]);
 

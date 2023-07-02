@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import * as S from "./Modal.styles";
 import { useRouter } from "next/router";
 
@@ -42,11 +43,31 @@ export default function Modal(props: IModalProps) {
     props.onClickLeft?.(); // 원래의 onClickLeft 함수 실행 (optional chaining 사용)
   };
 
+  // 매칭 완료 모달의 카운트
+  const [count, setCount] = useState(9);
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCount((prevCount) => {
+        if (prevCount === 1) {
+          if (props.onClickLeft) props.onClickLeft();
+        }
+        return prevCount > 0 ? prevCount - 1 : 0;
+      });
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, []);
+
   return (
     <>
       <S.Background>
         <S.Wrapper isLargeSize={!!props.singer}>
-          <img src={props.isCheck ? "/icon/check.png" : "/icon/warning.png"} />
+          {props.singer && !props.isCheck ? (
+            <S.Count>{count}</S.Count>
+          ) : (
+            <img
+              src={props.isCheck ? "/icon/check.png" : "/icon/warning.png"}
+            />
+          )}
           {props.singer ? (
             // 배틀 모드 매칭 완료 모달인 경우
             <S.Text>
