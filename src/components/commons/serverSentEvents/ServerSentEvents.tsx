@@ -38,11 +38,11 @@ export default function ServerSentEvents() {
     if (!userId) return;
     const eventSourceInvite = new EventSource(
       // `http://localhost:3000/social/invite/${userId}`
-      `http://injungle.shop/api/social/invite/${userId}`
+      `https://injungle.shop/api/social/invite/${userId}`
     );
     const eventSourceNoti = new EventSource(
       // `http://localhost:3000/social/notification/${userId}`
-      `http://injungle.shop/api/social/notification/${userId}`
+      `https://injungle.shop/api/social/notification/${userId}`
     );
 
     eventSourceInvite.onmessage = (event) => {
