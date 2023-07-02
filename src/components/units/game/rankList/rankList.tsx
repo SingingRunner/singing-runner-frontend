@@ -38,7 +38,10 @@ export default function RankList(props: IRankListProps) {
               src={`/game/player/profile/${el.character}.png`}
             />
             {el.activeItem && !props.isTerminated && (
-              <ItemEffect src={`/game/item/effect/${el.activeItem}.png`} />
+              <ItemEffect
+                isCurrentUser={el.userId === playerId}
+                src={`/game/item/effect/${el.activeItem}.png`}
+              />
             )}
             <span>{el.score}</span>
           </Rank>
@@ -118,10 +121,10 @@ const ProfileCard = styled.img<CardProps>`
   height: ${(props) => (props.isCurrentUser ? `80px` : `60px`)};
 `;
 
-const ItemEffect = styled.img`
+const ItemEffect = styled.img<CardProps>`
   position: absolute;
   top: 0;
-  right: 0;
+  right: ${(props) => (props.isCurrentUser ? `0` : `20px`)};
   width: 28px;
   height: 28px;
 `;

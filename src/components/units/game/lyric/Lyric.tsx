@@ -76,6 +76,9 @@ function Lyric(props: ILyricProps) {
     socket?.on("exit", (data: { userId: string; nickname: string }) => {
       setExit(data.nickname);
     });
+    return () => {
+      socket?.off("exit");
+    };
   }, [socket]);
   return (
     <LyricWrapper>
