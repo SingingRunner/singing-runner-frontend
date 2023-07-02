@@ -41,11 +41,10 @@ export interface IOnInviteHandlerData {
   roomId: number;
   hostId: string;
   hostNickname: string;
-  // 🚨 소켓메시지 완료되면 추가하기
-  // songId: string;
-  // songTitle: string;
-  // singer: string;
-  // gameMode: string;
+  songId: string;
+  songTitle: string;
+  singer: string;
+  gameMode: string;
   userId: string;
   nickname: string;
   character: string;
