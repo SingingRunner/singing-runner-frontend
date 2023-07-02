@@ -198,8 +198,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
           score: currentScore,
         });
       };
-
-      console.log("게임 종료, emit(game_terminated)", userId);
     };
     mediaRecorder.start();
 

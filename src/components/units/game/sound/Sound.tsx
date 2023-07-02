@@ -165,7 +165,6 @@ export default function Sound(props: ISoundProps) {
 
         // 유저 정보
         if (props.isReplay) {
-          console.log("replayUserData", replayUserData);
           props.setPlayersInfo(() => {
             const newPlayersInfo = [
               {

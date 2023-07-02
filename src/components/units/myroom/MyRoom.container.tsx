@@ -53,16 +53,8 @@ export default function MyRoom() {
         character: characters[currentImageIndex],
       },
     })
-      .then((result) => {
-        // Handle the result if needed
-        console.log("success userId: ", userId);
-        console.log("success character: ", characters[currentImageIndex]);
-        console.log(result.data);
-      })
+      .then(() => {})
       .catch((error) => {
-        // Handle any errors
-        console.log("failure userId: ", userId);
-        console.log("failure character: ", characters[currentImageIndex]);
         console.error(error);
       });
 
@@ -78,7 +70,6 @@ export default function MyRoom() {
   const handleNextImage = () => {
     audioRef.current?.play();
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % characters.length);
-    console.log(characters[currentImageIndex]);
   };
 
   const handlePreviousImage = () => {

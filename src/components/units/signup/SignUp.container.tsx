@@ -66,7 +66,6 @@ export default function SignUp() {
       const registeredUserId = data?.registerUser.user.userId;
 
       setUserId(registeredUserId || "");
-      console.log("registeredUser: ", registeredUserId);
 
       router.push("/signup/starting");
     } catch (error) {
@@ -182,7 +181,6 @@ export default function SignUp() {
   };
 
   const checkDuplicateEmail = async () => {
-    console.log("이메일 중복 확인 버튼 눌림");
     emailCheck({ variables: { userEmail: email } });
     setEmailVerified(false);
     setCheckEmail(true);
@@ -190,7 +188,6 @@ export default function SignUp() {
   };
 
   const checkDuplicateNickname = async () => {
-    console.log("닉네임 중복 확인 버튼 눌림");
     nicknameCheck({ variables: { nickname } });
     setNicknameVerified(false);
     setCheckNickname(true);
@@ -235,9 +232,7 @@ export default function SignUp() {
     }
   };
 
-  const dummyClick = () => {
-    console.log("dummy");
-  };
+  const dummyClick = () => {};
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -246,7 +241,6 @@ export default function SignUp() {
   }, []);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-
     if (event.key === "Enter") {
       if (isSignUpButtonEnabled) {
         audioRef.current?.play();

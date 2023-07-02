@@ -78,11 +78,7 @@ export default function Add() {
         },
       },
     })
-      .then((response) => {
-        console.log("Add friend request sent:", response);
-        console.log("receiverId:", receiverId);
-        console.log("senderId:", userId);
-      })
+      .then(() => {})
       .catch((error) => {
         console.error("Error sending add friend request:", error);
       });

@@ -22,7 +22,7 @@ export default function Nickname() {
   const [isNicknameButtonEnabled, setNicknameButtonEnabled] = useState(false);
   const [registerUserWithKakao] = useMutation(REGISTER_USER_WITH_KAKAO);
   const [registerUserWithGoogle] = useMutation(REGISTER_USER_WITH_GOOGLE);
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [, setUserId] = useRecoilState(userIdState);
   const [nicknameCheck, { data: nicknameCheckData }] = useLazyQuery(
     IS_NICKNAME_TAKEN,
     {
@@ -81,9 +81,6 @@ export default function Nickname() {
 
         setUserId(registeredUser?.userId || "");
 
-        console.log("registeredUser: ", registeredUser);
-        console.log(userId);
-
         router.push("/signup/starting");
       } catch (error) {
         if (error instanceof Error) {
@@ -139,7 +136,6 @@ export default function Nickname() {
   };
 
   const checkDuplicateNickname = async () => {
-    console.log("닉네임 중복 확인 버튼 눌림");
     nicknameCheck({ variables: { nickname } });
     setNicknameVerified(false);
     setIsNicknameCheckClicked(true);
@@ -157,9 +153,7 @@ export default function Nickname() {
     }
   }, [nicknameCheckData]);
 
-  const dummyClick = () => {
-    console.log("dummy");
-  };
+  const dummyClick = () => {};
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
