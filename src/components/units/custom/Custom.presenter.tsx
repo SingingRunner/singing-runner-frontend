@@ -74,10 +74,6 @@ export default function CustomUI(props: ICustomUIProps) {
               </S.JoinedPlayer>
             );
           } else {
-            console.log(
-              "🚨에러!! 유저 정보가 3명보다 많음, 플레이어 정보: ",
-              props.roomInfo.players
-            );
             return <></>;
           }
         })}

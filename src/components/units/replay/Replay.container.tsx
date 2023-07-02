@@ -55,7 +55,6 @@ export default function Replay() {
     if (userData?.fetchUserByUserId) {
       setCharacter(userData?.fetchUserByUserId.character);
       setNickname(userData?.fetchUserByUserId.nickname);
-      console.log(userData);
     }
   }, [userData, isMyReplay]);
 
@@ -65,9 +64,6 @@ export default function Replay() {
 
   useEffect(() => {
     setIsMyReplay(currentUserId === router.query.userId);
-    console.log("userId: ", userId, "current: ", currentUserId);
-    console.log("character: ", character);
-    console.log(character);
   }, [userId]);
 
   const convertTimeToUnit = (receivedAt: string) => {
@@ -143,7 +139,6 @@ export default function Replay() {
   };
 
   const changeToPublic = async () => {
-    console.log(currentReplay);
     await updatePublic({
       variables: {
         replayId: currentReplay,

@@ -48,9 +48,8 @@ export default function Modal(props: IModalProps) {
   useEffect(() => {
     const timerId = setInterval(() => {
       setCount((prevCount) => {
-        if (prevCount === 1) {
-          if (props.onClickLeft) props.onClickLeft();
-        }
+        if (prevCount === 1) handleLeftClick();
+
         return prevCount > 0 ? prevCount - 1 : 0;
       });
     }, 1000);

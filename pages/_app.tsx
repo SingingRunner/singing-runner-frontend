@@ -42,9 +42,7 @@ function preloadModel(url: string) {
     .then((response) => {
       return response.blob();
     })
-    .then((blob) => {
-      console.log(`Preloaded model: ${url}`);
-    })
+    .then(() => {})
     .catch((error) => {
       console.error(`Failed to preload model: ${url}`, error);
     });

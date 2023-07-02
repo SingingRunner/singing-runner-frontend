@@ -54,9 +54,6 @@ export default function Login() {
       const accessToken = result.data?.loginUser.accessToken;
       const loginUserInfo = result.data?.loginUser.user; // 로그인 유저 정보
 
-      console.log("userInfo: ", loginUserInfo);
-      console.log("accessToken: ", accessToken);
-
       if (accessToken === undefined) {
         return;
       }
@@ -123,9 +120,7 @@ export default function Login() {
     setPassword(enteredPassword);
   };
 
-  const dummyClick = () => {
-    console.log("dummy");
-  };
+  const dummyClick = () => {};
 
   const props: ILoginUIProps = {
     email,

@@ -51,19 +51,19 @@ const Main = () => {
     router.push("/game");
   };
   useEffect(() => {
-    if (!socket) return;
-    socket.on("accept", (isMatched: boolean) => {
+    socket?.on("accept", (isMatched: boolean) => {
+      console.log("🚨 on 'accept'", isMatched);
       if (isMatched) {
         console.log("accept true received");
         handleChangeAddress(); // 인게임 화면으로 전환
       } else {
         // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
-        console.log("accept false received");
+        console.log("🚨 거절하기 한 유저가 있음");
         setShowWaiting(false);
         setShowModal(false);
       }
     });
-    socket.on("match_making", (data) => {
+    socket?.on("match_making", (data) => {
       // 매칭 완료되면, 매칭된 유저 정보 받아오기
       const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
       setSongTitle(songTitle);
@@ -75,8 +75,8 @@ const Main = () => {
     });
 
     return () => {
-      socket.off("accept");
-      socket.off("match_making");
+      socket?.off("accept");
+      socket?.off("match_making");
     };
   }, [socket]);
 
@@ -90,8 +90,6 @@ const Main = () => {
     }
     if (socket && isRejected) {
       // 거절 누른 경우
-      console.log("accept false sended to server");
-      socketDisconnect();
       setIsRejected(false);
       // => 모드 선택 화면으로 이동
     }
@@ -186,14 +184,15 @@ const Main = () => {
   };
 
   const handleMatchDecline = () => {
+    console.log("🚨 매칭 거절함!");
     // 매칭 거절 버튼 눌렀을 때 작동
     socket?.emit("accept", { accept: false, userId });
+    socketDisconnect();
     setShowModal(false); // 모달 끄기
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
     setIsAccepted(false);
     setIsRejected(true);
-    // socketDisconnect();
   };
 
   useEffect(() => {
@@ -224,7 +223,7 @@ const Main = () => {
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
-      .then((stream) => {})
+      .then(() => {})
       .catch((err) => {
         console.log(err);
       });
