@@ -17,9 +17,7 @@ const keynoteDisplayNames = ["원키", "여키", "남키"];
 
 export default function MyRoomSetting() {
   const [userId, setUserId] = useRecoilState(userIdState);
-  const { data, refetch } = useQuery(FETCH_USER, {
-    variables: { userId },
-  });
+  const { data, refetch } = useQuery(FETCH_USER);
   const router = useRouter();
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
@@ -71,13 +69,13 @@ export default function MyRoomSetting() {
       setAccessToken("");
       await logoutUser({ variables: { userId } });
       setUserId("");
-      localStorage.setItem("userId", "");
       // 로그아웃 후 초기화면으로 이동
       setIsPolling(false);
+      console.log("로그아웃 성공");
       router.push("/");
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력
-      console.log(error.message);
+      console.log("로그아웃 실패: ", error.message);
       router.push("/");
     }
   };

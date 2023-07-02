@@ -19,9 +19,6 @@ import moment from "moment";
 export default function Notification() {
   const router = useRouter();
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
   const [isCheckClicked, setIsCheckClicked] = useState(false);
   const [addFriendMutation] = useMutation(ADD_FRIEND);
   const [deleteNotificationMutation] = useMutation(DELETE_NOTIFICATION);

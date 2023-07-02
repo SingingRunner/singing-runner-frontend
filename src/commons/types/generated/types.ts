@@ -61,7 +61,7 @@ export type IGameSongDto = {
   songFemaleDown: Scalars['String']['output'];
   songFemaleUp: Scalars['String']['output'];
   songGender: Scalars['Boolean']['output'];
-  songId: Scalars['Float']['output'];
+  songId: Scalars['Int']['output'];
   songLyrics: Scalars['String']['output'];
   songMale: Scalars['String']['output'];
   songMaleDown: Scalars['String']['output'];
@@ -72,15 +72,27 @@ export type IGameSongDto = {
   vocalMaleUp: Scalars['String']['output'];
 };
 
+export type IGoogleAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IGoogleUserResponseDto = {
+  googleId: Scalars['String']['input'];
+  google_account: IGoogleAccount;
+};
+
 export type IHostUserInput = {
   nickname: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
-export type IHostUserOutput = {
-  __typename?: 'HostUserOutput';
-  nickname: Scalars['String']['output'];
-  userId: Scalars['String']['output'];
+export type IKakaoAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IKakaoUserResponseDto = {
+  id: Scalars['String']['input'];
+  kakao_account: IKakaoAccount;
 };
 
 export type IMutation = {
@@ -90,10 +102,13 @@ export type IMutation = {
   friendRequest: Scalars['String']['output'];
   inviteFriend: Scalars['String']['output'];
   loginUser: IAuthDto;
+  loginUserWithGoogle: IAuthDto;
+  loginUserWithKakao: IAuthDto;
   logout: Scalars['String']['output'];
-  longPolling: IPollingDto;
   refreshAccessToken: IAuthTokenDto;
   registerUser: IAuthDto;
+  registerUserWithGoogle: IAuthDto;
+  registerUserWithKakao: IAuthDto;
   removeFriend: Scalars['String']['output'];
   saveReplay: IReply;
   updateCharacter: IUserCharacterResponseDto;
@@ -124,7 +139,17 @@ export type IMutationInviteFriendArgs = {
 
 
 export type IMutationLoginUserArgs = {
-  userLoginDto: IUserLoginDto;
+  userAuthDto: IUserAuthDto;
+};
+
+
+export type IMutationLoginUserWithGoogleArgs = {
+  googleUserResponse: IGoogleUserResponseDto;
+};
+
+
+export type IMutationLoginUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
 };
 
 
@@ -133,13 +158,20 @@ export type IMutationLogoutArgs = {
 };
 
 
-export type IMutationLongPollingArgs = {
-  userId: Scalars['String']['input'];
+export type IMutationRegisterUserArgs = {
+  newUser: IUserRegisterDto;
 };
 
 
-export type IMutationRegisterUserArgs = {
-  newUser: IUserRegisterDto;
+export type IMutationRegisterUserWithGoogleArgs = {
+  googleUserDto: IGoogleUserResponseDto;
+  nickname: Scalars['String']['input'];
+};
+
+
+export type IMutationRegisterUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
+  nickname: Scalars['String']['input'];
 };
 
 
@@ -176,25 +208,21 @@ export type INotificationDto = {
   userId: Scalars['String']['input'];
 };
 
-export type IPollingDto = {
-  __typename?: 'PollingDto';
-  hostUserDtoList: Array<IHostUserOutput>;
-  userNotificationList: Array<IUserNotification>;
-};
-
 export type IQuery = {
   __typename?: 'Query';
   fetchUser: IAuthUserDto;
-  fetchUserGuard: IAuthUserDto;
+  fetchUserByUserId: IAuthUserDto;
   getNotification: Array<IRequestDto>;
   getUserReplays: Array<IReplayWithSongInfo>;
+  isEmailTaken: Scalars['Boolean']['output'];
+  isNicknameTaken: Scalars['Boolean']['output'];
   searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
 };
 
 
-export type IQueryFetchUserArgs = {
+export type IQueryFetchUserByUserIdArgs = {
   userId: Scalars['String']['input'];
 };
 
@@ -209,6 +237,16 @@ export type IQueryGetUserReplaysArgs = {
   isMyReplay: Scalars['Boolean']['input'];
   pageNumber: Scalars['Int']['input'];
   userId: Scalars['String']['input'];
+};
+
+
+export type IQueryIsEmailTakenArgs = {
+  userEmail: Scalars['String']['input'];
+};
+
+
+export type IQueryIsNicknameTakenArgs = {
+  nickname: Scalars['String']['input'];
 };
 
 
@@ -285,6 +323,11 @@ export type IUser = {
   userPoint: Scalars['Int']['output'];
 };
 
+export type IUserAuthDto = {
+  password: Scalars['String']['input'];
+  userEmail: Scalars['String']['input'];
+};
+
 export type IUserCharacterResponseDto = {
   __typename?: 'UserCharacterResponseDto';
   character: ICharacterEnum;
@@ -297,25 +340,9 @@ export type IUserKeynoteResponseDto = {
   userKeynote: Scalars['Int']['output'];
 };
 
-export type IUserLoginDto = {
-  password: Scalars['String']['input'];
-  userEmail: Scalars['String']['input'];
-};
-
-export type IUserNotification = {
-  __typename?: 'UserNotification';
-  content: Scalars['String']['output'];
-  deletedAt: Scalars['DateTime']['output'];
-  receivedAt: Scalars['DateTime']['output'];
-  sender: IUser;
-  senderId: Scalars['String']['output'];
-  user: IUser;
-  userId: Scalars['String']['output'];
-};
-
 export type IUserRegisterDto = {
   nickname: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  password?: InputMaybe<Scalars['String']['input']>;
   userEmail: Scalars['String']['input'];
 };
 
@@ -323,12 +350,12 @@ export enum ICharacterEnum {
   Beluga = 'BELUGA',
   Hare = 'HARE',
   Husky = 'HUSKY',
+  Leopard = 'LEOPARD',
   Lynx = 'LYNX',
   Moose = 'MOOSE',
   Narwhal = 'NARWHAL',
   Puffin = 'PUFFIN',
-  Puma = 'PUMA',
-  Leopard = 'LEOPARD'
+  Puma = 'PUMA'
 }
 
 export enum IUserKeynoteStatus {
