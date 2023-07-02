@@ -1,11 +1,6 @@
-import { useRecoilState } from "recoil";
-import { userIdState } from "../../../../commons/store";
 import { useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
-import {
-  IQuery,
-  IQueryFetchUserArgs,
-} from "../../../../commons/types/generated/types";
+import { IQuery } from "../../../../commons/types/generated/types";
 import { FETCH_USER } from "./Character.queries";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -24,12 +19,9 @@ export default function Character() {
   let scene: THREE.Scene;
   let camera: THREE.PerspectiveCamera;
 
-  const [userId] = useRecoilState(userIdState);
-
-  const { data } = useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(
-    FETCH_USER,
-    { variables: { userId }, fetchPolicy: "network-only" }
-  );
+  const { data } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER, {
+    fetchPolicy: "network-only",
+  });
   /* 그래픽 초기화 */
   useEffect(() => {
     if (!canvasRef.current) return;

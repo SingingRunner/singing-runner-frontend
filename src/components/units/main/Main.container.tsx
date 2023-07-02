@@ -7,21 +7,13 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import { roomInfoState, userIdState } from "../../../commons/store";
 import { useRecoilState } from "recoil";
 import { FETCH_USER } from "./Main.queries";
-import { PollingContext } from "../../../commons/contexts/PollingContext";
-import {
-  IQuery,
-  IQueryFetchUserArgs,
-} from "../../../commons/types/generated/types";
+import { IQuery } from "../../../commons/types/generated/types";
 
 const Main = () => {
   // 소켓, 소켓 연결하는 함수 가져오기
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketConnect, socketDisconnect } = socketContext;
-
-  const pollingContext = useContext(PollingContext);
-  if (!pollingContext) return <div>Loading...</div>;
-  const { isPolling, setIsPolling } = pollingContext;
 
   const [isClicked, setIsClicked] = useState(false);
   const [songTitle, setSongTitle] = useState("");
@@ -41,14 +33,8 @@ const Main = () => {
   const [userId] = useRecoilState(userIdState);
 
   const { data } = useQuery(FETCH_USER, {
-    variables: { userId },
     fetchPolicy: "network-only",
   });
-
-  useEffect(() => {
-    console.log(isPolling);
-    setIsPolling(true);
-  }, []);
 
   useEffect(() => {
     setCharacter(data?.fetchUser.character);
@@ -65,29 +51,33 @@ const Main = () => {
     router.push("/game");
   };
   useEffect(() => {
-    if (socket) {
-      socket.on("accept", (isMatched: boolean) => {
-        if (isMatched) {
-          console.log("accept true received");
-          handleChangeAddress(); // 인게임 화면으로 전환
-        } else {
-          // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
-          console.log("accept false received");
-          setShowWaiting(false);
-          setShowModal(false);
-        }
-      });
-      socket.on("match_making", (data) => {
-        // 매칭 완료되면, 매칭된 유저 정보 받아오기
-        const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
-        setSongTitle(songTitle);
-        setSinger(singer);
+    if (!socket) return;
+    socket.on("accept", (isMatched: boolean) => {
+      if (isMatched) {
+        console.log("accept true received");
+        handleChangeAddress(); // 인게임 화면으로 전환
+      } else {
+        // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
+        console.log("accept false received");
+        setShowWaiting(false);
+        setShowModal(false);
+      }
+    });
+    socket.on("match_making", (data) => {
+      // 매칭 완료되면, 매칭된 유저 정보 받아오기
+      const { songTitle, singer } = data; // song_title, singer => 수락 화면에 집어넣기
+      setSongTitle(songTitle);
+      setSinger(singer);
 
-        if (songTitle && singer) {
-          setShowModal(true); // 수락 화면 띄우기
-        }
-      });
-    }
+      if (songTitle && singer) {
+        setShowModal(true); // 수락 화면 띄우기
+      }
+    });
+
+    return () => {
+      socket.off("accept");
+      socket.off("match_making");
+    };
   }, [socket]);
 
   useEffect(() => {
@@ -103,7 +93,6 @@ const Main = () => {
       console.log("accept false sended to server");
       socketDisconnect();
       setIsRejected(false);
-      setIsPolling(true);
       // => 모드 선택 화면으로 이동
     }
   }, [isAccepted, isRejected, showWaiting, socket]);
@@ -125,17 +114,13 @@ const Main = () => {
     setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
     // 소켓 연결
     const newSocket = socketConnect(userId);
-    setIsPolling(false);
     // 소켓 연결 => 유저 정보 보내기
     newSocket.emit("match_making", { UserMatchDto, accept: true });
   };
 
   const [, setRoomInfo] = useRecoilState(roomInfoState);
 
-  const [fetchUser] = useLazyQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, {
+  const [fetchUser] = useLazyQuery<Pick<IQuery, "fetchUser">>(FETCH_USER, {
     onCompleted: (userData) => {
       setRoomInfo((prev) => ({
         ...prev,
@@ -158,7 +143,6 @@ const Main = () => {
   const onClickCustomMode = async () => {
     // 소켓 연결
     const newSocket = socketConnect(userId);
-    setIsPolling(false);
     newSocket.emit("create_custom", {
       userId,
       userMmr,
@@ -171,7 +155,7 @@ const Main = () => {
   useEffect(() => {
     // 방장인 경우, 방 생성 이후에 처음 받는 메세지
     socket?.on("create_custom", async (roomId) => {
-      await fetchUser({ variables: { userId } });
+      await fetchUser();
       setRoomInfo((prev) => ({
         ...prev,
         roomId: String(roomId),
@@ -180,12 +164,15 @@ const Main = () => {
       // 커스텀 모드 화면으로 전환
       router.push("/custom");
     });
+
+    return () => {
+      socket?.off("create_custom");
+    };
   }, [socket]);
 
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     socketDisconnect();
-    setIsPolling(true);
     setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
   };

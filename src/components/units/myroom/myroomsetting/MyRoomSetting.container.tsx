@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -8,7 +8,6 @@ import {
   kakaoUserResponseState,
   googleUserResponseState,
 } from "../../../../commons/store";
-import { PollingContext } from "../../../../commons/contexts/PollingContext";
 import MyRoomSettingUI from "./MyRoomSetting.presenter";
 import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
 import {
@@ -28,7 +27,6 @@ export default function MyRoomSetting() {
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
   const [, setAccessToken] = useRecoilState(accessTokenState);
   const [updateUserKeynote] = useMutation(UPDATE_USER_KEYNOTE);
-  const { setIsPolling } = useContext(PollingContext);
   const setKakaoUserResponse = useSetRecoilState(kakaoUserResponseState);
   const setGoogleUserResponse = useSetRecoilState(googleUserResponseState);
 
@@ -77,7 +75,6 @@ export default function MyRoomSetting() {
       await logoutUser({ variables: { userId } });
       setUserId("");
       // 로그아웃 후 초기화면으로 이동
-      setIsPolling(false);
       setKakaoUserResponse(null);
       setGoogleUserResponse(null);
       console.log("로그아웃 성공");

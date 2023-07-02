@@ -13,9 +13,6 @@ export default function ItemList(props: { preventEvent?: boolean }) {
   const { socket } = socketContext;
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const [itemList, setItemList] = useState<string[]>([]);
 
@@ -32,6 +29,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
 
     return () => {
       clearInterval(interval); // 컴포넌트가 언마운트될 때 interval을 정리합니다.
+      socket?.off("get_item");
     };
   }, [socket]);
 

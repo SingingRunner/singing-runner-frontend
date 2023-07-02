@@ -29,9 +29,9 @@ export const UPDATE_PUBLIC = gql`
   }
 `;
 
-export const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
+export const FETCH_USER_BY_USER_ID = gql`
+  query FetchUserByUserId($userId: String!) {
+    fetchUserByUserId(userId: $userId) {
       userId
       userEmail
       nickname

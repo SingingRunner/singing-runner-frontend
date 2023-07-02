@@ -105,7 +105,7 @@ export const useCustomRoomInfo = () => {
 
     if (isHost) {
       resetRoomInfoState();
-      socketDisconnect(); // 🚨 모달 버튼을 통해 main으로 이동해서 polling이 자동으로 재개되므로 소켓 연결만 끊음
+      socketDisconnect();
       setGlobalModal((prev) => ({
         ...prev,
         isOpen: true,

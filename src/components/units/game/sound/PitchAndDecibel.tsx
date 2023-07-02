@@ -77,6 +77,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       socket?.on("game_ready", gameReady);
     }
     socket?.on("score", scoreListener);
+
+    return () => {
+      socket?.off("start_replay", gameReady);
+      socket?.off("game_ready", gameReady);
+      socket?.off("score", scoreListener);
+    };
   }, [socket]);
 
   const gameReady = () => {
@@ -136,7 +142,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     }
 
     if (propsRef.current.isSuper) {
-      score = Math.floor(currentScore * 1.2);
+      score = Math.floor(currentScore * 1.5);
     } else if (propsRef.current.isFrozen) {
       score = Math.floor((currentScore * 2) / 3);
     } else if (propsRef.current.isMute) {
