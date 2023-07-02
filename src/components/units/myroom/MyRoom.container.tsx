@@ -33,7 +33,6 @@ export default function MyRoom() {
   // }, []);
 
   const { data } = useQuery(FETCH_USER, {
-    variables: { userId },
     fetchPolicy: "network-only",
   });
 

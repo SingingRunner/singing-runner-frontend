@@ -5,7 +5,6 @@ import { useRecoilState, useResetRecoilState } from "recoil";
 import { roomInfoState, userIdState } from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useCustomRoomInfo } from "../../../commons/hooks/useCustomRoomInfo";
-import { PollingContext } from "../../../commons/contexts/PollingContext";
 
 export default function Custom() {
   const router = useRouter();
@@ -13,10 +12,6 @@ export default function Custom() {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketDisconnect } = socketContext;
-
-  const pollingContext = useContext(PollingContext);
-  if (!pollingContext) return <div>Loading...</div>;
-  const { setIsPolling } = pollingContext;
 
   const [userId] = useRecoilState(userIdState);
   const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
@@ -31,7 +26,6 @@ export default function Custom() {
   const onClickExit = () => {
     socket?.emit("leave_room", userId);
     socketDisconnect();
-    setIsPolling(true);
     resetRoomInfo();
     router.push("/main");
   };

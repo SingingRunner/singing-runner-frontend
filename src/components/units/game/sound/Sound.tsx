@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import { userIdState } from "../../../../commons/store";
 
 import { ISocketLoadingData, ISoundProps } from "./Sound.types";
-import { FETCH_USER } from "../Game.queries";
+import { FETCH_USER_BY_USER_ID, FETCH_USER } from "../Game.queries";
 import { useQuery } from "@apollo/client";
 import {
   IQuery,
-  IQueryFetchUserArgs,
+  IQueryFetchUserByUserIdArgs,
 } from "../../../../commons/types/generated/types";
 
 export default function Sound(props: ISoundProps) {
@@ -20,10 +20,7 @@ export default function Sound(props: ISoundProps) {
 
   const [userId] = useRecoilState(userIdState);
 
-  const { data: userData } = useQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, { variables: { userId } });
+  const { data: userData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
 
   const router = useRouter();
 
@@ -46,9 +43,12 @@ export default function Sound(props: ISoundProps) {
   }
 
   const { data: replayUserData } = isReplay
-    ? useQuery<Pick<IQuery, "fetchUser">, IQueryFetchUserArgs>(FETCH_USER, {
-        variables: { userId: replayUserId },
-      })
+    ? useQuery<Pick<IQuery, "fetchUserByUserId">, IQueryFetchUserByUserIdArgs>(
+        FETCH_USER_BY_USER_ID,
+        {
+          variables: { userId: replayUserId },
+        }
+      )
     : { data: null };
 
   useEffect(() => {
@@ -170,7 +170,7 @@ export default function Sound(props: ISoundProps) {
               const newPlayersInfo = [
                 {
                   userId: replayUserId,
-                  character: replayUserData?.fetchUser.character || "",
+                  character: replayUserData?.fetchUserByUserId.character || "",
                   activeItem: "",
                   score: 0,
                   position: "mid",

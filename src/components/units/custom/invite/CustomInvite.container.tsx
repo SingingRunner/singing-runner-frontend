@@ -4,6 +4,7 @@ import {
   INVITE_FRIEND,
   SEARCH_FRIEND,
   FETCH_USER,
+  FETCH_USER_BY_USER_ID,
 } from "./CustomInvite.queries";
 import { useRecoilState } from "recoil";
 import {
@@ -14,7 +15,7 @@ import {
 import { ChangeEvent, useCallback, useState } from "react";
 import {
   IQuery,
-  IQueryFetchUserArgs,
+  IQueryFetchUserByUserIdArgs,
   IQuerySearchFriendArgs,
 } from "../../../../commons/types/generated/types";
 import debounce from "lodash/debounce";
@@ -27,10 +28,7 @@ export default function CustomInvite() {
   const [isLimitCountModalOpen, setIsLimitCountModalOpen] = useState(false);
   const [, setGlobalModal] = useRecoilState(globalModalState);
 
-  const { data: userData } = useQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, { variables: { userId } });
+  const { data: userData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
 
   const { loading, data, refetch, fetchMore } = useQuery<
     Pick<IQuery, "searchFriend">,
@@ -46,15 +44,15 @@ export default function CustomInvite() {
 
   // 친구 초대 시 fetch 후 초대 완료 모달 생성
   const [fetchFriend] = useLazyQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, {
+    Pick<IQuery, "fetchUserByUserId">,
+    IQueryFetchUserByUserIdArgs
+  >(FETCH_USER_BY_USER_ID, {
     onCompleted: (friendData) => {
       setGlobalModal((prev) => ({
         ...prev,
         isOpen: true,
         isCheck: true,
-        hilightText: friendData?.fetchUser.nickname,
+        hilightText: friendData?.fetchUserByUserId.nickname,
         firstText: "님에게",
         secondText: "초대를 보냈어요!",
         buttonText: "확인",

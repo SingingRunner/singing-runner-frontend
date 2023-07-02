@@ -7,10 +7,13 @@ import { buttonType } from "../../commons/button/Button";
 import Modal from "../../commons/modal/Modal";
 import moment from "moment";
 import { useMutation, useQuery } from "@apollo/client";
-import { FETCH_USER, GET_USER_REPLAYS, UPDATE_PUBLIC } from "./Replay.queries";
+import {
+  FETCH_USER_BY_USER_ID,
+  GET_USER_REPLAYS,
+  UPDATE_PUBLIC,
+} from "./Replay.queries";
 import {
   IQuery,
-  IQueryFetchUserArgs,
   IQueryGetUserReplaysArgs,
 } from "../../../commons/types/generated/types";
 
@@ -26,15 +29,15 @@ export default function Replay() {
   const [nickname, setNickname] = useState("");
   const [userId, setUserId] = useState("");
 
-  const { data: userData } = useQuery<
-    Pick<IQuery, "fetchUser">,
-    IQueryFetchUserArgs
-  >(FETCH_USER, {
-    variables: {
-      userId: router.query.userId as string,
-    },
-    fetchPolicy: "network-only",
-  });
+  const { data: userData } = useQuery<Pick<IQuery, "fetchUserByUserId">>(
+    FETCH_USER_BY_USER_ID,
+    {
+      variables: {
+        userId: router.query.userId as string,
+      },
+      fetchPolicy: "network-only",
+    }
+  );
 
   const { data, fetchMore, refetch } = useQuery<
     Pick<IQuery, "getUserReplays">,
@@ -49,9 +52,9 @@ export default function Replay() {
   });
 
   useEffect(() => {
-    if (userData?.fetchUser) {
-      setCharacter(userData?.fetchUser.character);
-      setNickname(userData?.fetchUser.nickname);
+    if (userData?.fetchUserByUserId) {
+      setCharacter(userData?.fetchUserByUserId.character);
+      setNickname(userData?.fetchUserByUserId.nickname);
       console.log(userData);
     }
   }, [userData, isMyReplay]);

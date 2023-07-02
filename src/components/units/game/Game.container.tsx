@@ -17,7 +17,6 @@ import { useRouter } from "next/router";
 import Button, { buttonType } from "../../commons/button/Button";
 import { UPLOAD_FILE } from "./Game.queries";
 import { ILyric } from "./lyric/Lyric.types";
-import { PollingContext } from "../../../commons/contexts/PollingContext";
 
 /** mute 아이템을 해제시키는 데시벨 크기 */
 export const UNMUTE_DECIBEL = -68;
@@ -35,10 +34,6 @@ export default function Game(props: IGameProps) {
   const socketContext = useContext(SocketContext);
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketDisconnect } = socketContext;
-
-  const pollingContext = useContext(PollingContext);
-  if (!pollingContext) return <div>Loading...</div>;
-  const { setIsPolling } = pollingContext;
 
   const [roomInfo] = useRecoilState(roomInfoState);
   const resetRoomInfoState = useResetRecoilState(roomInfoState);
@@ -349,7 +344,6 @@ export default function Game(props: IGameProps) {
             onClick={() => {
               setIsUserExit(true);
               socketDisconnect();
-              setIsPolling(true);
               router.back();
             }}
           />
