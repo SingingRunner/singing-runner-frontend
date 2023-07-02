@@ -1,7 +1,7 @@
 import CallbackKakao from '../../../src/components/units/callback/CallbackKakao.container';
 
-// 메인
-export default function CallbackPage() {
+// 카카오 콜백 페이지
+export default function CallbackKakaoPage() {
   return (
     <>
       <CallbackKakao />

@@ -1,8 +1,13 @@
 import { useState, useContext } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
-import { accessTokenState, userIdState } from "../../../../commons/store";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  accessTokenState,
+  userIdState,
+  kakaoUserResponseState,
+  googleUserResponseState,
+} from "../../../../commons/store";
 import { PollingContext } from "../../../../commons/contexts/PollingContext";
 import MyRoomSettingUI from "./MyRoomSetting.presenter";
 import { IMyRoomSettingUIProps } from "./MyRoomSetting.types";
@@ -24,6 +29,8 @@ export default function MyRoomSetting() {
   const [, setAccessToken] = useRecoilState(accessTokenState);
   const [updateUserKeynote] = useMutation(UPDATE_USER_KEYNOTE);
   const { setIsPolling } = useContext(PollingContext);
+  const setKakaoUserResponse = useSetRecoilState(kakaoUserResponseState);
+  const setGoogleUserResponse = useSetRecoilState(googleUserResponseState);
 
   const onClickKeySetting = async () => {
     const totalKeynotes = 3; // 원키, 여키, 남키 총 3가지
@@ -71,6 +78,8 @@ export default function MyRoomSetting() {
       setUserId("");
       // 로그아웃 후 초기화면으로 이동
       setIsPolling(false);
+      setKakaoUserResponse(null);
+      setGoogleUserResponse(null);
       console.log("로그아웃 성공");
       router.push("/");
     } catch (error) {

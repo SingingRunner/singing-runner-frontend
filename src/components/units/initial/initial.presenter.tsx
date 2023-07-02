@@ -21,29 +21,27 @@ export default function InitialUI(props: IInitialUIProps) {
             <S.ImageLogo src="/images/game_logo.png" alt="logo" />
           </S.ImageWrapper>
         </div>
-        <div>
-
-        <img
-          src="/button/kakao_login_large.png"
-          style={{
-            width: "120px",
-            height: "auto",
-            marginRight: "20px",
-          }}
-          onClick={props.handleKakaoLogin}
-        >
-        </img>
-        <button
-          style={{
-            height: "40px",
-            width: "120px",
-            backgroundColor: "white",
-            marginBottom: "20vh",
-          }}
-          >
-          구글 로그인
-        </button>
-          </div>
+        <div style={{display: "flex", marginBottom: "124px"}}>
+          <img
+            src="/button/kakao_login.png"
+            style={{
+              width: "60px",
+              height: "auto",
+              marginRight: "20px",
+            }}
+            onClick={props.handleKakaoLogin}
+          ></img>
+          <img
+            src="/button/google_login.png"
+            style={{
+              width: "60px",
+              height: "auto",
+              borderRadius: "50%",
+              backgroundColor: "white",
+            }}
+            onClick={props.handleGoogleLogin}
+          ></img>
+        </div>
       </div>
 
       <Button

@@ -11,14 +11,6 @@ const LOGIN_WITH_KAKAO = gql`
       accessToken
       user {
         userId
-        userEmail
-        password
-        nickname
-        userActive
-        userKeynote
-        userMmr
-        userPoint
-        character
       }
     }
   }
