@@ -6,7 +6,6 @@ import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 import ApolloSetting from "../src/components/commons/apollo";
-import { PollingProvider } from "../src/commons/contexts/PollingContext";
 import { useEffect } from "react";
 
 const nonModelFiles = [
@@ -90,27 +89,25 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
     <RecoilRoot>
       <ApolloSetting>
         <SocketProvider>
-          <PollingProvider>
-            <Global styles={globalStyles} />
-            <Head>
-              {/* 확대 방지 */}
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          <Global styles={globalStyles} />
+          <Head>
+            {/* 확대 방지 */}
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+            />
+            {nonModelFiles.map((file, index) => (
+              <link
+                key={index}
+                rel="preload"
+                href={file}
+                as={getAsAttribute(file)}
               />
-              {nonModelFiles.map((file, index) => (
-                <link
-                  key={index}
-                  rel="preload"
-                  href={file}
-                  as={getAsAttribute(file)}
-                />
-              ))}
-            </Head>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </PollingProvider>
+            ))}
+          </Head>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </SocketProvider>
       </ApolloSetting>
     </RecoilRoot>

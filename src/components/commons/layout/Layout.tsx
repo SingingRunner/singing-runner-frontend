@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import * as S from "./Layout.styles";
 import { useRouter } from "next/router";
-import LongPolling from "../longPolling/LongPolling";
+import ServerSentEvents from "../serverSentEvents/ServerSentEvents";
 import GlobalModal from "./globalModal/GlobalModal";
 
 interface ILayoutProps {
@@ -20,7 +20,7 @@ export default function Layout(props: ILayoutProps) {
       ) : (
         <S.Background>
           <S.Body>
-            <LongPolling />
+            <ServerSentEvents />
             <GlobalModal />
             <S.Wrapper>{props.children}</S.Wrapper>
           </S.Body>

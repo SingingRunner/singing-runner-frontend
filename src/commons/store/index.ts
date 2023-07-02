@@ -5,6 +5,11 @@ import { IRoomInfoState } from "../../components/units/custom/Custom.types";
 import { IGameResult } from "../../components/units/game/result/GameResult.types";
 import { IModalProps } from "../../components/commons/modal/Modal";
 
+export const kakaoUserResponseState = atom({
+  key: `kakaoUserResponseState${uuidv4()}`,
+  default: null,
+});
+
 export const accessTokenState = atom({
   key: `accessTokenState${uuidv4()}`,
   default: "",

@@ -19,17 +19,17 @@ export const INVITE_FRIEND = gql`
 `;
 
 export const FETCH_USER = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
+  query FetchUser {
+    fetchUser {
       character
       nickname
     }
   }
 `;
 
-export const FETCH_FRIEND = gql`
-  query FetchUser($userId: String!) {
-    fetchUser(userId: $userId) {
+export const FETCH_USER_BY_USER_ID = gql`
+  query fetchUserByUserId($userId: String!) {
+    fetchUserByUserId(userId: $userId) {
       character
       nickname
       userMmr
