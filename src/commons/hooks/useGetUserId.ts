@@ -19,7 +19,7 @@ export const useGetUserInfo = () => {
   useEffect(() => {
     if (!userId) {
       setUserId(data?.fetchUser.userId || "");
-      console.log("🚨🚨🚨🚨 userId 갱신", data?.fetchUser.userId);
+      console.log("🚨 userId 갱신", data?.fetchUser.userId);
     }
   }, [userId, data?.fetchUser.userId]);
 };

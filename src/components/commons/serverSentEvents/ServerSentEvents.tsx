@@ -16,7 +16,6 @@ import {
 } from "../../units/custom/Custom.types";
 
 export default function ServerSentEvents() {
-  console.log("서버 센트 이벤트");
   const router = useRouter();
 
   // 소켓 가져오기
@@ -34,8 +33,8 @@ export default function ServerSentEvents() {
   const [hostId, setHostId] = useState("");
 
   useEffect(() => {
-    console.log("서버 센트 이벤트 유저 아이디", userId);
     if (!userId) return;
+    console.log("서버 센트 이벤트 유저 아이디", userId);
     const eventSourceInvite = new EventSource(
       // `http://localhost:3000/social/invite/${userId}`
       `https://injungle.shop/api/social/invite/${userId}`
@@ -85,7 +84,6 @@ export default function ServerSentEvents() {
         },
       },
       async (response: { message: string; data: IOnInviteHandlerData[] }) => {
-        console.log("invite 응답", response);
         if (response.message === "full") {
           setGlobalModal((prev) => ({
             ...prev,

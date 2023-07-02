@@ -51,7 +51,6 @@ export default function MyRoomSetting() {
 
   const onClickReplay = () => {
     try {
-      console.log("myId: ", userId);
       router.push({
         pathname: `/replay/${userId}`,
       });
@@ -77,7 +76,6 @@ export default function MyRoomSetting() {
       // 로그아웃 후 초기화면으로 이동
       setKakaoUserResponse(null);
       setGoogleUserResponse(null);
-      console.log("로그아웃 성공");
       router.push("/");
     } catch (error) {
       // 로그아웃 실패 시 에러메시지 출력

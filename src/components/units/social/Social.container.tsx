@@ -44,7 +44,6 @@ export default function Social() {
 
   const onClickReplay = (friendId: string) => () => {
     try {
-      console.log("replay friendId: ", friendId);
       router.push({
         pathname: `/replay/${friendId}`,
       });

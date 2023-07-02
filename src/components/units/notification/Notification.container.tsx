@@ -100,13 +100,9 @@ export default function Notification() {
     setSenderName(sender);
     setSenderId(friendId);
     setIsCheckClicked(true);
-    console.log("sender nickname: ", sender);
-    console.log("senderId: ", friendId);
   };
 
   const onClickAccept = async () => {
-    console.log("userId: ", userId);
-    console.log("senderId: ", senderId);
     await addFriendMutation({
       variables: {
         addFriendDto: {
@@ -116,7 +112,6 @@ export default function Notification() {
       },
     });
 
-    console.log("senderId: ", senderId);
     await deleteNotificationMutation({
       variables: {
         notificationDto: {
@@ -133,8 +128,6 @@ export default function Notification() {
   const onClickDeny = async () => {
     setIsCheckClicked(false);
 
-    console.log("userId: ", userId);
-    console.log("senderId: ", senderId);
     await deleteNotificationMutation({
       variables: {
         notificationDto: {
