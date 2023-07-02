@@ -31,6 +31,7 @@ export default function Sound(props: ISoundProps) {
   const [isKeyDown, setKeyDown] = useState(false);
   const [isFrozen, setFrozen] = useState(false);
   const [isMute, setMute] = useState(false);
+  const [isSuper, setIsSuper] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodes = useRef<GainNode[]>([]);
   const sources = useRef<AudioBufferSourceNode[]>([]);
@@ -69,6 +70,8 @@ export default function Sound(props: ISoundProps) {
     else setFrozen(false);
     if (props.appliedItems.includes("mute")) setMute(true);
     else setMute(false);
+    if (props.appliedItems.includes("super")) setIsSuper(true);
+    else setIsSuper(false);
   }, [props.appliedItems]);
 
   useEffect(() => {
@@ -342,6 +345,7 @@ export default function Sound(props: ISoundProps) {
         isKeyDown={isKeyDown}
         isFrozen={isFrozen}
         isMute={isMute}
+        isSuper={isSuper}
         setDecibel={props.setDecibel}
         sources={sources}
         setIsLoadComplete={props.setIsLoadComplete}

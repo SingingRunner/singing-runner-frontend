@@ -12,9 +12,16 @@ export default function ManualPage() {
       <Header text="아이템 설명" />
       <Wrapper>
         <Item>
+          <img src="/game/item/super.png" />
+          <TextWrapper>
+            <p>캐릭터가 강력해집니다.</p>
+            <p>공격을 무시하고 속도가 빨라집니다.</p>
+          </TextWrapper>
+        </Item>
+        <Item>
           <img src="/game/item/frozen.png" />
           <TextWrapper>
-            <p>캐릭터가 눈사람으로 변해버립니다.</p>
+            <p>캐릭터가 눈사람으로 변해버려 속도가 느려집니다.</p>
             <p>눈사람을 두드려서 탈출하세요!</p>
           </TextWrapper>
         </Item>

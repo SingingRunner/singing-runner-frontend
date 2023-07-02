@@ -95,6 +95,15 @@ export type IKakaoUserResponseDto = {
   kakao_account: IKakaoAccount;
 };
 
+export type IKakaoAccount = {
+  email: Scalars['String']['input'];
+};
+
+export type IKakaoUserResponseDto = {
+  id: Scalars['String']['input'];
+  kakao_account: IKakaoAccount;
+};
+
 export type IMutation = {
   __typename?: 'Mutation';
   addFriend: Scalars['String']['output'];
@@ -140,6 +149,11 @@ export type IMutationInviteFriendArgs = {
 
 export type IMutationLoginUserArgs = {
   userAuthDto: IUserAuthDto;
+};
+
+
+export type IMutationLoginUserWithKakaoArgs = {
+  kakaoUserResponse: IKakaoUserResponseDto;
 };
 
 
@@ -338,6 +352,17 @@ export type IUserKeynoteResponseDto = {
   __typename?: 'UserKeynoteResponseDto';
   userId: Scalars['String']['output'];
   userKeynote: Scalars['Int']['output'];
+};
+
+export type IUserNotification = {
+  __typename?: 'UserNotification';
+  content: Scalars['String']['output'];
+  deletedAt: Scalars['DateTime']['output'];
+  receivedAt: Scalars['DateTime']['output'];
+  sender: IUser;
+  senderId: Scalars['String']['output'];
+  user: IUser;
+  userId: Scalars['String']['output'];
 };
 
 export type IUserRegisterDto = {
