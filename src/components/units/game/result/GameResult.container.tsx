@@ -13,9 +13,6 @@ export default function GameResult() {
   const [gameResult] = useRecoilState(gameResultState);
 
   const [userId] = useRecoilState(userIdState);
-  // useEffect(() => {
-  //   setUserId(localStorage.getItem("userId") || "");
-  // }, []);
 
   const [currentUserResult, setCurrentUserResult] = useState({
     mmrDiff: 0,
