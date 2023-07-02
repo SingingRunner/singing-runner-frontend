@@ -201,6 +201,12 @@ export default function Game(props: IGameProps) {
       setIsTerminated(true);
       resetRoomInfoState();
     });
+
+    return () => {
+      socket?.off("use_item");
+      socket?.off("escape_item");
+      socket?.off("game_terminated");
+    };
   }, [socket]);
 
   useEffect(() => {

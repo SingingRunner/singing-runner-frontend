@@ -77,6 +77,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       socket?.on("game_ready", gameReady);
     }
     socket?.on("score", scoreListener);
+
+    return () => {
+      socket?.off("start_replay", gameReady);
+      socket?.off("game_ready", gameReady);
+      socket?.off("score", scoreListener);
+    };
   }, [socket]);
 
   const gameReady = () => {
