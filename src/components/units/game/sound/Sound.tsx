@@ -267,16 +267,15 @@ export default function Sound(props: ISoundProps) {
         keyDown = gameSong.songMaleDown;
         break;
       default:
-        keyOrigin =
-          gameSong.songGender === 0 ? gameSong.songMale : gameSong.songFemale;
-        keyUp =
-          gameSong.songGender === 0
-            ? gameSong.songMaleUp
-            : gameSong.songFemaleUp;
-        keyDown =
-          gameSong.songGender === 0
-            ? gameSong.songMaleDown
-            : gameSong.songFemaleDown;
+        keyOrigin = !gameSong.songGender
+          ? gameSong.songMale
+          : gameSong.songFemale;
+        keyUp = !gameSong.songGender
+          ? gameSong.songMaleUp
+          : gameSong.songFemaleUp;
+        keyDown = !gameSong.songGender
+          ? gameSong.songMaleDown
+          : gameSong.songFemaleDown;
         break;
     }
     return [keyOrigin, keyUp, keyDown];
@@ -302,16 +301,15 @@ export default function Sound(props: ISoundProps) {
         answerDown = gameSong.vocalMaleDown;
         break;
       default:
-        answerOrigin =
-          gameSong.songGender === 0 ? gameSong.vocalMale : gameSong.vocalFemale;
-        answerUp =
-          gameSong.songGender === 0
-            ? gameSong.vocalMaleUp
-            : gameSong.vocalFemaleUp;
-        answerDown =
-          gameSong.songGender === 0
-            ? gameSong.vocalMaleDown
-            : gameSong.vocalFemaleDown;
+        answerOrigin = !gameSong.songGender
+          ? gameSong.vocalMale
+          : gameSong.vocalFemale;
+        answerUp = !gameSong.songGender
+          ? gameSong.vocalMaleUp
+          : gameSong.vocalFemaleUp;
+        answerDown = !gameSong.songGender
+          ? gameSong.vocalMaleDown
+          : gameSong.vocalFemaleDown;
         break;
     }
     return [answerOrigin, answerUp, answerDown];
