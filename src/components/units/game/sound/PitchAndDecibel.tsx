@@ -38,8 +38,8 @@ const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   if (diff >= 3 && diff < 5) return 90;
   if (diff >= 5 && diff < 9) return 70;
   if (diff >= 9 && diff < 14) return 60;
-  if (diff >= 14 && diff < 20) return 40;
-  else return 30;
+  if (diff >= 14 && diff < 20) return 55;
+  else return 50;
 };
 
 export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
