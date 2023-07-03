@@ -31,7 +31,7 @@ jobs:
       - name: Build Docker image
         run: |
           version=${{ steps.extract-version.outputs.version }}
-          docker build --build-arg NEXT_PUBLIC_KAKAO_API_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_API_KEY }} --build-arg NEXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_API_KEY }} --build-arg NEXT_PUBLIC_APPKEY=${{ secrets.NEXT_PUBLIC_APPKEY }} -t singing-runner-frontend:$version .
+          docker build --build-arg NEXT_PUBLIC_GOOGLE_REDIRECT_URL=${{ secrets.NEXT_PUBLIC_GOOGLE_REDIRECT_URL }} --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET }} --build-arg NEXT_PUBLIC_KAKAO_API_KEY=${{ secrets.NEXT_PUBLIC_KAKAO_API_KEY }} --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }} --build-arg NEXT_PUBLIC_APPKEY=${{ secrets.NEXT_PUBLIC_APPKEY }} -t singing-runner-frontend:$version .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
