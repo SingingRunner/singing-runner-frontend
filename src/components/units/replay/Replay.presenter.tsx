@@ -147,7 +147,7 @@ export default function ReplayUI(props: IReplayUIProps) {
                       <S.Date>{props.convertTimeToUnit(elem.createdAt)}</S.Date>
                     </S.SingerDateWrapper>
 
-                    <S.SongTitle>{elem.songTitle}asdfasfasasdf</S.SongTitle>
+                    <S.SongTitle>{elem.songTitle}</S.SongTitle>
                   </S.SongWrapper>
                 </ListItem>
               )
