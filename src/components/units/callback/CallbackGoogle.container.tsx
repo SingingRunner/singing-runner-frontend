@@ -1,15 +1,16 @@
-import { gql, useMutation } from "@apollo/client";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   accessTokenState,
   googleUserResponseState,
   userIdState,
 } from "../../../commons/store";
+import { gql, useMutation } from "@apollo/client";
 
-const LOGIN_USER_WITH_GOOGLE = gql`
-  mutation LoginUserWithGoogle($googleUserResponse: GoogleUserResponseDto!) {
+export const LOGIN_USER_WITH_GOOGLE = gql`
+  mutation loginUserWithGoogle($googleUserResponse: GoogleUserResponseDto!) {
     loginUserWithGoogle(googleUserResponse: $googleUserResponse) {
       accessToken
       user {
@@ -21,66 +22,83 @@ const LOGIN_USER_WITH_GOOGLE = gql`
 
 export default function CallbackGoogle() {
   const router = useRouter();
-  const [loginUserWithGoogle] = useMutation(LOGIN_USER_WITH_GOOGLE);
-  const setAccessToken = useSetRecoilState(accessTokenState);
-  const setUserId = useSetRecoilState(userIdState);
-  const setGoogleUserResponse = useSetRecoilState(googleUserResponseState);
-  const NEXT_PUBLIC_GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+  const [loginWithGoogle] = useMutation(LOGIN_USER_WITH_GOOGLE);
+  const [, setAccessToken] = useRecoilState(accessTokenState);
+  const [, setUserId] = useRecoilState(userIdState);
+  const [, setGoogleUserResponse] = useRecoilState(googleUserResponseState);
 
   useEffect(() => {
-    const scriptTag = document.createElement("script");
-    scriptTag.src = "https://apis.google.com/js/platform.js";
-    scriptTag.async = true;
-    scriptTag.defer = true;
-    scriptTag.onload = () => initGoogleAuth();
-    document.body.appendChild(scriptTag);
-  }, []);
+    const handleGoogleLogin = async () => {
+      const code = new URLSearchParams(window.location.search).get("code");
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+      const clientSecret = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET;
 
-  const initGoogleAuth = () => {
-    gapi.load("client:auth2", async () => {
-      await gapi.auth2
-        .init({
-          client_id: NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        })
-        .then(() => {
-          const auth2 = gapi.auth2.getAuthInstance();
-          const currentUser = auth2.currentUser.get();
+      // 엑세스 토큰 및 사용자 정보 가져오기
+      const response = await axios.post<{
+        access_token: string;
+        id_token: string;
+      }>("https://oauth2.googleapis.com/token", null, {
+        params: {
+          client_id: clientId,
+          clientSecret,
+          redirect_uri: "https://injungle.shop/callback/google", // 배포
+          // redirect_uri: "http://localhost:3001/callback/google", // 로컬
+          scope:
+            "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+          code,
+          grant_type: "authorization_code",
+        },
+      });
+      const { data } = response;
 
-          if (currentUser) {
-            const googleUserResponse = {
-              id_token: currentUser.getAuthResponse().id_token,
-              email: currentUser.getBasicProfile().getEmail(),
-            };
-
-            handleGoogleLogin(googleUserResponse);
-          }
-        });
-    });
-  };
-
-  const handleGoogleLogin = async (response) => {
-    try {
-      const { data: loggedInData } = await loginUserWithGoogle({
-        variables: {
-          googleUserResponse: response,
+      // 엑세스 토큰에서 사용자 ID 가져오기
+      const {
+        data: { sub, email }, // 변수 sub 및 email 추가
+      } = await axios.get<{
+        sub: string;
+        email: string; // email 속성 추가
+      }>("https://www.googleapis.com/oauth2/v3/userinfo", {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
         },
       });
 
-      const accessToken = loggedInData.loginUserWithGoogle.accessToken;
-      const userId = loggedInData.loginUserWithGoogle.user.userId;
+      const googleUserResponse = {
+        googleId: sub, // 구글 사용자 ID
+        google_account: {
+          // 구글 사용자 이메일
+          email,
+        },
+      };
 
-      setAccessToken(accessToken);
-      setUserId(userId);
+      try {
+        // 로그인 API 호출 및 AccessToken, UserId 전역 상태에 저장
+        const result = await loginWithGoogle({
+          variables: {
+            googleUserResponse,
+          },
+        });
+        const {
+          accessToken,
+          user: { userId },
+        } = result.data.loginUserWithGoogle;
 
-      router.push("/main");
-    } catch (error) {
-      console.error("로그인 예외:", error); // 회원 가입 필요 (추후 수정)
+        setAccessToken(accessToken);
+        setUserId(userId);
 
-      setGoogleUserResponse(response);
+        // 로그인 성공한 경우 메인 페이지로 이동
+        router.push("/main");
+      } catch (error) {
+        console.error("로그인 예외:", error);
+        setGoogleUserResponse(googleUserResponse as any);
+        router.push("/nickname");
+      }
+    };
 
-      router.push("/nickname"); // 닉네임 설정 페이지로 이동
+    if (router.query.code) {
+      handleGoogleLogin();
     }
-  };
+  }, [router.query]);
 
   return <div>Loading...</div>;
 }
