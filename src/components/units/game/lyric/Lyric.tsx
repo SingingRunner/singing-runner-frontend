@@ -25,9 +25,17 @@ function Lyric(props: ILyricProps) {
             diff >= endLyric.current &&
             lyricRef.current < props.lyrics.length - 1
           ) {
-            endLyric.current = props.lyrics[lyricRef.current + 1].endTime;
-            setLyricIdx((prev) => prev + 1);
-            lyricRef.current++;
+            if (
+              endLyric.current === props.lyrics[lyricRef.current + 1].endTime
+            ) {
+              endLyric.current = props.lyrics[lyricRef.current + 2].endTime;
+              setLyricIdx((prev) => prev + 2);
+              lyricRef.current += 2;
+            } else {
+              endLyric.current = props.lyrics[lyricRef.current + 1].endTime;
+              setLyricIdx((prev) => prev + 1);
+              lyricRef.current++;
+            }
           }
         }
         requestAnimationFrame(changeLyric);
