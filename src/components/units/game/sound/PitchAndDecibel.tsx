@@ -93,23 +93,22 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
         });
       });
     }
-    const nowTime = performance.now();
-    props.setStartTime(nowTime);
-    const sources = propsRef.current.sources;
-    sources.current.forEach((source) => {
-      source.start();
-    });
-    if (!props.isReplay) {
+    if (props.isReplay) {
+      const nowTime = performance.now();
+      props.setStartTime(nowTime);
+      const sources = propsRef.current.sources;
+      sources.current.forEach((source) => {
+        source.start();
+      });
+    } else {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(handleAudioStream)
         .catch((error) => {
           console.error("Error accessing microphone:", error);
         });
-      props.setIsLoadComplete(true);
-    } else {
-      props.setIsLoadComplete(true);
     }
+    props.setIsLoadComplete(true);
   };
 
   const scoreListener = (data: ISocketScore) => {
@@ -181,6 +180,12 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     analyzer.fftSize = 2048;
     mediaStreamSource.connect(analyzer);
     const pitchWorker = new Worker("/game/sound/calculatePitchWorker.js");
+    const nowTime = performance.now();
+    props.setStartTime(nowTime);
+    const sources = propsRef.current.sources;
+    sources.current.forEach((source) => {
+      source.start();
+    });
     mediaRecorder.ondataavailable = (e) => {
       chunks.push(e.data);
     };
