@@ -34,12 +34,11 @@ const calculateDecibel = (value: number): number => {
 const getScoreFromDiff = (answerNote: number, userNote: number): number => {
   const diff = Math.abs(answerNote - userNote);
   if (diff === 0) return 100;
-  if (diff === 1) return 100;
-  if (diff === 2) return 90;
-  if (diff === 3) return 80;
-  if (diff === 4) return 70;
-  if (diff === 5) return 60;
-  if (diff === 6) return 40;
+  if (diff <= 1 && diff > 3) return 100;
+  if (diff <= 3 && diff > 5) return 90;
+  if (diff <= 5 && diff > 9) return 70;
+  if (diff <= 9 && diff > 14) return 60;
+  if (diff <= 14 && diff > 20) return 40;
   else return 30;
 };
 
