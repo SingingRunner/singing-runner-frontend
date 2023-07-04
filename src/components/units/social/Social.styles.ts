@@ -34,7 +34,7 @@ export const SearchIcon = styled.img`
 
 export const InfiniteScrollWrapper = styled.div`
   position: absolute;
-  top: 54px;
+  top: 74px;
   height: calc(100% - 200px);
   width: 100%;
   overflow: auto;
@@ -52,7 +52,7 @@ export const InfiniteScrollWrapper = styled.div`
 export const InputWrapper = styled.div`
   position: fixed;
   width: calc(100% - 32px);
-  top: 60px;
+  top: 80px;
 `;
 
 export const Mmr = styled.div`
