@@ -8,7 +8,7 @@ export default function BeforeClickModes(props: IMainUIProps) {
         <>
           <Button
             buttonType={buttonType.EMPTY}
-            text="배틀 모드"
+            text="랭크 모드"
             isFixedAtBottomSecond
             onClick={props.handleBattleModeClick}
           />

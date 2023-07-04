@@ -65,7 +65,13 @@ export default function SocialUI(props: ISocialUIProps) {
                     >
                       {`"${props.keyword}"`}
                     </p>
-                    <div style={{ color: "white", fontSize: "24px", marginBottom: "4px" }}>
+                    <div
+                      style={{
+                        color: "white",
+                        fontSize: "24px",
+                        marginBottom: "4px",
+                      }}
+                    >
                       해당 키워드와 일치하는
                     </div>
                     <div

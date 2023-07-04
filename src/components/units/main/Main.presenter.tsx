@@ -54,7 +54,7 @@ export default function MainUI(props: IMainUIProps) {
       {!props.isBattleClicked && <BeforeClickModes {...props} />}
       {/* 1. START 클릭 후 모드 선택 화면 */}
       {props.isBattleClicked && <AfterClickBattle {...props} />}
-      {/* 2. 배틀 모드 클릭 후 화면 */}
+      {/* 2. 랭크 모드 클릭 후 화면 */}
       {props.showModal && <MatchingModal {...props} />}
       {/* 3. 매칭 모달 */}
       {props.showWaiting && <WaitingModal {...props} />}
