@@ -92,8 +92,6 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
           track.stop();
         });
       });
-    }
-    if (props.isReplay) {
       const nowTime = performance.now();
       props.setStartTime(nowTime);
       const sources = propsRef.current.sources;
@@ -148,6 +146,8 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     } else {
       score = getScoreFromDiff(answer[idx], noteValue);
     }
+
+    score = Math.min(score, 100 * (currentIdx + 1 - ignoreCount) - totalScore);
 
     if (answer[idx] === 0) {
       ignoreCount++;
@@ -282,7 +282,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       return cb;
     };
 
-    processAudio(processAudioCb(15));
+    processAudio(processAudioCb(30));
   };
 
   return null;
