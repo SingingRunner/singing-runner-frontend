@@ -284,8 +284,9 @@ export default function Game(props: IGameProps) {
     if (preventEvent) return;
     console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
-      setIsMuteActive(false);
-      setDecibel(0);
+      offItem("mute");
+      // setIsMuteActive(false);
+      // setDecibel(0);
       socket?.emit("escape_item", { item: "mute", userId });
     }
   };
