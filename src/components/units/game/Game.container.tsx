@@ -19,7 +19,7 @@ import { UPLOAD_FILE } from "./Game.queries";
 import { ILyric } from "./lyric/Lyric.types";
 
 /** mute 아이템을 해제시키는 데시벨 크기 */
-export const UNMUTE_DECIBEL = -68;
+export const UNMUTE_DECIBEL = -73;
 
 export default function Game(props: IGameProps) {
   const [userId] = useRecoilState(userIdState);
@@ -281,8 +281,8 @@ export default function Game(props: IGameProps) {
 
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
-    console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
     if (preventEvent) return;
+    console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       setIsMuteActive(false);
       setDecibel(0);
