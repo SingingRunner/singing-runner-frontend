@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
 
 export const globalStyles = css`
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+
   * {
     margin: 0;
     box-sizing: border-box;
