@@ -24,8 +24,9 @@ export default function Custom() {
   useCustomRoomInfo();
 
   const onClickExit = () => {
-    socket?.emit("leave_room", userId);
-    socketDisconnect();
+    socket?.emit("leave_room", userId, () => {
+      socketDisconnect();
+    });
     resetRoomInfo();
     router.push("/main");
   };
