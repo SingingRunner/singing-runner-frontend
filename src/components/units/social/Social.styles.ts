@@ -35,7 +35,7 @@ export const SearchIcon = styled.img`
 export const InfiniteScrollWrapper = styled.div`
   position: absolute;
   top: 74px;
-  height: calc(100% - 200px);
+  height: calc(100% - 210px);
   width: 100%;
   overflow: auto;
 
