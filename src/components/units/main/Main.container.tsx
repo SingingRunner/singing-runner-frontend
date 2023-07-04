@@ -109,7 +109,7 @@ const Main = () => {
   };
 
   const handleBattleModeClick = () => {
-    setIsBattleClicked(true); // => 배틀 모드 버튼 누른 상태로
+    setIsBattleClicked(true); // => 랭크 모드 버튼 누른 상태로
     // 소켓 연결
     const newSocket = socketConnect(userId);
     // 소켓 연결 => 유저 정보 보내기
@@ -171,7 +171,7 @@ const Main = () => {
   const handleMatchCancel = () => {
     socket?.emit("match_making", { UserMatchDto, accept: false }); // 매칭 취소 백엔드에 알림
     socketDisconnect();
-    setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
+    setIsBattleClicked(false); // 랭크 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
   };
 
@@ -189,7 +189,7 @@ const Main = () => {
     socket?.emit("accept", { accept: false, userId });
     socketDisconnect();
     setShowModal(false); // 모달 끄기
-    setIsBattleClicked(false); // 배틀 모드 버튼 누르지 않은 상태로 변경
+    setIsBattleClicked(false); // 랭크 모드 버튼 누르지 않은 상태로 변경
     setTimer(0); // 타이머 0으로 초기화
     setIsAccepted(false);
     setIsRejected(true);

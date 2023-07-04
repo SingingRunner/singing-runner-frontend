@@ -68,7 +68,7 @@ export default function Modal(props: IModalProps) {
             />
           )}
           {props.singer ? (
-            // 배틀 모드 매칭 완료 모달인 경우
+            // 랭크 모드 매칭 완료 모달인 경우
             <S.Text>
               <p>{props.firstText ?? `매칭이 완료되었습니다.`}</p>
               <S.SongWrapper>

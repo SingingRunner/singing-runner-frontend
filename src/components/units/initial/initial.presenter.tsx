@@ -1,5 +1,3 @@
-// components/InitialUI.tsx
-
 import * as S from "./initial.styles";
 import { IInitialUIProps } from "./initial.types";
 import Button, { buttonType } from "../../commons/button/Button";
@@ -7,25 +5,22 @@ import Button, { buttonType } from "../../commons/button/Button";
 function InitialUI(props: IInitialUIProps) {
   return (
     <>
-      <S.container>
+      <S.Container>
         <S.LogoWrapper>
           <S.ImageLogo src="/images/game_logo.png" alt="logo" />
         </S.LogoWrapper>
-        <div style={{ display: "flex", position: "fixed", bottom: "124px" }}>
-          <img
-            src="/button/kakao_login.png"
-            style={{
-              width: "60px",
-              height: "auto",
-              marginRight: "20px",
-            }}
-            onClick={props.handleKakaoLogin}
-            alt="Kakao login"
-          ></img>
+        <S.SocialWrapper>
+          <S.KakaoLoginButton onClick={props.handleKakaoLogin}>
+            <S.KakaoLogo src="/logo/kakao.png"></S.KakaoLogo>
+            <S.KakaoText>카카오 로그인</S.KakaoText>
+          </S.KakaoLoginButton>
+          <S.GoogleLoginButton onClick={props.handleGoogleLogin}>
+            <S.GoogleLogo src="/logo/google.png"></S.GoogleLogo>
+            <S.GoogleText>구글 로그인</S.GoogleText>
+          </S.GoogleLoginButton>
+        </S.SocialWrapper>
+      </S.Container>
 
-          <button onClick={props.handleGoogleLogin}>구글 로그인</button>
-        </div>
-      </S.container>
       <Button
         buttonType={buttonType.GRADATION}
         text="로그인"
