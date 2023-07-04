@@ -19,6 +19,23 @@ export const ImageLogo = styled.img`
   left: 50%;
   transform: translate(-50%, -50%);
   top: 0px;
-  width: 300px; /* Set the desired width */
-  height: auto; /* Adjust the height proportionally */
+  width: 300px;
+  height: auto;
+`;
+
+export const SocialWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 128px;
+`;
+
+export const KakaoIcon = styled.img`
+  width: calc(50% - 24px);
+  margin-right: 12px;
+`;
+
+export const GoogleIcon = styled.img`
+  width: calc(50% - 21px);
 `;
