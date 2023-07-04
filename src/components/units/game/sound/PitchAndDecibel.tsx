@@ -282,7 +282,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
       return cb;
     };
 
-    processAudio(processAudioCb(15));
+    processAudio(processAudioCb(30));
   };
 
   return null;
