@@ -39,7 +39,7 @@ export const SocialWrapper = styled.div`
   bottom: 126px;
 `;
 
-export const KakaoLoginButton = styled.div`
+export const KakaoLoginButton = styled.button`
   display: flex;
   align-items: center;
   background-color: #fee500;
@@ -51,6 +51,7 @@ export const KakaoLoginButton = styled.div`
   padding-right: 12px;
   --logo-text-gap: 32px;
   margin-right: 8px;
+  cursor: pointer;
 `;
 
 export const KakaoLogo = styled.img`
@@ -69,7 +70,7 @@ export const KakaoText = styled.div`
   justify-content: center;
 `;
 
-export const GoogleLoginButton = styled.div`
+export const GoogleLoginButton = styled.button`
   display: flex;
   align-items: center;
   background-color: #ffffff;
@@ -80,6 +81,10 @@ export const GoogleLoginButton = styled.div`
   padding-left: 10px;
   padding-right: 10px;
   --logo-text-gap: 30px;
+  cursor: pointer;
+  &:hover {
+    background: #eeeeee;
+  }
 `;
 
 export const GoogleLogo = styled.img`
