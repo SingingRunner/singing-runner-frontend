@@ -52,6 +52,7 @@ export const KakaoLoginButton = styled.button`
   --logo-text-gap: 32px;
   margin-right: 8px;
   cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 `;
 
 export const KakaoLogo = styled.img`
@@ -68,6 +69,7 @@ export const KakaoText = styled.div`
   )}
   display: flex;
   justify-content: center;
+  color: black;
 `;
 
 export const GoogleLoginButton = styled.button`
@@ -82,9 +84,11 @@ export const GoogleLoginButton = styled.button`
   padding-right: 10px;
   --logo-text-gap: 30px;
   cursor: pointer;
-  &:hover {
-    background: #eeeeee;
+  &:hover,
+  &:focus {
+    background-color: #eeeeee;
   }
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 `;
 
 export const GoogleLogo = styled.img`
@@ -97,4 +101,5 @@ export const GoogleText = styled.div`
   ${fontStyle("Roboto", 500, "14px")}
   display: flex;
   justify-content: center;
+  color: black;
 `;
