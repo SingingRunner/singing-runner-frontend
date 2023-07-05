@@ -297,9 +297,6 @@ export default function Game(props: IGameProps) {
 
   return (
     <>
-      <div style={{ position: "fixed", color: "#fff", fontSize: "20px" }}>
-        현재 데시벨: {decibel}
-      </div>
       <GameUI
         playerId={props.playerId}
         preventEvent={preventEvent}
