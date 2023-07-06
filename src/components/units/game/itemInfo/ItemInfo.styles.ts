@@ -1,6 +1,6 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
-export const ITEM_DURATION = 7000; // 아이템 지속 시간
+export const ITEM_DURATION = 10000; // 아이템 지속 시간
 
 // 아이템 효과를 서서히 나타나게 하기 위한 애니메이션
 const fadeIn = keyframes`
