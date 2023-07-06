@@ -10,6 +10,7 @@ import { gsap } from "gsap";
 import { useRouter } from "next/router";
 import Button, { buttonType } from "../../../commons/button/Button";
 import { IPlayersInfo } from "../Game.types";
+import { ITEM_DURATION } from "../itemInfo/ItemInfo.styles";
 
 declare global {
   interface Window {
@@ -271,7 +272,7 @@ export default function Graphic(props: IGrapicProps) {
 
     // roll 액션으로 변경
     onRollAction(position);
-    await sleep(4000); // 4초 대기
+    await sleep(ITEM_DURATION - 3000); // ITEM_DURATION - 3초 대기
 
     // 크기 축소
     shrinkPlayer(position);
