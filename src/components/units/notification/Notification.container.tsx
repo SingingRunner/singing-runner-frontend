@@ -14,7 +14,9 @@ import {
   DELETE_NOTIFICATION,
   GET_NOTIFICATION,
 } from "./Notification.queries";
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko";
 
 export default function Notification() {
   const router = useRouter();
@@ -56,13 +58,16 @@ export default function Notification() {
         }
         return {
           getNotification: [
-            ...prev.getNotification,
-            ...fetchMoreResult.getNotification,
+            ...(prev.getNotification || []),
+            ...(fetchMoreResult.getNotification || []),
           ],
         };
       },
     });
   };
+
+  dayjs.locale("ko"); // 언어를 한국어로 설정
+  dayjs.extend(relativeTime); // 플러그인 활성화
 
   // 시간 단위로 변환하는 함수
   const convertTimeToUnit = (receivedAt: string) => {
@@ -70,30 +75,7 @@ export default function Notification() {
       return "알 수 없음";
     }
 
-    const receivedAtDate = moment(receivedAt).toDate();
-    const now = new Date();
-    const diffInSeconds = Math.floor(
-      (now.valueOf() - receivedAtDate.valueOf()) / 1000
-    ); // 초 단위 차이 계산
-
-    if (diffInSeconds < 60) {
-      return `${diffInSeconds}초 전`;
-    } else if (diffInSeconds < 60 * 60) {
-      const minutes = Math.floor(diffInSeconds / 60);
-      return `${minutes}분 전`;
-    } else if (diffInSeconds < 60 * 60 * 24) {
-      const hours = Math.floor(diffInSeconds / (60 * 60));
-      return `${hours}시간 전`;
-    } else if (diffInSeconds < 60 * 60 * 24 * 30) {
-      const days = Math.floor(diffInSeconds / (60 * 60 * 24));
-      return `${days}일 전`;
-    } else if (diffInSeconds < 60 * 60 * 24 * 365) {
-      const months = Math.floor(diffInSeconds / (60 * 60 * 24 * 30));
-      return `${months}달 전`;
-    } else {
-      const years = Math.floor(diffInSeconds / (60 * 60 * 24 * 365));
-      return `${years}년 전`;
-    }
+    return dayjs().to(dayjs(receivedAt));
   };
 
   const onClickCheck = (friendId: string, sender: string) => () => {
