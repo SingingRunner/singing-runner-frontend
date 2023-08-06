@@ -13,7 +13,7 @@ export const getAccessToken = async (): Promise<string | undefined> => {
   try {
     // const graphQLClient = new GraphQLClient( "http://localhost:3000/graphql", // 로컬 테스트용
     const graphQLClient = new GraphQLClient(
-      "https://injungle.shop/api/graphql", // 서버 테스트용
+      `https://${window.location.host}/api/graphql`, // 서버 테스트용
       { credentials: "include" }
     );
     const result = await graphQLClient.request<

@@ -41,7 +41,7 @@ export default function CallbackKakao() {
           params: {
             grant_type: "authorization_code",
             client_id: kakaoApiKey,
-            redirect_uri: "https://injungle.shop/callback/kakao", // 배포용
+            redirect_uri: `https://${window.location.host}/callback/kakao`, // 배포용
             // redirect_uri: "http://localhost:3001/callback/kakao", // 로컬용
             code,
           },

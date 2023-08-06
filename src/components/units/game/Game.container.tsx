@@ -282,7 +282,6 @@ export default function Game(props: IGameProps) {
   /** 데시벨을 측정하는 함수 */
   const checkDecibel = () => {
     if (preventEvent) return;
-    console.log("현재 데시벨: ", decibel, UNMUTE_DECIBEL, "넘어야 함");
     if (isMuteActive && decibel !== 0 && decibel > UNMUTE_DECIBEL) {
       offItem("mute");
       // setIsMuteActive(false);

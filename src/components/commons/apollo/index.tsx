@@ -6,7 +6,7 @@ import {
   fromPromise,
 } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValueLoadable } from "recoil";
 import {
   accessTokenState,
@@ -23,6 +23,7 @@ interface IApolloSettingProps {
 
 export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const [hostUrl, setHostUrl] = useState("");
   const refreshLoadable = useRecoilValueLoadable(refreshAccessTokenLoadable);
 
   // 프리렌더링 무시
@@ -30,6 +31,7 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
     void refreshLoadable.toPromise().then((newAccessToken) => {
       setAccessToken(newAccessToken ?? "");
     });
+    setHostUrl(window.location.host);
   }, []);
 
   const errorLink = onError(({ graphQLErrors, operation, forward }) => {
@@ -58,7 +60,7 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
 
   const uploadLink = createUploadLink({
     // uri: "http://localhost:3000/graphql", // 로컬 테스트용
-    uri: "https://injungle.shop/api/graphql", // 배포용
+    uri: `https://${hostUrl}/api/graphql`, // 배포용
     headers: { Authorization: `Bearer ${accessToken}` },
     credentials: "include",
     withCredentials: true,
