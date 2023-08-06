@@ -34,7 +34,7 @@ export default function GameResult() {
   socketDisconnect();
 
   useEffect(() => {
-    const audio = new Audio("/sound/effect/game_reseult.mp3");
+    const audio = new Audio("/sound/effect/game_result.mp3");
     audio.play();
   }, []);
 
