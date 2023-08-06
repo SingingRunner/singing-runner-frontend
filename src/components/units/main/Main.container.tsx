@@ -52,13 +52,10 @@ const Main = () => {
   };
   useEffect(() => {
     socket?.on("accept", (isMatched: boolean) => {
-      console.log("🚨 on 'accept'", isMatched);
       if (isMatched) {
-        console.log("accept true received");
         handleChangeAddress(); // 인게임 화면으로 전환
       } else {
         // 거절하는 사람 있으면 다시 게임 찾는 중 화면으로 보내기
-        console.log("🚨 거절하기 한 유저가 있음");
         setShowWaiting(false);
         setShowModal(false);
       }
@@ -83,7 +80,6 @@ const Main = () => {
   useEffect(() => {
     if (socket && isAccepted) {
       // 수락 누른 경우
-      console.log("accept true sended to server");
       socket.emit("accept", { accept: true, userId });
       setIsAccepted(false);
       // => 대기 화면으로 이동
@@ -186,7 +182,6 @@ const Main = () => {
   };
 
   const handleMatchDecline = () => {
-    console.log("🚨 매칭 거절함!");
     // 매칭 거절 버튼 눌렀을 때 작동
     socket?.emit("accept", { accept: false, userId }, () => {
       socketDisconnect();

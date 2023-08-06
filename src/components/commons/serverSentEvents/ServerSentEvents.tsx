@@ -34,19 +34,17 @@ export default function ServerSentEvents() {
 
   useEffect(() => {
     if (!userId) return;
-    console.log("서버 센트 이벤트 유저 아이디", userId);
     const eventSourceInvite = new EventSource(
       // `http://localhost:3000/social/invite/${userId}`
-      `https://injungle.shop/api/social/invite/${userId}`
+      `https://${window.location.host}/api/social/invite/${userId}`
     );
     const eventSourceNoti = new EventSource(
       // `http://localhost:3000/social/notification/${userId}`
-      `https://injungle.shop/api/social/notification/${userId}`
+      `https://${window.location.host}/api/social/notification/${userId}`
     );
 
     eventSourceInvite.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log("🙂 서버 센트 이벤트 응답 (초대): ", parsedData);
       if (parsedData.host.userId) {
         setHostId(parsedData.host.userId);
         setHostNickname(parsedData.host.nickname);
@@ -57,7 +55,6 @@ export default function ServerSentEvents() {
     };
     eventSourceNoti.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
-      console.log("🙂 서버 센트 이벤트 (초대 왔다): ", parsedData);
       if (parsedData.alarm) setIsNotification(true);
       else setIsNotification(false);
     };

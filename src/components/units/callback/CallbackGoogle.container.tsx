@@ -41,7 +41,7 @@ export default function CallbackGoogle() {
         params: {
           client_id: clientId,
           clientSecret,
-          redirect_uri: "https://injungle.shop/callback/google", // 배포
+          redirect_uri: `https://${window.location.host}/callback/google`, // 배포
           // redirect_uri: "http://localhost:3001/callback/google", // 로컬
           scope:
             "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
