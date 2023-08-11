@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { S3_PATH } from "../src/commons/constants/Constants";
 
 const nonModelFiles = [
-  `${S3_PATH}/game/floor/neon.png`,
+  `/game/floor/neon.webp`,
   `${S3_PATH}/game/item/effect/frozen.png`,
   `${S3_PATH}/game/item/effect/keyDown.png`,
   `${S3_PATH}/game/item/effect/keyUp.png`,
