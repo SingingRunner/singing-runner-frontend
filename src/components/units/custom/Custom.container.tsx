@@ -1,8 +1,12 @@
 import { useRouter } from "next/router";
 import CustomUI from "./Custom.presenter";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState } from "recoil";
-import { roomInfoState, userIdState } from "../../../commons/store";
+import {
+  globalModalState,
+  roomInfoState,
+  userIdState,
+} from "../../../commons/store";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useCustomRoomInfo } from "../../../commons/hooks/useCustomRoomInfo";
 
@@ -20,6 +24,23 @@ export default function Custom() {
   const [isSongModalOpen, setIsSongModalOpen] = useState(false);
   const [isPrevModalOpen, setIsPrevModalOpen] = useState(false);
   const [isNotHostModalOpen, setIsNotHostModalOpen] = useState(false);
+
+  const [, setGlobalModal] = useRecoilState(globalModalState);
+
+  useEffect(() => {
+    // 방장인 경우 유저 정보 로드에 실패하면 퇴장 처리
+    if (!roomInfo.hostId) {
+      setGlobalModal((prev) => ({
+        ...prev,
+        isOpen: true,
+        firstText: "방 생성에 실패했습니다. 다시 시도해주세요.",
+        buttonText: "확인",
+        onClickRight: () => {
+          onClickExit();
+        },
+      }));
+    }
+  }, []);
 
   useCustomRoomInfo();
 
