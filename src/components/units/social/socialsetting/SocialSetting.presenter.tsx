@@ -9,6 +9,7 @@ import * as S from "../Social.styles";
 import Label from "../../../commons/label/Label";
 import Header from "../../../commons/layout/header/Header";
 import Modal from "../../../commons/modal/Modal";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 export default function SocialSettingUI(props: ISocialSettingUIProps) {
   return (
@@ -16,7 +17,7 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
       <Header text="친구 관리" onClickPrev={props.onClickExit} />
       <S.Container>
         <S.InputWrapper>
-          <S.SearchIcon src="/icon/search-purple.png" />
+          <S.SearchIcon src={`${S3_PATH}/icon/search-purple.png`} />
           <Input
             inputType={inputType.SEARCH}
             type="text"
@@ -48,35 +49,41 @@ export default function SocialSettingUI(props: ISocialSettingUIProps) {
                   )}
                 {props.keyword && !props.data?.searchFriend.length && (
                   <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <p
                     style={{
-                      color: "#fe259b",
-                      fontSize: "24px",
-                      marginBottom: "20px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    {`"${props.keyword}"`}
-                  </p>
-                  <div style={{ color: "white", fontSize: "24px", marginBottom: "4px" }}>
-                    해당 키워드와 일치하는
+                    <p
+                      style={{
+                        color: "#fe259b",
+                        fontSize: "24px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      {`"${props.keyword}"`}
+                    </p>
+                    <div
+                      style={{
+                        color: "white",
+                        fontSize: "24px",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      해당 키워드와 일치하는
+                    </div>
+                    <div
+                      style={{
+                        color: "white",
+                        marginBottom: "150px",
+                        fontSize: "24px",
+                      }}
+                    >
+                      검색 결과가 없습니다.
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      color: "white",
-                      marginBottom: "150px",
-                      fontSize: "24px",
-                    }}
-                  >
-                    검색 결과가 없습니다.
-                  </div>
-                </div>
                 )}
               </>
             )}

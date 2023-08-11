@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as S from "./Modal.styles";
 import { useRouter } from "next/router";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export interface IModalProps {
   /* 아이콘 */
@@ -27,7 +28,7 @@ export default function Modal(props: IModalProps) {
 
   // 소리 재생 함수
   const playSound = () => {
-    const audio = new Audio("/sound/effect/disabled_button.mp3");
+    const audio = new Audio(`${S3_PATH}/sound/effect/disabled_button.mp3`);
     audio.play();
   };
 
@@ -64,7 +65,11 @@ export default function Modal(props: IModalProps) {
             <S.Count>{count}</S.Count>
           ) : (
             <img
-              src={props.isCheck ? "/icon/check.png" : "/icon/warning.png"}
+              src={
+                props.isCheck
+                  ? `${S3_PATH}/icon/check.png`
+                  : `${S3_PATH}/icon/warning.png`
+              }
             />
           )}
           {props.singer ? (

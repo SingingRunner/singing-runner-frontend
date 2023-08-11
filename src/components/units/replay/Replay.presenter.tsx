@@ -6,6 +6,7 @@ import { useState } from "react";
 import Label from "../../commons/label/Label";
 import Header from "../../commons/layout/header/Header";
 import * as S from "./Replay.styles";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function ReplayUI(props: IReplayUIProps) {
   const [isSettingMode, setIsSettingMode] = useState(false);
@@ -26,7 +27,7 @@ export default function ReplayUI(props: IReplayUIProps) {
               top: "8px",
               right: "8px",
             }}
-            src="/icon/setting.png"
+            src={`${S3_PATH}/icon/setting.png`}
           />
         ) : (
           <></>
@@ -35,7 +36,9 @@ export default function ReplayUI(props: IReplayUIProps) {
       {!props.isMyReplay && (
         <S.ProfileWrapper>
           {props.character ? (
-            <S.Profile src={`/game/player/profile/${props.character}.png`} />
+            <S.Profile
+              src={`${S3_PATH}/game/player/profile/${props.character}.png`}
+            />
           ) : (
             <S.PlaceholderProfile />
           )}

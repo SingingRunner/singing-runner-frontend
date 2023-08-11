@@ -1,3 +1,4 @@
+import { S3_PATH } from "../../../../commons/constants/Constants";
 import Button, { buttonType } from "../../../commons/button/Button";
 import * as S from "./Starting.styles";
 import { IStartingUIProps } from "./Starting.types";
@@ -18,18 +19,18 @@ export default function StartingUI(props: IStartingUIProps) {
       <S.Container>
         <S.ImageWrapper>
           <S.ImageVectorLeft
-            src="/icon/arrow.png"
+            src={`${S3_PATH}/icon/arrow.png`}
             alt="previous"
             onClick={props.handlePreviousImage}
           />
           <S.ImageCharacter
-            src={`/game/player/profile/${
+            src={`${S3_PATH}/game/player/profile/${
               props.characters[props.currentImageIndex]
             }.png`}
             alt="character"
           />
           <S.ImageVectorRight
-            src="/icon/arrow.png"
+            src={`${S3_PATH}/icon/arrow.png`}
             alt="next"
             onClick={props.handleNextImage}
           />

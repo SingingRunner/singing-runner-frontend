@@ -10,6 +10,7 @@ import {
   IMutationLoginUserArgs,
 } from "../../../commons/types/generated/types";
 import { LOGIN_USER } from "./Login.queries";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function Login() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function Login() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/disabled_button.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/disabled_button.mp3`);
   }, []);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

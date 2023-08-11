@@ -8,17 +8,21 @@ import { v4 as uuidv4 } from "uuid";
 import * as S from "./Social.styles";
 import Label from "../../commons/label/Label";
 import Header from "../../commons/layout/header/Header";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function SocialUI(props: ISocialUIProps) {
   return (
     <>
       <Header onClickPrev={props.onClickExit} text="친구 목록" />
-      <S.Add src="/icon/friends.png" onClick={props.onClickAdd} />
-      <S.Setting src="/icon/delete-friend.png" onClick={props.onClickSetting} />
+      <S.Add src={`${S3_PATH}/icon/friends.png`} onClick={props.onClickAdd} />
+      <S.Setting
+        src={`${S3_PATH}/icon/delete-friend.png`}
+        onClick={props.onClickSetting}
+      />
 
       <S.Container>
         <S.InputWrapper>
-          <S.SearchIcon src="/icon/search-purple.png" />
+          <S.SearchIcon src={`${S3_PATH}/icon/search-purple.png`} />
           <Input
             inputType={inputType.SEARCH}
             type="text"
@@ -121,7 +125,7 @@ export default function SocialUI(props: ISocialUIProps) {
                       <img
                         onClick={props.onClickReplay(el.userId)}
                         style={{ width: "28px" }}
-                        src="/icon/replay.png"
+                        src={`${S3_PATH}/icon/replay.png`}
                       />
                     </div>
                   }
