@@ -4,6 +4,7 @@ import { IQuery } from "../../../../commons/types/generated/types";
 import { FETCH_USER } from "./Character.queries";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 declare global {
   interface Window {
@@ -72,23 +73,26 @@ export default function Character() {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     canvasRef.current.appendChild(renderer.domElement);
 
-    gltfLoader.load(`/game/player/${data?.fetchUser.character}.glb`, (gltf) => {
-      const player = gltf.scene.children[0];
-      player.scale.set(0.7, 0.7, 0.7);
-      player.position.copy(playerPositions);
-      if (gltf.animations && gltf.animations.length > 0) {
-        const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
-        const action = mixer.clipAction(gltf.animations[6]); // 애니메이션을 재생할 action 생성
-        mixer.timeScale = 0.5;
-        action.play(); // 애니메이션 재생
-        mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
-      }
+    gltfLoader.load(
+      `${S3_PATH}/game/player/${data?.fetchUser.character}.glb`,
+      (gltf) => {
+        const player = gltf.scene.children[0];
+        player.scale.set(0.7, 0.7, 0.7);
+        player.position.copy(playerPositions);
+        if (gltf.animations && gltf.animations.length > 0) {
+          const mixer = new THREE.AnimationMixer(player); // 애니메이션을 재생할 mixer 생성
+          const action = mixer.clipAction(gltf.animations[6]); // 애니메이션을 재생할 action 생성
+          mixer.timeScale = 0.5;
+          action.play(); // 애니메이션 재생
+          mixers.push(mixer); // animate 함수에서 mixer를 update해서 재생해야 하기 때문에 저장해둠
+        }
 
-      player.traverse((child) => {
-        child.castShadow = true; // 그림자 생성
-      });
-      scene.add(player);
-    });
+        player.traverse((child) => {
+          child.castShadow = true; // 그림자 생성
+        });
+        scene.add(player);
+      }
+    );
   }, [data?.fetchUser.character]);
 
   /* animation */

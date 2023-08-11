@@ -8,6 +8,7 @@ import { ICustomUIProps } from "./Custom.types";
 import Label from "../../commons/label/Label";
 import { v4 as uuidv4 } from "uuid";
 import VoiceChat from "./chat/Chat";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function CustomUI(props: ICustomUIProps) {
   const router = useRouter();
@@ -105,7 +106,7 @@ export default function CustomUI(props: ICustomUIProps) {
         ) : (
           <Button onClick={props.onClickSong} buttonType={buttonType.ONECOLOR}>
             <S.SongButtonWrapper>
-              <S.SearchIcon src="/icon/search.png" />
+              <S.SearchIcon src={`${S3_PATH}/icon/search.png`} />
               <S.Song>
                 <S.Singer>{props.roomInfo.singer}</S.Singer>
                 <S.Title>{props.roomInfo.songTitle}</S.Title>

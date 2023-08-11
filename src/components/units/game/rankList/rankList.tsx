@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IPlayersInfo } from "../Game.types";
 import { userIdState } from "../../../../commons/store";
 import { useRecoilState } from "recoil";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 interface IRankListProps {
   playerId?: string;
@@ -40,12 +41,12 @@ export default function RankList(props: IRankListProps) {
               <span>{rank}</span>
               <ProfileCard
                 isCurrentUser={el.userId === playerId}
-                src={`/game/player/profile/${el.character}.png`}
+                src={`${S3_PATH}/game/player/profile/${el.character}.png`}
               />
               {el.activeItem && !props.isTerminated && (
                 <ItemEffect
                   isCurrentUser={el.userId === playerId}
-                  src={`/game/item/effect/${el.activeItem}.png`}
+                  src={`${S3_PATH}/game/item/effect/${el.activeItem}.png`}
                 />
               )}
               <span>{el.score}</span>

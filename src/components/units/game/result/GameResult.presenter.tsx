@@ -7,6 +7,7 @@ import { IGameResultUIProps } from "./GameResult.types";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 export default function GameResultUI(props: IGameResultUIProps) {
   const router = useRouter();
@@ -56,7 +57,9 @@ export default function GameResultUI(props: IGameResultUIProps) {
       <S.TierWrapper>
         <S.OutCircle tier={props.currentUserResult.tier}>
           <S.InCircle tier={props.currentUserResult.tier}>
-            <S.TierIcon src={`/tier/${props.currentUserResult.tier}.png`} />
+            <S.TierIcon
+              src={`${S3_PATH}/tier/${props.currentUserResult.tier}.png`}
+            />
             <S.TierText tier={props.currentUserResult.tier}>
               {props.currentUserResult.tier.toUpperCase()}
             </S.TierText>

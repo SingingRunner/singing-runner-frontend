@@ -6,6 +6,7 @@ import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
 import { IMyRoomUIProps } from "./MyRoom.types";
 import { FETCH_USER, UPDATE_CHARACTER } from "./MyRoom.queries";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 const characters = [
   "beluga",
@@ -64,7 +65,7 @@ export default function MyRoom() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/pop.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/pop.mp3`);
   }, []);
 
   const handleNextImage = () => {

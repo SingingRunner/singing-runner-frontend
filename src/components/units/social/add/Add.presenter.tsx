@@ -9,6 +9,7 @@ import Label from "../../../commons/label/Label";
 import { IAddUIProps } from "./Add.types";
 import Modal from "../../../commons/modal/Modal";
 import Header from "../../../commons/layout/header/Header";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 export default function AddUI(props: IAddUIProps) {
   return (
@@ -16,7 +17,7 @@ export default function AddUI(props: IAddUIProps) {
       <Header text="친구 추가" onClickPrev={props.onClickExit} />
       <S.Container>
         <S.InputWrapper>
-          <S.SearchIcon src="/icon/search-purple.png" />
+          <S.SearchIcon src={`${S3_PATH}/icon/search-purple.png`} />
           <Input
             inputType={inputType.SEARCH}
             type="text"

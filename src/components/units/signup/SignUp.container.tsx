@@ -15,6 +15,7 @@ import {
   IS_NICKNAME_TAKEN,
   REGISTER_USER,
 } from "./SignUp.queries";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -237,7 +238,7 @@ export default function SignUp() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/button.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/button.mp3`);
   }, []);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

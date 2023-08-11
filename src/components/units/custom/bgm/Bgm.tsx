@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 // 메인
 export default function Bgm() {
@@ -8,7 +9,7 @@ export default function Bgm() {
 
   // BGM 설정
   useEffect(() => {
-    const audio = new Audio("/sound/bgm/waiting.mp3");
+    const audio = new Audio(`${S3_PATH}/sound/bgm/waiting.mp3`);
     setBgm(audio);
 
     return () => {

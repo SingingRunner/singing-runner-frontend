@@ -12,6 +12,7 @@ import SocialUI from "./Social.presenter";
 import { ISocialUIProps } from "./Social.types";
 
 import { SEARCH_FRIEND } from "./Social.queries";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function Social() {
   const [userId] = useRecoilState(userIdState);
@@ -145,7 +146,7 @@ export default function Social() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const audio = new Audio("/sound/effect/popup.mp3");
+    const audio = new Audio(`${S3_PATH}/sound/effect/popup.mp3`);
     audioRef.current = audio;
   }, []);
 

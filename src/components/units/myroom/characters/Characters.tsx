@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 declare global {
   interface Window {
@@ -88,7 +89,7 @@ export default function MyroomCharacters(props: { character: string }) {
 
     CHARACTERS.forEach((character, idx) => {
       if (characterObjects[idx]) return;
-      gltfLoader.load(`/game/player/${character}.glb`, (gltf) => {
+      gltfLoader.load(`${S3_PATH}/game/player/${character}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
         player.scale.set(1, 1, 1);
         player.position.copy(playerPositions);

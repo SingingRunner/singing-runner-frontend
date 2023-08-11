@@ -9,13 +9,14 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { isNotificationState } from "../../../commons/store";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function MainUI(props: IMainUIProps) {
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/popup.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/popup.mp3`);
   }, []);
 
   const onClickMenu = (path: string) => {
@@ -30,21 +31,21 @@ export default function MainUI(props: IMainUIProps) {
       </S.LogoWrapper>
       <S.HeaderWrapper>
         <img
-          src="/icon/header/manual.png"
+          src={`${S3_PATH}/icon/header/manual.png`}
           onClick={() => onClickMenu("/main/manual")}
           style={{ width: "40px" }}
         />
         <img
-          src="/icon/header/social.png"
+          src={`${S3_PATH}/icon/header/social.png`}
           onClick={() => onClickMenu("/social")}
         />
         <img
-          src="/icon/header/notification.png"
+          src={`${S3_PATH}/icon/header/notification.png`}
           onClick={() => onClickMenu("/notification")}
         />
         {isNotification && <S.Notification />}
         <img
-          src="/icon/header/myroom.png"
+          src={`${S3_PATH}/icon/header/myroom.png`}
           onClick={() => onClickMenu("/myroom")}
           style={{ width: "40px" }}
         />

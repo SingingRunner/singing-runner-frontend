@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { memo, useEffect, useState, useRef, useContext } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { ILyricProps } from "./Lyric.types";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 function Lyric(props: ILyricProps) {
   // 소켓 가져오기
@@ -104,7 +105,7 @@ function Lyric(props: ILyricProps) {
           onStop={onStop}
           position={position}
         >
-          <Cloud src="/game/item/effect/draggable_cloud.png" />
+          <Cloud src={`${S3_PATH}/game/item/effect/draggable_cloud.png`} />
         </Draggable>
       )}
     </LyricWrapper>

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { useRecoilState } from "recoil";
 import { userIdState } from "../../../../commons/store";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 const ITEM_GET_INTERVAL = 10000; // 아이템 발생 텀
 
@@ -59,7 +60,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
         .map((item, i) => (
           <img
             key={i}
-            src={`/game/item/${item}.png`}
+            src={`${S3_PATH}/game/item/${item}.png`}
             onClick={() => useItem(item)}
           />
         ))}

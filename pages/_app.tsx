@@ -7,34 +7,36 @@ import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 import ApolloSetting from "../src/components/commons/apollo";
 import { useEffect } from "react";
+import { S3_PATH } from "../src/commons/constants/Constants";
 
 const nonModelFiles = [
-  "/game/floor/neon.png",
-  "/game/item/effect/frozen.png",
-  "/game/item/effect/keyDown.png",
-  "/game/item/effect/keyUp.png",
-  "/game/item/effect/mute.png",
-  "/game/item/effect/super.png",
-  "/game/item/effect/small_crash.mp3",
-  "/game/item/cloud.png",
-  "/game/item/frozen.png",
-  "/game/item/keyDown.png",
-  "/game/item/keyUp.png",
-  "/game/item/mute.png",
-  "/game/item/super.png",
+  `${S3_PATH}/game/floor/neon.png`,
+  `${S3_PATH}/game/item/effect/frozen.png`,
+  `${S3_PATH}/game/item/effect/keyDown.png`,
+  `${S3_PATH}/game/item/effect/keyUp.png`,
+  `${S3_PATH}/game/item/effect/mute.png`,
+  `${S3_PATH}/game/item/effect/super.png`,
+  `${S3_PATH}/game/item/effect/draggable_cloud.png`,
+  `${S3_PATH}/game/item/effect/small_crash.mp3`,
+  `${S3_PATH}/game/item/cloud.png`,
+  `${S3_PATH}/game/item/frozen.png`,
+  `${S3_PATH}/game/item/keyDown.png`,
+  `${S3_PATH}/game/item/keyUp.png`,
+  `${S3_PATH}/game/item/mute.png`,
+  `${S3_PATH}/game/item/super.png`,
 ];
 
 const modelFiles = [
-  "/game/player/beluga.glb",
-  "/game/player/husky.glb",
-  "/game/player/puma.glb",
-  "/game/player/hare.glb",
-  "/game/player/lynx.glb",
-  "/game/player/moose.glb",
-  "/game/player/narwhal.glb",
-  "/game/player/puffin.glb",
-  "/game/player/leopard.glb",
-  "/game/player/snowman.glb",
+  `${S3_PATH}/game/player/beluga.glb`,
+  `${S3_PATH}/game/player/husky.glb`,
+  `${S3_PATH}/game/player/puma.glb`,
+  `${S3_PATH}/game/player/hare.glb`,
+  `${S3_PATH}/game/player/lynx.glb`,
+  `${S3_PATH}/game/player/moose.glb`,
+  `${S3_PATH}/game/player/narwhal.glb`,
+  `${S3_PATH}/game/player/puffin.glb`,
+  `${S3_PATH}/game/player/leopard.glb`,
+  `${S3_PATH}/game/player/snowman.glb`,
 ];
 
 function preloadModel(url: string) {

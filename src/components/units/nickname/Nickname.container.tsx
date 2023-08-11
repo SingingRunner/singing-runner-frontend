@@ -14,6 +14,7 @@ import {
   REGISTER_USER_WITH_GOOGLE,
   REGISTER_USER_WITH_KAKAO,
 } from "./Nickname.queries";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function Nickname() {
   const [nickname, setNickname] = useState("");
@@ -158,7 +159,7 @@ export default function Nickname() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/button.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/button.mp3`);
   }, []);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
