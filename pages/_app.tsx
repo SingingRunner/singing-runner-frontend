@@ -104,6 +104,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
                 as={getAsAttribute(file)}
               />
             ))}
+            <link rel="icon" href="/favicon.png" />
           </Head>
           <Layout>
             <Component {...pageProps} />
