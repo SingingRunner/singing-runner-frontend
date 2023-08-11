@@ -6,6 +6,7 @@ import { userIdState } from "../../../../commons/store";
 import StartingUI from "./Starting.presenter";
 import { UPDATE_CHARACTER } from "./Starting.queries";
 import { IStartingUIProps } from "./Starting.types";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 const characters = [
   "beluga",
@@ -44,7 +45,7 @@ export default function Starting() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/pop.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/pop.mp3`);
   }, []);
 
   const handleNextImage = () => {

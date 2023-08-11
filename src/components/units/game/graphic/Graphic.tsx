@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import Button, { buttonType } from "../../../commons/button/Button";
 import { IPlayersInfo } from "../Game.types";
 import { ITEM_DURATION } from "../itemInfo/ItemInfo.styles";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 declare global {
   interface Window {
@@ -108,7 +109,8 @@ export default function Graphic(props: IGrapicProps) {
     /* floor */
     const floorGeometry = new THREE.PlaneGeometry(100, 100);
     const textureLoader = new THREE.TextureLoader();
-    floorTexture = textureLoader.load("/game/floor/neon.png");
+    textureLoader.setCrossOrigin(S3_PATH);
+    floorTexture = textureLoader.load(`${S3_PATH}/game/floor/neon.png`);
     floorTexture.wrapS = THREE.RepeatWrapping;
     floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set(10, 10); // Repeat the texture 10 times in both directions
@@ -132,7 +134,7 @@ export default function Graphic(props: IGrapicProps) {
 
     const characters = props.playersInfo.map((player) => player.character);
     for (let i = 0; i < props.playersInfo.length; i++) {
-      gltfLoader.load(`/game/player/${characters[i]}.glb`, (gltf) => {
+      gltfLoader.load(`${S3_PATH}/game/player/${characters[i]}.glb`, (gltf) => {
         const player = gltf.scene.children[0];
         player.scale.set(0.7, 0.7, 0.7);
         player.position.copy(playerPositions[i]);
@@ -197,7 +199,9 @@ export default function Graphic(props: IGrapicProps) {
 
   const terminateAudioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
-    terminateAudioRef.current = new Audio("/sound/bgm/terminated.mp3");
+    terminateAudioRef.current = new Audio(
+      `${S3_PATH}/sound/bgm/terminated.mp3`
+    );
     return () => {
       // 화면 전환 시 게임 종료 bgm 중지
       terminateAudioRef.current?.pause();
@@ -503,7 +507,7 @@ export default function Graphic(props: IGrapicProps) {
     if (position === "mid" && snowmans.length) return;
     if (position === "right" && snowmansRight.length) return;
     if (position === "left" && snowmansLeft.length) return;
-    gltfLoader.load("/game/player/snowman.glb", (gltf) => {
+    gltfLoader.load(`${S3_PATH}/game/player/snowman.glb`, (gltf) => {
       const snowman = gltf.scene.children[0];
       snowman.scale.set(0.02, 0.02, 0.02);
       snowman.position.copy(players[position].position);
@@ -613,7 +617,7 @@ export default function Graphic(props: IGrapicProps) {
   const soundCounterRef = useRef(0);
   let audio: HTMLAudioElement;
   useEffect(() => {
-    audio = new Audio("/game/item/effect/small_crash.mp3");
+    audio = new Audio(`${S3_PATH}/game/item/effect/small_crash.mp3`);
     audio.onended = () => {
       // 오디오가 끝나면 플래그를 다시 false로 설정하고, 카운터 초기화
       // (세번 클릭까지는 오디오를 다시 재생하지 않음)

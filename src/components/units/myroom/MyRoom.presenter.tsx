@@ -5,13 +5,14 @@ import MyroomCharacters from "./characters/Characters";
 import Header from "../../commons/layout/header/Header";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function MyRoomUI(props: IMyRoomUIProps) {
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/sound/effect/popup.mp3");
+    audioRef.current = new Audio(`${S3_PATH}/sound/effect/popup.mp3`);
   }, []);
 
   const onClickMenu = (path: string) => {
@@ -24,7 +25,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
       <Header onClickPrev={props.onClickComplete} />
       <S.HeaderWrapper>
         <img
-          src="/icon/header/setting.png"
+          src={`${S3_PATH}/icon/header/setting.png`}
           onClick={() => onClickMenu("/myroom/setting")}
         />
       </S.HeaderWrapper>
@@ -32,7 +33,9 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
       <S.Wrapper>
         <S.ProfileWrapper>
           {props.character ? (
-            <S.Profile src={`/game/player/profile/${props.character}.png`} />
+            <S.Profile
+              src={`${S3_PATH}/game/player/profile/${props.character}.png`}
+            />
           ) : (
             <S.PlaceholderProfile />
           )}
@@ -47,7 +50,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
               {props.tier.toUpperCase()}
             </S.LetterTier>
             {props.tier ? (
-              <S.IconTier src={`/tier/${props.tier}.png`} />
+              <S.IconTier src={`${S3_PATH}/tier/${props.tier}.png`} />
             ) : (
               <S.PlaceholderIconTier />
             )}
@@ -58,7 +61,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
       <S.Container>
         <S.ImageWrapper>
           <S.ImageVectorLeft
-            src="/icon/arrow.png"
+            src={`${S3_PATH}/icon/arrow.png`}
             alt="previous"
             onClick={props.handlePreviousImage}
           />
@@ -68,7 +71,7 @@ export default function MyRoomUI(props: IMyRoomUIProps) {
             />
           )}
           <S.ImageVectorRight
-            src="/icon/arrow.png"
+            src={`${S3_PATH}/icon/arrow.png`}
             alt="next"
             onClick={props.handleNextImage}
           />

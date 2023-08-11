@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { useContext, useEffect, useState } from "react";
 import GameResultUI from "./GameResult.presenter";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
+import { S3_PATH } from "../../../../commons/constants/Constants";
 
 export default function GameResult() {
   // 소켓, 소켓 끊는 함수 가져오기
@@ -34,7 +35,7 @@ export default function GameResult() {
   socketDisconnect();
 
   useEffect(() => {
-    const audio = new Audio("/sound/effect/game_result.mp3");
+    const audio = new Audio(`${S3_PATH}/sound/effect/game_result.mp3`);
     audio.play();
   }, []);
 

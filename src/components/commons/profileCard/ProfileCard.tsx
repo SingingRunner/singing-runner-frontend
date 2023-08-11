@@ -7,6 +7,7 @@ import Modal from "../modal/Modal";
 import { IProfileCardProps } from "./ProfileCard.types";
 import { FRIEND_REQUEST } from "./ProfileCard.queries";
 import { v4 as uuidv4 } from "uuid";
+import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function ProfileCard(props: IProfileCardProps) {
   const [userId] = useRecoilState(userIdState);
@@ -42,8 +43,10 @@ export default function ProfileCard(props: IProfileCardProps) {
       )}
       <S.Wrapper style={{ margin: props.margin }}>
         <S.ImgWrapper onClick={onClickAddFriend}>
-          <S.Img src={`/game/player/profile/${props.character}.png`} />
-          {props.add && <S.AddIcon src="/icon/add.png" />}
+          <S.Img
+            src={`${S3_PATH}/game/player/profile/${props.character}.png`}
+          />
+          {props.add && <S.AddIcon src={`${S3_PATH}/icon/add.png`} />}
           {props.online && <S.OnlineIcon />}
           {props.offline && <S.OfflineIcon />}
         </S.ImgWrapper>
@@ -68,7 +71,7 @@ export default function ProfileCard(props: IProfileCardProps) {
         {!props.hilightNickname && props.nickname && (
           <S.NicknameWrapper>{props.nickname}</S.NicknameWrapper>
         )}
-        {props.tier && <S.Tier src={`/tier/${props.tier}.png`} />}
+        {props.tier && <S.Tier src={`${S3_PATH}/tier/${props.tier}.png`} />}
         {props.children && props.children}
       </S.Wrapper>
     </>

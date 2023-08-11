@@ -4,11 +4,12 @@ import Button, {
   buttonType,
 } from "../../../src/components/commons/button/Button";
 import { useRouter } from "next/router";
+import { S3_PATH } from "../../../src/commons/constants/Constants";
 
 const gameItems = [
   {
     title: "눈사람",
-    image: "/game/item/frozen.png",
+    image: `${S3_PATH}/game/item/frozen.png`,
     description: [
       { isBold: true, text: "눈사람으로 변합니다" },
       {
@@ -27,7 +28,7 @@ const gameItems = [
   },
   {
     title: "음소거",
-    image: "/game/item/mute.png",
+    image: `${S3_PATH}/game/item/mute.png`,
     description: [
       { isBold: true, text: "마이크가 고장나서 정신을 잃습니다" },
       {
@@ -50,7 +51,7 @@ const gameItems = [
   },
   {
     title: "먹구름",
-    image: "/game/item/cloud.png",
+    image: `${S3_PATH}/game/item/cloud.png`,
     description: [
       { isBold: true, text: "먹구름이 몰려와 가사를 가립니다" },
       {
@@ -70,7 +71,7 @@ const gameItems = [
   },
   {
     title: "슈퍼맨",
-    image: "/game/item/super.png",
+    image: `${S3_PATH}/game/item/super.png`,
     description: [
       { isBold: true, text: "캐릭터가 거대해지고 데굴데굴 굴러갑니다" },
       {
@@ -92,7 +93,7 @@ const gameItems = [
   },
   {
     title: "키 Up",
-    image: "/game/item/keyUp.png",
+    image: `${S3_PATH}/game/item/keyUp.png`,
     description: [
       { isBold: true, text: "3키 높아진 반주에 맞추어 노래해주세요" },
 
@@ -108,7 +109,7 @@ const gameItems = [
   },
   {
     title: "키 Down",
-    image: "/game/item/keyDown.png",
+    image: `${S3_PATH}/game/item/keyDown.png`,
     description: [
       { isBold: true, text: "3키 낮아진 반주에 맞추어 노래해주세요" },
 

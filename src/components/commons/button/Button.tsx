@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as S from "./Button.styles";
+import { S3_PATH } from "../../../commons/constants/Constants";
 interface IButtonProps {
   buttonType: buttonType;
   text?: string;
@@ -36,8 +37,10 @@ export default function Button(props: IButtonProps) {
         props.buttonType
       )
     )
-      audioRef.current = new Audio("/sound/effect/disabled_button.mp3");
-    else audioRef.current = new Audio("/sound/effect/button.mp3");
+      audioRef.current = new Audio(
+        `${S3_PATH}/sound/effect/disabled_button.mp3`
+      );
+    else audioRef.current = new Audio(`${S3_PATH}/sound/effect/button.mp3`);
   }, []);
 
   return (
@@ -55,32 +58,49 @@ export default function Button(props: IButtonProps) {
     >
       {props.buttonType === buttonType.SELECT ? (
         <>
-          <S.SelectIcon src="/icon/triangle.png" alt="triangle" />
+          <S.SelectIcon src={`${S3_PATH}/icon/triangle.png`} alt="triangle" />
           {props.text}
-          <S.SelectIcon isRight src="/icon/triangle.png" alt="triangle" />
+          <S.SelectIcon
+            isRight
+            src={`${S3_PATH}/icon/triangle.png`}
+            alt="triangle"
+          />
         </>
       ) : [buttonType.SHORT_SELECT, buttonType.SHORT_SELECT_EMPTY].includes(
           props.buttonType
         ) ? (
         <>
-          <S.SelectIcon small src="/icon/triangle.png" alt="triangle" />
+          <S.SelectIcon
+            small
+            src={`${S3_PATH}/icon/triangle.png`}
+            alt="triangle"
+          />
           {props.text}
-          <S.SelectIcon small isRight src="/icon/triangle.png" alt="triangle" />
+          <S.SelectIcon
+            small
+            isRight
+            src={`${S3_PATH}/icon/triangle.png`}
+            alt="triangle"
+          />
         </>
       ) : props.buttonType === buttonType.SEARCH ? (
         <>
-          <S.SearchIcon src="/icon/search.png" alt="triangle" />
+          <S.SearchIcon src={`${S3_PATH}/icon/search.png`} alt="triangle" />
           {props.text}
           <S.Empty />
         </>
       ) : props.buttonType === buttonType.FILTER ? (
         <>
-          <S.SelectIcon small src="/icon/triangle-black.png" alt="triangle" />
+          <S.SelectIcon
+            small
+            src={`${S3_PATH}/icon/triangle-black.png`}
+            alt="triangle"
+          />
           {props.text}
           <S.SelectIcon
             small
             isRight
-            src="/icon/triangle-black.png"
+            src={`${S3_PATH}/icon/triangle-black.png`}
             alt="triangle"
           />
         </>
