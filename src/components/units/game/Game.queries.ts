@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const FETCH_USER = gql`
   query FetchUser {
     fetchUser {
+      userId
       userKeynote
       character
     }
@@ -12,6 +13,7 @@ export const FETCH_USER = gql`
 export const FETCH_USER_BY_USER_ID = gql`
   query FetchUserByUserId($userId: String!) {
     fetchUserByUserId(userId: $userId) {
+      userId
       userKeynote
       character
     }
