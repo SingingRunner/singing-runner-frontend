@@ -10,14 +10,13 @@ import { useEffect } from "react";
 import { S3_PATH } from "../src/commons/constants/Constants";
 
 const nonModelFiles = [
-  `/game/floor/neon.webp`,
+  `/game/floor/neon.jpeg`,
   `${S3_PATH}/game/item/effect/frozen.png`,
   `${S3_PATH}/game/item/effect/keyDown.png`,
   `${S3_PATH}/game/item/effect/keyUp.png`,
   `${S3_PATH}/game/item/effect/mute.png`,
   `${S3_PATH}/game/item/effect/super.png`,
   `${S3_PATH}/game/item/effect/draggable_cloud.png`,
-  `${S3_PATH}/game/item/effect/small_crash.mp3`,
   `${S3_PATH}/game/item/cloud.png`,
   `${S3_PATH}/game/item/frozen.png`,
   `${S3_PATH}/game/item/keyDown.png`,
@@ -50,24 +49,6 @@ function preloadModel(url: string) {
     });
 }
 
-function getAsAttribute(filePath: string) {
-  const fileExtension = String(filePath.split(".").pop());
-
-  switch (fileExtension) {
-    case "jpg":
-    case "png":
-      return "image";
-    case "mp3":
-    case "wav":
-      return "audio";
-    case "js":
-      return "script";
-    default:
-      console.error(`Unrecognized file extension: ${fileExtension}`);
-      return ""; // 목적에 따라 return 'fetch' 해도 됨.
-  }
-}
-
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {
     modelFiles.forEach((modelUrl) => {
@@ -97,12 +78,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
               content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
             />
             {nonModelFiles.map((file, index) => (
-              <link
-                key={index}
-                rel="preload"
-                href={file}
-                as={getAsAttribute(file)}
-              />
+              <link key={index} rel="preload" href={file} as="image" />
             ))}
             <link rel="icon" href="/favicon.png" />
           </Head>
