@@ -1,14 +1,14 @@
-import Button, { buttonType } from "../../commons/button/Button";
+import Button, { buttonType } from "../../../commons/button/Button";
 import InfiniteScroll from "react-infinite-scroller";
-import ListItem from "../../commons/listItem/ListItem";
-import { IReplayUIProps } from "./Replay.types";
+import ListItem from "../../../commons/listItem/ListItem";
 import { useState } from "react";
-import Label from "../../commons/label/Label";
-import Header from "../../commons/layout/header/Header";
-import * as S from "./Replay.styles";
-import { S3_PATH } from "../../../commons/constants/Constants";
+import Label from "../../../commons/label/Label";
+import Header from "../../../commons/layout/header/Header";
+import * as S from "./ReplayList.styles";
+import { S3_PATH } from "../../../../commons/constants/Constants";
+import { IReplayListUIProps } from "./ReplayList.types";
 
-export default function ReplayUI(props: IReplayUIProps) {
+export default function ReplayListUI(props: IReplayListUIProps) {
   const [isSettingMode, setIsSettingMode] = useState(false);
   return (
     <>

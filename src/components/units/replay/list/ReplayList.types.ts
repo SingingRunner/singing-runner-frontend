@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
-import { buttonType } from "../../commons/button/Button";
+import { buttonType } from "../../../commons/button/Button";
 
-export interface IReplayUIProps {
+export interface IReplayListUIProps {
   isMyReplay: boolean;
   btnType: buttonType;
   setBtnType: Dispatch<SetStateAction<buttonType>>;
