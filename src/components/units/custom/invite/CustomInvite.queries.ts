@@ -21,6 +21,7 @@ export const INVITE_FRIEND = gql`
 export const FETCH_USER = gql`
   query FetchUser {
     fetchUser {
+      userId
       character
       nickname
     }
