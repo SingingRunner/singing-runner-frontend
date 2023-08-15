@@ -103,3 +103,8 @@ export const globalModalState = atom<IGlobalModalProps>({
     onClickLeft: () => {},
   },
 });
+
+export const replayStatusState = atom<"START" | "END" | "LOADING">({
+  key: `replayStatusState${uuidv4()}`,
+  default: "LOADING",
+});

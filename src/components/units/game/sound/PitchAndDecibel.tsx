@@ -3,7 +3,7 @@ import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
 
 import { useRecoilState } from "recoil";
-import { userIdState } from "../../../../commons/store";
+import { replayStatusState, userIdState } from "../../../../commons/store";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
   const A4MIDINoteValue = 69; // MIDI note value for A4 (440 Hz)
@@ -69,35 +69,46 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     propsRef.current = props;
   }, [props]);
 
+  const [, setReplayStatus] = useRecoilState(replayStatusState);
   useEffect(() => {
-    if (props.isReplay) {
-      socket?.on("start_replay", gameReady);
-    } else {
+    if (props.replaySources.length) gameReady();
+  }, [props.replaySources]);
+
+  useEffect(() => {
+    if (!props.isReplay) {
       socket?.on("game_ready", gameReady);
     }
     socket?.on("score", scoreListener);
 
     return () => {
-      socket?.off("start_replay", gameReady);
       socket?.off("game_ready", gameReady);
       socket?.off("score", scoreListener);
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (props.isReplay && props.replayEvent?.eventName === "score") {
+      scoreListener(props.replayEvent.eventContent);
+    }
+  }, [props.replayEvent]);
+
   const gameReady = () => {
     if (props.isReplay) {
-      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => {
-          track.stop();
-        });
-      });
-      const nowTime = performance.now();
-      props.setStartTime(nowTime);
-      const sources = propsRef.current.sources;
-      sources.current.forEach((source) => {
-        source.start();
-      });
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => {
+            track.stop();
+          });
+          const nowTime = performance.now();
+          props.setStartTime(nowTime);
+          props.replaySources.forEach((source) => {
+            source.start();
+          });
+          setReplayStatus("START");
+        })
+        .catch((e) => console.log(e));
     } else {
       navigator.mediaDevices
         .getUserMedia({ audio: true })

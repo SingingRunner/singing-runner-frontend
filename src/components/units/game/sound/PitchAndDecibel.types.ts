@@ -20,6 +20,8 @@ export interface IPitchAndDecibelProps {
   preventEvent?: boolean;
   isReplay?: boolean;
   setBase64Data: Dispatch<SetStateAction<string>>;
+  replaySources: any[];
+  replayEvent?: any;
 }
 
 export interface ISocketScore {

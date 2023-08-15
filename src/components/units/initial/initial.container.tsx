@@ -1,9 +1,15 @@
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import InitialUI from "./initial.presenter";
 import { IInitialUIProps } from "./initial.types";
 
 export default function Initial() {
   const router = useRouter();
+  const [hostUrl, setHostUrl] = useState("");
+
+  useEffect(() => {
+    setHostUrl(window.location.host);
+  });
 
   const handleKakaoLogin = () => {
     const kakaoRedirectUri = encodeURIComponent(
@@ -18,7 +24,7 @@ export default function Initial() {
 
   const handleGoogleLogin = () => {
     const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-    const googleRedirectUrl = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL || "";
+    const googleRedirectUrl = `https://${hostUrl}/callback/google`;
     const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${googleClientId}&scope=openid%20profile%20email&redirect_uri=${googleRedirectUrl}`;
 
     window.location.href = googleAuthURL;

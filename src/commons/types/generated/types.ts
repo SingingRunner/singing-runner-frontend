@@ -110,7 +110,7 @@ export type IMutation = {
   registerUserWithGoogle: IAuthDto;
   registerUserWithKakao: IAuthDto;
   removeFriend: Scalars['String']['output'];
-  saveReplay: IReply;
+  saveReplay: IReplay;
   updateCharacter: IUserCharacterResponseDto;
   updateReplayIsPublic: IReplayIsPublicResponseDto;
   updateUserKeynote: IUserKeynoteResponseDto;
@@ -216,6 +216,7 @@ export type IQuery = {
   getUserReplays: Array<IReplayWithSongInfo>;
   isEmailTaken: Scalars['Boolean']['output'];
   isNicknameTaken: Scalars['Boolean']['output'];
+  playReplay: IReplayInfoDto;
   searchFriend: Array<ISearchFriendDto>;
   searchSong: Array<IGameSongDto>;
   searchUser: Array<IFriendDto>;
@@ -250,6 +251,11 @@ export type IQueryIsNicknameTakenArgs = {
 };
 
 
+export type IQueryPlayReplayArgs = {
+  replayId: Scalars['Int']['input'];
+};
+
+
 export type IQuerySearchFriendArgs = {
   nickname: Scalars['String']['input'];
   page: Scalars['Int']['input'];
@@ -270,10 +276,45 @@ export type IQuerySearchUserArgs = {
   userId: Scalars['String']['input'];
 };
 
+export type IReplay = {
+  __typename?: 'Replay';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+};
+
+export type IReplayInfoDto = {
+  __typename?: 'ReplayInfoDto';
+  characterList: Array<IReplayUserInfoDto>;
+  gameEvent: Scalars['String']['output'];
+  gameSong: IReplaySongDto;
+  replayKeynote: Scalars['Int']['output'];
+  userVocal: Scalars['String']['output'];
+};
+
 export type IReplayIsPublicResponseDto = {
   __typename?: 'ReplayIsPublicResponseDto';
   isPublic: Scalars['Int']['output'];
   replayId: Scalars['String']['output'];
+};
+
+export type IReplaySongDto = {
+  __typename?: 'ReplaySongDto';
+  singer: Scalars['String']['output'];
+  songFemale: Scalars['String']['output'];
+  songFemaleDown: Scalars['String']['output'];
+  songFemaleUp: Scalars['String']['output'];
+  songGender: Scalars['Boolean']['output'];
+  songLyrics: Scalars['String']['output'];
+  songMale: Scalars['String']['output'];
+  songMaleDown: Scalars['String']['output'];
+  songMaleUp: Scalars['String']['output'];
+  songTitle: Scalars['String']['output'];
+};
+
+export type IReplayUserInfoDto = {
+  __typename?: 'ReplayUserInfoDto';
+  character: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
 };
 
 export type IReplayWithSongInfo = {
@@ -283,12 +324,6 @@ export type IReplayWithSongInfo = {
   replayId: Scalars['Int']['output'];
   singer: Scalars['String']['output'];
   songTitle: Scalars['String']['output'];
-};
-
-export type IReply = {
-  __typename?: 'Reply';
-  code: Scalars['Int']['output'];
-  message: Scalars['String']['output'];
 };
 
 export type IRequestDto = {
