@@ -1,10 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
 import { IPlayersInfo } from "../Game.types";
 import { ILyric } from "../lyric/Lyric.types";
+import {
+  IReplaySongDto,
+  IReplayUserInfoDto,
+} from "../../../../commons/types/generated/types";
 
 export interface ISoundProps {
   preventEvent?: boolean;
-  isReplay?: boolean;
   appliedItems: string[];
   setSongInfo: Dispatch<
     SetStateAction<{
@@ -25,10 +28,19 @@ export interface ISoundProps {
   setIsLoadComplete: Dispatch<SetStateAction<boolean>>;
   setPlayersInfo: Dispatch<SetStateAction<IPlayersInfo[]>>;
   setLyrics: Dispatch<SetStateAction<ILyric[]>>;
+  isReplay?: boolean;
+  replayLoadingData?: {
+    gameSong: IReplaySongDto | undefined;
+    characterList: IReplayUserInfoDto[] | undefined;
+    userVocal: string | undefined;
+    replayKeynote: number | undefined;
+  };
+  replayUserId?: string;
+  replayEvent?: any;
 }
 
 export interface ISocketLoadingData {
-  gameSong: {
+  gameSong?: {
     songTitle: string;
     singer: string;
     songLyrics: string;
@@ -39,14 +51,14 @@ export interface ISocketLoadingData {
     songFemale: string;
     songFemaleUp: string;
     songFemaleDown: string;
-    vocalMale: string;
-    vocalMaleUp: string;
-    vocalMaleDown: string;
-    vocalFemale: string;
-    vocalFemaleUp: string;
-    vocalFemaleDown: string;
+    vocalMale?: string;
+    vocalMaleUp?: string;
+    vocalMaleDown?: string;
+    vocalFemale?: string;
+    vocalFemaleUp?: string;
+    vocalFemaleDown?: string;
   };
-  characterList: [
+  characterList?: [
     { userId: string; character: string },
     { userId: string; character: string },
     { userId: string; character: string }

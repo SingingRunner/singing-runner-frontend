@@ -1,10 +1,10 @@
 import { useRecoilState } from "recoil";
-import ReplayUI from "./Replay.presenter";
-import { userIdState } from "../../../commons/store";
+import ReplayListUI from "./ReplayList.presenter";
+import { userIdState } from "../../../../commons/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { buttonType } from "../../commons/button/Button";
-import Modal from "../../commons/modal/Modal";
+import { buttonType } from "../../../commons/button/Button";
+import Modal from "../../../commons/modal/Modal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
@@ -13,13 +13,13 @@ import {
   FETCH_USER_BY_USER_ID,
   GET_USER_REPLAYS,
   UPDATE_PUBLIC,
-} from "./Replay.queries";
+} from "./ReplayList.queries";
 import {
   IQuery,
   IQueryGetUserReplaysArgs,
-} from "../../../commons/types/generated/types";
+} from "../../../../commons/types/generated/types";
 
-export default function Replay() {
+export default function ReplayList() {
   const router = useRouter();
   const [isMyReplay, setIsMyReplay] = useState(true);
   const [currentUserId] = useRecoilState(userIdState);
@@ -98,7 +98,7 @@ export default function Replay() {
   };
 
   const playReplay = (replayId: number) => {
-    router.push(`/replay/ingame/${userId}/${replayId}`);
+    router.push(`/replay/${userId}/${replayId}`);
   };
 
   const setPublic = async (replayId: number, isPublic: boolean) => {
@@ -137,7 +137,7 @@ export default function Replay() {
 
   return (
     <>
-      <ReplayUI
+      <ReplayListUI
         isMyReplay={isMyReplay}
         btnType={btnType}
         setBtnType={setBtnType}

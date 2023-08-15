@@ -1,8 +1,21 @@
+import {
+  IQuery,
+  IReplaySongDto,
+  IReplayUserInfoDto,
+} from "../../../commons/types/generated/types";
 import { ILyric } from "./lyric/Lyric.types";
 
 export interface IGameProps {
   isReplay?: boolean;
-  playerId?: string;
+  replayData?: Pick<IQuery, "playReplay"> | undefined;
+  replayLoadingData?: {
+    gameSong: IReplaySongDto | undefined;
+    characterList: IReplayUserInfoDto[] | undefined;
+    userVocal: string | undefined;
+    replayKeynote: number | undefined;
+  };
+  replayUserId?: string;
+  replayEvent?: any;
 }
 export interface IGameUIProps {
   playerId?: string;
