@@ -15,7 +15,13 @@ import {
 import { onError } from "@apollo/client/link/error";
 import { getAccessToken } from "../../../commons/libraries/getAccessToken";
 
-const GLOBAL_STATE = new InMemoryCache();
+const GLOBAL_STATE = new InMemoryCache({
+  typePolicies: {
+    AuthUserDto: {
+      keyFields: ["userId"],
+    },
+  },
+});
 
 interface IApolloSettingProps {
   children: JSX.Element;
@@ -68,7 +74,7 @@ export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
 
   const client = new ApolloClient({
     link: ApolloLink.from([errorLink, uploadLink]),
-    cache: GLOBAL_STATE, // 컴퓨터의 메모리에 백엔드에서 받아온 데이터 임시로 저장해 놓기 => 나중에 더 자세히 알아보기
+    cache: GLOBAL_STATE,
   });
 
   return <ApolloProvider client={client}>{props.children}</ApolloProvider>;
