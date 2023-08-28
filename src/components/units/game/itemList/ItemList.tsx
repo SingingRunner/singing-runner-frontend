@@ -17,6 +17,9 @@ export default function ItemList(props: { preventEvent?: boolean }) {
 
   const [itemList, setItemList] = useState<string[]>([]);
 
+  const useItemAudio = new Audio(`/sound/effect/use_item.mp3`);
+  const getItemAudio = new Audio(`/sound/effect/get_item.mp3`);
+
   useEffect(() => {
     // ITEM_GET_INTERVAL 간격으로 아이템 획득 요청
     const interval = setInterval(() => {
@@ -40,6 +43,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
       if (prev.length >= 2) return prev;
       return [...prev, item];
     });
+    getItemAudio.play();
   };
 
   /** 아이템 사용 함수 */
@@ -51,6 +55,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
       if (prev[0] === prev[1]) return prev.slice(1);
       return prev.filter((i) => i !== item); // itemList에서 해당 아이템을 제외한 나머지만 반환
     });
+    useItemAudio.play();
   };
 
   return (
