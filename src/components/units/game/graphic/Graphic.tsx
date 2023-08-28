@@ -267,6 +267,7 @@ export default function Graphic(props: IGrapicProps) {
 
     // 크기 확대
     enlargePlayer(position);
+    superStartAudio.play();
     await sleep(1000); // 1초 대기
 
     // 기존 시점으로 카메라 이동
@@ -279,6 +280,8 @@ export default function Graphic(props: IGrapicProps) {
 
     // 크기 축소
     shrinkPlayer(position);
+    superFinishAudio.play();
+
     // 기본 액션으로 변경
     onRunAction(position);
   };
@@ -610,6 +613,10 @@ export default function Graphic(props: IGrapicProps) {
       return newHealth;
     });
   };
+
+  /* 슈퍼모드 효과음 */
+  const superStartAudio = new Audio(`/sound/effect/super_start.mp3`);
+  const superFinishAudio = new Audio(`/sound/effect/super_finish.mp3`);
 
   /* 눈사람 뿌시는 소리 */
   const soundRef = useRef(false);

@@ -50,18 +50,18 @@ export default function ServerSentEvents() {
         setHostNickname(parsedData.host.nickname);
       }
     };
-    eventSourceInvite.onerror = function (error) {
-      console.error("Error occurred:", error);
-    };
+    // eventSourceInvite.onerror = function (error) {
+    //   console.error("Error occurred:", error);
+    // };
     eventSourceNoti.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
       if (parsedData.alarm) setIsNotification(true);
       else setIsNotification(false);
     };
 
-    eventSourceNoti.onerror = function (error) {
-      console.error("Error occurred:", error);
-    };
+    // eventSourceNoti.onerror = function (error) {
+    //   console.error("Error occurred:", error);
+    // };
 
     return () => {
       eventSourceInvite.close();
