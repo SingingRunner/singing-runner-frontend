@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import {
   IQuery,
@@ -13,7 +13,7 @@ import { REMOVE_FRIEND, SEARCH_FRIEND } from "./SocialSetting.queries";
 
 export default function SocialSetting() {
   const router = useRouter();
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   const [keyword, setKeyword] = useState("");
   const [debounceValue, setDebounceValue] = useState("");
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);

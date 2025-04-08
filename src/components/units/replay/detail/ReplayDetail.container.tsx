@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { IQuery } from "../../../../commons/types/generated/types";
 import { PLAY_REPLAY } from "./Replaydetail.queries";
 import { S3_PATH } from "../../../../commons/constants/Constants";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { replayStatusState } from "../../../../commons/store";
 import { useEffect, useState } from "react";
 
@@ -13,7 +13,7 @@ export default function ReplayDetail() {
   if (router.query.replayId === undefined) return <div>Loading...</div>;
 
   const [eventList, setEventList] = useState([]);
-  const [replayStatus] = useRecoilState(replayStatusState);
+  const replayStatus = useAtomValue(replayStatusState);
   const [replayEvent, setReplayEvent] = useState<any>();
 
   const { data, loading } = useQuery<Pick<IQuery, "playReplay">>(PLAY_REPLAY, {

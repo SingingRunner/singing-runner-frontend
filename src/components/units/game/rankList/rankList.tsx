@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { IPlayersInfo } from "../Game.types";
 import { userIdState } from "../../../../commons/store";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { S3_PATH } from "../../../../commons/constants/Constants";
 
 interface IRankListProps {
@@ -13,7 +13,7 @@ interface IRankListProps {
 
 export default function RankList(props: IRankListProps) {
   // 현재 플레이어의 정보
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   /** 플레이어: 인게임인 경우 현재 유저, 리플레이인 경우 해당 리플레이의 유저 */
   const [playerId] = useState(props.playerId || userId);
 

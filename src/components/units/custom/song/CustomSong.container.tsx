@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import CustomSongUI from "./CustomSong.presenter";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { roomInfoState, userIdState } from "../../../../commons/store";
 import { ChangeEvent, useCallback, useContext, useState } from "react";
 import { SEARCH_SONG_QUERY } from "./CustomSong.queries";
@@ -20,8 +20,8 @@ export default function CustomSong() {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
-  const [roomInfo] = useRecoilState(roomInfoState);
+  const userId = useAtomValue(userIdState);
+  const roomInfo = useAtomValue(roomInfoState);
   const [filter, setFilter] = useState("createdAt");
   const [keyword, setKeyword] = useState("");
 

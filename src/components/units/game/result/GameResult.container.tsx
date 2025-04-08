@@ -1,5 +1,5 @@
 import { gameResultState, userIdState } from "../../../../commons/store";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { useContext, useEffect, useState } from "react";
 import GameResultUI from "./GameResult.presenter";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
@@ -11,9 +11,9 @@ export default function GameResult() {
   if (!socketContext) return <div>Loading...</div>;
   const { socketDisconnect } = socketContext;
 
-  const [gameResult] = useRecoilState(gameResultState);
+  const gameResult = useAtomValue(gameResultState);
 
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [currentUserResult, setCurrentUserResult] = useState({
     mmrDiff: 0,

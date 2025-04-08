@@ -3,7 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import GameUI from "./Game.presenter";
 import Sound from "./sound/Sound";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import {
   gameResultState,
   roomInfoState,
@@ -31,7 +32,7 @@ export default function Game(props: IGameProps) {
   const { socket, socketDisconnect } = socketContext;
 
   // 유저 정보
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   const { data: userData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
   // 플레이어: 리플레이인 경우 해당 리플레이의 유저, 인게임인 경우 현재 유저
   const [playerId] = useState(props.replayUserId || userId);
@@ -39,8 +40,8 @@ export default function Game(props: IGameProps) {
   const [playersInfo, setPlayersInfo] = useState<IPlayersInfo[]>([]);
 
   // 방 정보
-  const [roomInfo] = useRecoilState(roomInfoState);
-  const resetRoomInfoState = useResetRecoilState(roomInfoState);
+  const roomInfo = useAtomValue(roomInfoState);
+  const resetRoomInfo = useResetAtom(roomInfoState);
 
   // 일반전이거나 리플레이인 경우, 이벤트를 막는 상태
   const [preventEvent, setPreventEvent] = useState(false);
@@ -102,7 +103,7 @@ export default function Game(props: IGameProps) {
     left: false,
   });
 
-  const [, setGameResult] = useRecoilState(gameResultState);
+  const setGameResult = useSetAtom(gameResultState);
 
   useEffect(() => {
     // 다른 유저가 아이템을 시전
@@ -235,7 +236,7 @@ export default function Game(props: IGameProps) {
   const gameTerminated = (data: IGameResult[]) => {
     setGameResult(data);
     setIsTerminated(true);
-    resetRoomInfoState();
+    resetRoomInfo();
   };
 
   // 게임 종료 후, 유저의 음정 파일 업로드 (리플레이에서 조회하기 위함)

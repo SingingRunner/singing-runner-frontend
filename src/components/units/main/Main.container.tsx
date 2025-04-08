@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { SocketContext } from "../../../commons/contexts/SocketContext";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { roomInfoState, userIdState } from "../../../commons/store";
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import { FETCH_USER } from "./Main.queries";
 import { IQuery } from "../../../commons/types/generated/types";
 
@@ -30,7 +30,7 @@ const Main = () => {
   const [userKeynote, setUserKeynote] = useState("");
   const [userActive, setUserActive] = useState(false);
 
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const { data } = useQuery(FETCH_USER, {
     fetchPolicy: "network-only",
@@ -112,7 +112,7 @@ const Main = () => {
     newSocket.emit("match_making", { UserMatchDto, accept: true });
   };
 
-  const [, setRoomInfo] = useRecoilState(roomInfoState);
+  const setRoomInfo = useSetAtom(roomInfoState);
 
   const [fetchUser] = useLazyQuery<Pick<IQuery, "fetchUser">>(FETCH_USER, {
     onCompleted: (userData) => {

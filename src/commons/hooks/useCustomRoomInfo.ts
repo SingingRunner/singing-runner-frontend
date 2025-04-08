@@ -1,5 +1,6 @@
 import { SocketContext } from "../contexts/SocketContext";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import { globalModalState, roomInfoState, userIdState } from "../store";
 import { useRouter } from "next/router";
 import {
@@ -17,10 +18,10 @@ export const useCustomRoomInfo = () => {
   if (!socketContext) return null;
   const { socket, socketDisconnect } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
-  const [, setRoomInfo] = useRecoilState(roomInfoState);
-  const [, setGlobalModal] = useRecoilState(globalModalState);
-  const resetRoomInfoState = useResetRecoilState(roomInfoState);
+  const userId = useAtomValue(userIdState);
+  const setRoomInfo = useSetAtom(roomInfoState);
+  const setGlobalModal = useSetAtom(globalModalState);
+  const resetRoomInfo = useResetAtom(roomInfoState);
 
   useEffect(() => {
     // 유저가 방에 들어옴
@@ -103,7 +104,7 @@ export const useCustomRoomInfo = () => {
     });
 
     if (isHost) {
-      resetRoomInfoState();
+      resetRoomInfo();
       socketDisconnect();
       setGlobalModal((prev) => ({
         ...prev,

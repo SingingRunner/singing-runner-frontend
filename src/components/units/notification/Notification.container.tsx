@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import { isNotificationState, userIdState } from "../../../commons/store";
 import {
   IQuery,
@@ -20,7 +20,7 @@ import "dayjs/locale/ko";
 
 export default function Notification() {
   const router = useRouter();
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   const [isCheckClicked, setIsCheckClicked] = useState(false);
   const [addFriendMutation] = useMutation(ADD_FRIEND);
   const [deleteNotificationMutation] = useMutation(DELETE_NOTIFICATION);
@@ -37,7 +37,7 @@ export default function Notification() {
     fetchPolicy: "network-only",
   });
 
-  const [, setIsNotification] = useRecoilState(isNotificationState);
+  const setIsNotification = useSetAtom(isNotificationState);
   useEffect(() => {
     // 페이지가 렌더링 될 때 마다 사용자 정보 새로 불러옴
     refetch();

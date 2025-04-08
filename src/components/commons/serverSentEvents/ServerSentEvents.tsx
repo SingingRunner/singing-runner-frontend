@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   globalModalState,
   isNotificationState,
@@ -23,12 +23,12 @@ export default function ServerSentEvents() {
   if (!socketContext) return <div>Loading...</div>;
   const { socketConnect, socketDisconnect } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
-  const [, setRoomInfo] = useRecoilState(roomInfoState);
-  const [, setGlobalModal] = useRecoilState(globalModalState);
+  const userId = useAtomValue(userIdState);
+  const setRoomInfo = useSetAtom(roomInfoState);
+  const setGlobalModal = useSetAtom(globalModalState);
 
   // 친구 요청이 있으면 true
-  const [, setIsNotification] = useRecoilState(isNotificationState);
+  const setIsNotification = useSetAtom(isNotificationState);
   const [hostNickname, setHostNickname] = useState("");
   const [hostId, setHostId] = useState("");
 

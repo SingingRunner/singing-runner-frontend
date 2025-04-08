@@ -1,4 +1,4 @@
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import ReplayListUI from "./ReplayList.presenter";
 import { userIdState } from "../../../../commons/store";
 import { useRouter } from "next/router";
@@ -22,7 +22,7 @@ import {
 export default function ReplayList() {
   const router = useRouter();
   const [isMyReplay, setIsMyReplay] = useState(true);
-  const [currentUserId] = useRecoilState(userIdState);
+  const currentUserId = useAtomValue(userIdState);
   const [updatePublic] = useMutation(UPDATE_PUBLIC);
   const [btnType, setBtnType] = useState(buttonType.SHORT_PINK);
   const [isModalOpen, setIsModalOpen] = useState(false);

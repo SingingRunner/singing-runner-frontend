@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import { S3_PATH } from "../../../../commons/constants/Constants";
 
@@ -13,7 +13,7 @@ export default function ItemList(props: { preventEvent?: boolean }) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [itemList, setItemList] = useState<string[]>([]);
 

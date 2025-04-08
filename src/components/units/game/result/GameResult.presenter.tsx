@@ -5,13 +5,13 @@ import Button, { buttonType } from "../../../commons/button/Button";
 import { useRouter } from "next/router";
 import { IGameResultUIProps } from "./GameResult.types";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import { S3_PATH } from "../../../../commons/constants/Constants";
 
 export default function GameResultUI(props: IGameResultUIProps) {
   const router = useRouter();
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [mmr, setMMR] = useState(0);
   useEffect(() => {

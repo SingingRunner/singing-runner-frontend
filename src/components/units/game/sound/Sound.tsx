@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import PitchAndDecibel from "./PitchAndDecibel";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import { ISocketLoadingData, ISoundProps } from "./Sound.types";
 import { FETCH_USER_BY_USER_ID, FETCH_USER } from "../Game.queries";
@@ -17,7 +17,7 @@ export default function Sound(props: ISoundProps) {
   const { socket } = socketContext;
 
   const { data: userData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [isKeyUp, setKeyUp] = useState(false);
   const [isKeyDown, setKeyDown] = useState(false);

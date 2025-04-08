@@ -1,13 +1,13 @@
 import { Global } from "@emotion/react";
 import { AppProps } from "next/app";
 import { globalStyles } from "../styles/globalStyles";
-import { RecoilRoot } from "recoil";
 import { SocketProvider } from "../src/commons/contexts/SocketContext";
 import Layout from "../src/components/commons/layout/Layout";
 import Head from "next/head";
 import ApolloSetting from "../src/components/commons/apollo";
 import { useEffect } from "react";
 import { S3_PATH } from "../src/commons/constants/Constants";
+import { Provider as JotaiProvider } from "jotai";
 
 const nonModelFiles = [
   `/game/floor/neon.jpeg`,
@@ -67,7 +67,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
   }, []);
 
   return (
-    <RecoilRoot>
+    <JotaiProvider>
       <ApolloSetting>
         <SocketProvider>
           <Global styles={globalStyles} />
@@ -87,6 +87,6 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
           </Layout>
         </SocketProvider>
       </ApolloSetting>
-    </RecoilRoot>
+    </JotaiProvider>
   );
 }

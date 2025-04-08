@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { INicknameUIProps } from "./Nickname.types";
 import NicknameUI from "./Nickname.presenter";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   userIdState,
   kakaoUserResponseState,
@@ -23,7 +23,7 @@ export default function Nickname() {
   const [isNicknameButtonEnabled, setNicknameButtonEnabled] = useState(false);
   const [registerUserWithKakao] = useMutation(REGISTER_USER_WITH_KAKAO);
   const [registerUserWithGoogle] = useMutation(REGISTER_USER_WITH_GOOGLE);
-  const [, setUserId] = useRecoilState(userIdState);
+  const setUserId = useSetAtom(userIdState);
   const [nicknameCheck, { data: nicknameCheckData }] = useLazyQuery(
     IS_NICKNAME_TAKEN,
     {
@@ -35,8 +35,8 @@ export default function Nickname() {
   const [isNicknameCheckClicked, setIsNicknameCheckClicked] = useState(false);
   // 회원가입 눌렀을 때, "이미 사용중입니다."라는 문구가 안 뜨게 방지하는 플래그
   const [isCompleteClicked, setIsCompleteClicked] = useState(false);
-  const [kakaoUserResponse] = useRecoilState(kakaoUserResponseState);
-  const [googleUserResponse] = useRecoilState(googleUserResponseState);
+  const kakaoUserResponse = useAtomValue(kakaoUserResponseState);
+  const googleUserResponse = useAtomValue(googleUserResponseState);
 
   const router = useRouter();
 

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import {
   IQuery,
@@ -15,7 +15,7 @@ import { FRIEND_REQUEST, SEARCH_USER } from "./Add.queries";
 export default function Add() {
   const router = useRouter();
   const [isRequestClicked, setIsRequestClicked] = useState(false);
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   const [keyword, setKeyword] = useState("");
   const [receiverNickname, setReceiverNickname] = useState("");
 

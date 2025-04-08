@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../commons/store";
 import MyRoomUI from "./MyRoom.presenter";
 import { IMyRoomUIProps } from "./MyRoom.types";
@@ -28,7 +28,7 @@ export default function MyRoom() {
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
   const [tier, setTier] = useState("");
   const [mmr, setMmr] = useState(0);
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const { data } = useQuery(FETCH_USER, {
     fetchPolicy: "network-only",

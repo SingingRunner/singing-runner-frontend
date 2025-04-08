@@ -8,7 +8,7 @@ import {
   IMutationRegisterUserArgs,
 } from "../../../commons/types/generated/types";
 
-import { useRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import { userIdState } from "../../../commons/store";
 import {
   IS_EMAIL_TAKEN,
@@ -33,7 +33,7 @@ export default function SignUp() {
     IMutationRegisterUserArgs
   >(REGISTER_USER);
 
-  const [, setUserId] = useRecoilState(userIdState);
+  const setUserId = useSetAtom(userIdState);
   const [emailCheck, { data: emailCheckData }] = useLazyQuery(IS_EMAIL_TAKEN, {
     fetchPolicy: "network-only",
   });

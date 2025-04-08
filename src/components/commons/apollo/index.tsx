@@ -7,10 +7,10 @@ import {
 } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { useEffect, useState } from "react";
-import { useRecoilState, useRecoilValueLoadable } from "recoil";
+import { useAtom, useSetAtom } from "jotai";
 import {
   accessTokenState,
-  refreshAccessTokenLoadable,
+  refreshAccessTokenAtom,
 } from "../../../commons/store";
 import { onError } from "@apollo/client/link/error";
 import { getAccessToken } from "../../../commons/libraries/getAccessToken";
@@ -28,15 +28,13 @@ interface IApolloSettingProps {
 }
 
 export default function ApolloSetting(props: IApolloSettingProps): JSX.Element {
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const [accessToken, setAccessToken] = useAtom(accessTokenState);
   const [hostUrl, setHostUrl] = useState("");
-  const refreshLoadable = useRecoilValueLoadable(refreshAccessTokenLoadable);
+  const refreshAccessToken = useSetAtom(refreshAccessTokenAtom);
 
   // 프리렌더링 무시
   useEffect(() => {
-    void refreshLoadable.toPromise().then((newAccessToken) => {
-      setAccessToken(newAccessToken ?? "");
-    });
+    refreshAccessToken(); // 액세스 토큰 갱신
     setHostUrl(window.location.host);
   }, []);
 

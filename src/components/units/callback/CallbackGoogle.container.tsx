@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import {
   accessTokenState,
   googleUserResponseState,
@@ -23,9 +23,9 @@ export const LOGIN_USER_WITH_GOOGLE = gql`
 export default function CallbackGoogle() {
   const router = useRouter();
   const [loginWithGoogle] = useMutation(LOGIN_USER_WITH_GOOGLE);
-  const [, setAccessToken] = useRecoilState(accessTokenState);
-  const [, setUserId] = useRecoilState(userIdState);
-  const [, setGoogleUserResponse] = useRecoilState(googleUserResponseState);
+  const setAccessToken = useSetAtom(accessTokenState);
+  const setUserId = useSetAtom(userIdState);
+  const setGoogleUserResponse = useSetAtom(googleUserResponseState);
 
   useEffect(() => {
     const handleGoogleLogin = async () => {

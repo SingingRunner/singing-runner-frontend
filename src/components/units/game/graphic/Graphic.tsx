@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { IGrapicProps } from "./Graphic.types";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import { gsap } from "gsap";
 import { useRouter } from "next/router";
@@ -27,7 +27,7 @@ export default function Graphic(props: IGrapicProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [players, setPlayers] = useState<{
     mid: THREE.Object3D | undefined;
