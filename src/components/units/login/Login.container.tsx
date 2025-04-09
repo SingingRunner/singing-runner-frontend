@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import { accessTokenState, userIdState } from "../../../commons/store";
 import LoginUI from "./Login.presenter";
 import { ILoginUIProps } from "./Login.types";
@@ -24,8 +24,8 @@ export default function Login() {
   >(LOGIN_USER);
   const [isLoginButtonEnabled, setLoginButtonEnabled] = useState(false);
 
-  const [, setAccessToken] = useRecoilState(accessTokenState);
-  const [, setUserId] = useRecoilState(userIdState);
+  const setAccessToken = useSetAtom(accessTokenState);
+  const setUserId = useSetAtom(userIdState);
 
   useEffect(() => {
     // 유효성 검사 결과 => 가입 완료 버튼 활성화 여부 업데이트.

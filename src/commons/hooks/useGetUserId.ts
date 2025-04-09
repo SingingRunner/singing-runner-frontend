@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { useRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import { userIdState } from "../store";
 import { useEffect } from "react";
 import { IQuery } from "../types/generated/types";
@@ -18,7 +18,7 @@ export const useGetUserInfo = () => {
   const beforeLoginPath = ["/", "/login", "/signup"];
   if (beforeLoginPath.includes(router.asPath)) return;
 
-  const [, setUserId] = useRecoilState(userIdState);
+  const setUserId = useSetAtom(userIdState);
   const { data } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
 
   useEffect(() => {

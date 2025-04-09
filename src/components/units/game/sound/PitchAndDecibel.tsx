@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "../../../../commons/contexts/SocketContext";
 import { IPitchAndDecibelProps, ISocketScore } from "./PitchAndDecibel.types";
 
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import { replayStatusState, userIdState } from "../../../../commons/store";
 
 const pitchToMIDINoteValue = (pitch: number): number => {
@@ -48,7 +48,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
   if (!socketContext) return <div>Loading...</div>;
   const { socket } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const pitchAveragesRef = useRef<number[]>([]);
 
@@ -69,7 +69,7 @@ export default function PitchAndDecibel(props: IPitchAndDecibelProps) {
     propsRef.current = props;
   }, [props]);
 
-  const [, setReplayStatus] = useRecoilState(replayStatusState);
+  const setReplayStatus = useSetAtom(replayStatusState);
   useEffect(() => {
     if (props.replaySources.length) gameReady();
   }, [props.replaySources]);

@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../../commons/store";
 import StartingUI from "./Starting.presenter";
 import { UPDATE_CHARACTER } from "./Starting.queries";
@@ -23,7 +23,7 @@ const characters = [
 export default function Starting() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [updateCharacterMutation] = useMutation(UPDATE_CHARACTER);
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const router = useRouter();
 

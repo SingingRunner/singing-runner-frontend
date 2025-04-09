@@ -7,7 +7,7 @@ import Character from "./character/Character";
 import * as S from "./Main.styles";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { isNotificationState } from "../../../commons/store";
 import { S3_PATH } from "../../../commons/constants/Constants";
 
@@ -23,7 +23,7 @@ export default function MainUI(props: IMainUIProps) {
     audioRef.current?.play();
     router.push(path);
   };
-  const [isNotification] = useRecoilState(isNotificationState);
+  const isNotification = useAtomValue(isNotificationState);
   return (
     <>
       <S.LogoWrapper onClick={() => onClickMenu("/main")}>

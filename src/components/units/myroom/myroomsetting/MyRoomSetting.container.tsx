@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useAtom, useSetAtom } from "jotai";
 import {
   accessTokenState,
   userIdState,
@@ -20,15 +20,15 @@ const keynoteNames = ["ORIGINAL_KEY", "FEMALE_KEY", "MALE_KEY"];
 const keynoteDisplayNames = ["원키", "여키", "남키"];
 
 export default function MyRoomSetting() {
-  const [userId, setUserId] = useRecoilState(userIdState);
+  const [userId, setUserId] = useAtom(userIdState);
   const { data, refetch } = useQuery(FETCH_USER);
   const router = useRouter();
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [isLogoutClicked, setIsLogoutClicked] = useState(false);
-  const [, setAccessToken] = useRecoilState(accessTokenState);
+  const setAccessToken = useSetAtom(accessTokenState);
   const [updateUserKeynote] = useMutation(UPDATE_USER_KEYNOTE);
-  const setKakaoUserResponse = useSetRecoilState(kakaoUserResponseState);
-  const setGoogleUserResponse = useSetRecoilState(googleUserResponseState);
+  const setKakaoUserResponse = useSetAtom(kakaoUserResponseState);
+  const setGoogleUserResponse = useSetAtom(googleUserResponseState);
 
   const onClickKeySetting = async () => {
     const totalKeynotes = 3; // 원키, 여키, 남키 총 3가지

@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../commons/store";
 import {
   IQuery,
@@ -15,7 +15,7 @@ import { SEARCH_FRIEND } from "./Social.queries";
 import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function Social() {
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
   const [keyword, setKeyword] = useState("");
   const [debounceValue, setDebounceValue] = useState("");
   // 소셜 화면으로 이동해 왔을 때, 친구가 없다는 문구가 바로 뜨지 않게 하기 위한 state

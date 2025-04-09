@@ -6,7 +6,7 @@ import {
   FETCH_USER,
   FETCH_USER_BY_USER_ID,
 } from "./CustomInvite.queries";
-import { useRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   globalModalState,
   roomInfoState,
@@ -22,11 +22,11 @@ import debounce from "lodash/debounce";
 import { useCustomRoomInfo } from "../../../../commons/hooks/useCustomRoomInfo";
 
 export default function CustomInvite() {
-  const [userId] = useRecoilState(userIdState);
-  const [roomInfo] = useRecoilState(roomInfoState);
+  const userId = useAtomValue(userIdState);
+  const roomInfo = useAtomValue(roomInfoState);
   const [keyword, setKeyword] = useState("");
   const [isLimitCountModalOpen, setIsLimitCountModalOpen] = useState(false);
-  const [, setGlobalModal] = useRecoilState(globalModalState);
+  const setGlobalModal = useSetAtom(globalModalState);
 
   const { data: userData } = useQuery<Pick<IQuery, "fetchUser">>(FETCH_USER);
 

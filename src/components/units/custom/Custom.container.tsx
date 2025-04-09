@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import CustomUI from "./Custom.presenter";
 import { useContext, useEffect, useState } from "react";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 import {
   globalModalState,
   roomInfoState,
@@ -17,15 +18,15 @@ export default function Custom() {
   if (!socketContext) return <div>Loading...</div>;
   const { socket, socketDisconnect } = socketContext;
 
-  const [userId] = useRecoilState(userIdState);
-  const [roomInfo, setRoomInfo] = useRecoilState(roomInfoState);
-  const resetRoomInfo = useResetRecoilState(roomInfoState);
+  const userId = useAtomValue(userIdState);
+  const [roomInfo, setRoomInfo] = useAtom(roomInfoState);
+  const resetRoomInfo = useResetAtom(roomInfoState);
 
   const [isSongModalOpen, setIsSongModalOpen] = useState(false);
   const [isPrevModalOpen, setIsPrevModalOpen] = useState(false);
   const [isNotHostModalOpen, setIsNotHostModalOpen] = useState(false);
 
-  const [, setGlobalModal] = useRecoilState(globalModalState);
+  const setGlobalModal = useSetAtom(globalModalState);
 
   useEffect(() => {
     // 방장인 경우 유저 정보 로드에 실패하면 퇴장 처리

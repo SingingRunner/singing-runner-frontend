@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import * as S from "./ProfileCard.styles";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
+import { useAtomValue } from "jotai";
 import { userIdState } from "../../../commons/store";
 import Modal from "../modal/Modal";
 import { IProfileCardProps } from "./ProfileCard.types";
@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import { S3_PATH } from "../../../commons/constants/Constants";
 
 export default function ProfileCard(props: IProfileCardProps) {
-  const [userId] = useRecoilState(userIdState);
+  const userId = useAtomValue(userIdState);
 
   const [friendRequest] = useMutation(FRIEND_REQUEST);
   const [frienedRequestModalIsOpen, setFriendRequestModalIsOpen] =

@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import {
   accessTokenState,
   kakaoUserResponseState,
@@ -23,9 +23,9 @@ const LOGIN_WITH_KAKAO = gql`
 export default function CallbackKakao() {
   const router = useRouter();
   const [loginWithKakao] = useMutation(LOGIN_WITH_KAKAO);
-  const [, setAccessToken] = useRecoilState(accessTokenState);
-  const [, setUserId] = useRecoilState(userIdState);
-  const [, setKakaoUserResponse] = useRecoilState(kakaoUserResponseState);
+  const setAccessToken = useSetAtom(accessTokenState);
+  const setUserId = useSetAtom(userIdState);
+  const setKakaoUserResponse = useSetAtom(kakaoUserResponseState);
 
   useEffect(() => {
     const handleKakaoLogin = async () => {
@@ -75,10 +75,10 @@ export default function CallbackKakao() {
 
         // 로그인 성공한 경우 메인 페이지로 이동
         const accessToken = loggedInData.loginUserWithKakao.accessToken;
-        const userId = loggedInData.loginUserWithKakao.user.userId; // 이 부분을 추가하세요
+        const userId = loggedInData.loginUserWithKakao.user.userId;
 
-        setAccessToken(accessToken); // Recoil에 엑세스 토큰 저장
-        setUserId(userId); // Recoil에 userId 저장
+        setAccessToken(accessToken);
+        setUserId(userId);
 
         router.push("/main");
       } catch (error) {
